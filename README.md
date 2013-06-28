@@ -1,4 +1,4 @@
-kettle
-======
+Kettle.
+===
 
-A serverside framework based on Infusion framework.
+A serverside declarative IoC framework.
