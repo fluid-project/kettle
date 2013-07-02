@@ -1,4 +1,5 @@
-var fluid = require("infusion");
+var fluid = require("infusion"),
+    kettle = fluid.registerNamespace("kettle");
 
 var loader = fluid.getLoader(__dirname);
 
@@ -9,3 +10,5 @@ loader.require("./lib/request.js");
 loader.require("./lib/server.js");
 loader.require("./lib/app.js");
 loader.require("./lib/configLoader.js");
+
+module.exports = kettle;
