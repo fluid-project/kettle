@@ -35,16 +35,19 @@ https://github.com/GPII/kettle/LICENSE.txt
         }
     );
 
-    fluid.test.cleanUpAndContinue = function cleanUpAndContinue(fileName) {
-        fileName = fileName.substring(7);
-        fs.unlink(fileName);
-        jqUnit.start();
-    };
-
     kettle.dataSource.errback.handleErrorTest = function (data) {
         jqUnit.assertTrue(
             "Data source should properly handle paths to non-existent or empty files",
             data.isError);
+    };
+
+    fluid.test.makeSetResponseTester = function (dataSource, directModel, expected) {
+        return function testResponse() {
+            var fileName = dataSource.urlResolver.resolve(directModel).substring(7),
+                data = JSON.parse(fs.readFileSync(fileName, "utf8"));
+            jqUnit.assertDeepEq("Response is correct", expected, data);
+            fs.unlink(fileName);
+        };
     };
 
     fluid.test.setCouchDocument = function setCouchDocument(config, dataSource) {
@@ -57,9 +60,67 @@ https://github.com/GPII/kettle/LICENSE.txt
         fs.writeFileSync(fileName, JSON.stringify(data), "utf8");
     };
 
+    fluid.test.makeResponseTester = function makeResponseTester(expected) {
+        return function testResponse(data) {
+            jqUnit.assertDeepEq("Response is correct", expected, data);
+        };
+    };
+
+    fluid.test.makePromise = function (adapter, operation, directModel, callback) {
+        adapter[operation](directModel).then(callback);
+    };
+
+    fluid.test.makeSetPromise = function (adapter, operation, directModel, model, callback) {
+        adapter[operation](directModel, model).then(callback);
+    };
+
+    fluid.test.testInit = function (dataSource, expectedWrite) {
+        jqUnit.assertValue("Data source is initialized", dataSource);
+        jqUnit.assertValue("Data source should have a get method",
+            dataSource.get);
+        jqUnit.assertEquals("Data source should have a correct write method",
+            expectedWrite, dataSource.options.writeMethod);
+        jqUnit.assertUndefined("Data source should not have a set method by default",
+            dataSource.set);
+        jqUnit.assertDeepEq("Data source should have a termMap", {},
+            dataSource.options.termMap);
+        jqUnit.assertValue("urlResolver is initialized", dataSource.urlResolver);
+    };
+
+    fluid.test.testUrlResolver = function (urlResolver, directModel) {
+        jqUnit.assertEquals("Data source should should expand urls based on termMap",
+            "file://test/test.json", urlResolver.resolve(directModel));
+    };
+
     fluid.defaults("fluid.test.dataSource", {
         gradeNames: ["fluid.test.testEnvironment", "autoInit"],
         components: {
+
+            // Data source test components.
+            urlDataSource: {
+                type: "kettle.dataSource.URL"
+            },
+            couchDBDataSource: {
+                type: "kettle.dataSource.CouchDB"
+            },
+            urlDataSourceStatic: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%expand/test.json",
+                    termMap: {
+                        expand: "test"
+                    }
+                }
+            },
+            urlDataSourceDynamic: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%expand/test.json",
+                    termMap: {
+                        expand: "%expand"
+                    }
+                }
+            },
             dataSource1: {
                 type: "kettle.dataSource.URL",
                 options: {
@@ -126,21 +187,215 @@ https://github.com/GPII/kettle/LICENSE.txt
                     }
                 }
             },
+            dataSource10: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    }
+                }
+            },
+            dataSource11: {
+                type: "kettle.dataSource.CouchDB",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    }
+                }
+            },
+            dataSource12: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/test.json",
+                    writable: true
+                }
+            },
+            dataSource13: {
+                type: "kettle.dataSource.CouchDB",
+                options: {
+                    url: "file://%root/data/test.json",
+                    writable: true
+                }
+            },
+            dataSource14: {
+                type: "kettle.dataSource.CouchDB",
+                options: {
+                    url: "file://%root/data/tmpCouchDataSourceTestFile.json",
+                    writable: true
+                }
+            },
+            dataSource15: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    },
+                    writable: true
+                }
+            },
+            dataSource16: {
+                type: "kettle.dataSource.CouchDB",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    },
+                    writable: true
+                }
+            },
+
+            // Adapter test components.
+            callbackWrapper: {
+                type: "kettle.requestContextCallbackWrapper"
+            },
+            rawDataSource1: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/dataSourceTestFile.json"
+                }
+            },
+            adapter1: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource1}"
+                    }
+                }
+            },
+            rawDataSource2: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/emptyDataSourceTestFile.json"
+                }
+            },
+            adapter2: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource2}"
+                    }
+                }
+            },
+            rawDataSource3: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    }
+                }
+            },
+            adapter3: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource3}"
+                    }
+                }
+            },
+            rawDataSource4: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "dataSourceTestFile"
+                    }
+                }
+            },
+            adapter4: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource4}"
+                    }
+                }
+            },
+            rawDataSource5: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    }
+                }
+            },
+            adapter5: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource5}"
+                    }
+                }
+            },
+            rawDataSource6: {
+                type: "kettle.dataSource.CouchDB",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    }
+                }
+            },
+            adapter6: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource6}"
+                    }
+                }
+            },
+            rawDataSource7: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/test.json",
+                    writable: true
+                }
+            },
+            adapter7: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource7}"
+                    }
+                }
+            },
+            rawDataSource8: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
+                    },
+                    writable: true
+                }
+            },
+            adapter8: {
+                type: "kettle.callbackWrappingPromiseDataSource",
+                options: {
+                    components: {
+                        rawSource: "{rawDataSource8}"
+                    }
+                }
+            },
+
+            // Testers.
+            promiseAdapterDataSourceTester: {
+                type: "fluid.test.promiseAdapterDataSourceTester"
+            },
             dataSourceTester: {
                 type: "fluid.test.dataSourceTester"
+            },
+            generalDataSourceTester: {
+                type: "fluid.test.generalDataSourceTester"
+            },
+            urlResolverTester: {
+                type: "fluid.test.urlResolverTester"
             }
         }
     });
-
-    fluid.test.makeResponseTester = function makeResponseTester(expected) {
-        return function testResponse(data) {
-            jqUnit.assertDeepEq("Response is correct", expected, data);
-        };
-    };
-
-    fluid.test.makePromise = function (adapter, operation, directModel, callback) {
-        adapter[operation](directModel).then(callback);
-    };
 
     fluid.defaults("fluid.test.dataSourceTester", {
         gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
@@ -231,34 +486,122 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }
                     }
                 }]
+            }, {
+                expect: 1,
+                name: "Testing url datasource with filesystem and expansion",
+                func: "{dataSource10}.get",
+                args: [{
+                    expand: "dataSourceTestFile"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeResponseTester",
+                        args: {
+                            dataSource: "works"
+                        }
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem and expansion",
+                func: "{dataSource11}.get",
+                args: [{
+                    expand: "couchDataSourceTestFile"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeResponseTester",
+                        args: {
+                            dataSource: "works"
+                        }
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing url datasource with filesystem - set",
+                func: "{dataSource12}.set",
+                args: [null, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{dataSource12}", null, {
+                            test: "test"
+                        }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem - set",
+                func: "{dataSource13}.set",
+                args: [null, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{dataSource13}", null, {
+                            test: "test"
+                        }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem exiting doc - set",
+                func: "{dataSource14}.set",
+                args: [null, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{dataSource14}", null, {
+                            value: {
+                                test: "test"
+                            },
+                            _rev: "test_rev",
+                            _id: "test_id"
+                        }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing url datasource with filesystem and expansion- set",
+                func: "{dataSource15}.set",
+                args: [{
+                    expand: "test"
+                }, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{dataSource15}", {
+                            expand: "test"
+                        }, {
+                            test: "test"
+                        }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem and expansion- set",
+                func: "{dataSource16}.set",
+                args: [{
+                    expand: "test"
+                }, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{dataSource16}", {
+                            expand: "test"
+                        }, {
+                            value: {
+                                test: "test"
+                            },
+                            _rev: "test_rev",
+                            _id: "test_id"
+                        }]
+                    }
+                }]
             }]
         }]
-    });
-
-    fluid.defaults("fluid.test.promiseAdapterdataSource", {
-        gradeNames: ["fluid.test.testEnvironment", "autoInit"],
-        components: {
-            callbackWrapper: {
-                type: "kettle.requestContextCallbackWrapper"
-            },
-            rawDataSource1: {
-                type: "kettle.dataSource.URL",
-                options: {
-                    url: "file://%root/data/dataSourceTestFile.json"
-                }
-            },
-            adapter1: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource1}"
-                    }
-                }
-            },
-            promiseAdapterDataSourceTester: {
-                type: "fluid.test.promiseAdapterDataSourceTester"
-            }
-        }
     });
 
     fluid.defaults("fluid.test.promiseAdapterDataSourceTester", {
@@ -277,508 +620,134 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }
                     }
                 }]
+            }, {
+                expect: 1,
+                name: "Testing promise adapter with empty response",
+                func: "fluid.test.makePromise",
+                args: ["{adapter2}", "get", null, fluid.identity]
+            }, {
+                expect: 1,
+                name: "Testing promise adapter with filesystem with expansion and no file",
+                func: "fluid.test.makePromise",
+                args: ["{adapter3}", "get", {
+                    expand: "not_found"
+                }, fluid.identity]
+            }, {
+                expect: 1,
+                name: "Testing promise adapter with filesystem with expansion and static termMap",
+                func: "fluid.test.makePromise",
+                args: ["{adapter4}", "get", null, {
+                    expander: {
+                        func: "fluid.test.makeResponseTester",
+                        args: {
+                            dataSource: "works"
+                        }
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing promise adapter with filesystem and expansion",
+                func: "fluid.test.makePromise",
+                args: ["{adapter5}", "get", {
+                    expand: "dataSourceTestFile"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeResponseTester",
+                        args: {
+                            dataSource: "works"
+                        }
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing promise adapter with filesystem and expansion",
+                func: "fluid.test.makePromise",
+                args: ["{adapter6}", "get", {
+                    expand: "couchDataSourceTestFile"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeResponseTester",
+                        args: {
+                            dataSource: "works"
+                        }
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing promise adapter with filesystem - set",
+                func: "fluid.test.makeSetPromise",
+                args: ["{adapter7}", "set", null, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{rawDataSource7}", null, {
+                            test: "test"
+                        }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing promise adapter with filesystem and expansion- set",
+                func: "fluid.test.makeSetPromise",
+                args: ["{adapter8}", "set", {
+                    expand: "test"
+                }, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{rawDataSource8}", {
+                            expand: "test"
+                        }, {
+                            test: "test"
+                        }]
+                    }
+                }]
+            }]
+        }]
+    });
+
+    fluid.defaults("fluid.test.generalDataSourceTester", {
+        gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
+        modules: [{
+            name: "General Data Source",
+            tests: [{
+                expect: 6,
+                name: "URL Data source initialization",
+                func: "fluid.test.testInit",
+                args: ["{urlDataSource}", "POST"]
+            }, {
+                expect: 6,
+                name: "CouchDB Data source initialization",
+                func: "fluid.test.testInit",
+                args: ["{couchDBDataSource}", "PUT"]
+            }]
+        }]
+    });
+
+    fluid.defaults("fluid.test.urlResolverTester", {
+        gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
+        modules: [{
+            name: "UrlResolver",
+            tests: [{
+                expect: 1,
+                name: "URL Data source initialization",
+                func: "fluid.test.testUrlResolver",
+                args: "{urlDataSourceStatic}.urlResolver"
+            }, {
+                expect: 1,
+                name: "CouchDB Data source initialization",
+                func: "fluid.test.testUrlResolver",
+                args: ["{urlDataSourceDynamic}.urlResolver", {
+                    expand: "test"
+                }]
             }]
         }]
     });
 
     fluid.test.runTests([
-        "fluid.test.dataSource",
-        "fluid.test.promiseAdapterdataSource"
+        "fluid.test.dataSource"
     ]);
-
-    // var testConfig = {
-    //     "Testing promise adapter with filesystem": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/dataSourceTestFile.json"
-    //         },
-    //         testEnv: promiseAdapterDataSourceTester,
-    //         adapter: "kettle.callbackWrappingPromiseDataSource",
-    //         testType: "asyncTest",
-    //         operation: "get",
-    //         directModel: null,
-    //         testCases: {
-    //             "Data source should properly fetch data from a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     dataSource: "works"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     return options.data;
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing promise adapter with empty response": {
-    //         testEnv: promiseAdapterDataSourceTester,
-    //         adapter: "kettle.callbackWrappingPromiseDataSource",
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/emptyDataSourceTestFile.json"
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "get",
-    //         directModel: null
-    //     },
-    //     "Testing promise adapter with filesystem with expansion and no file": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             }
-    //         },
-    //         testEnv: promiseAdapterDataSourceTester,
-    //         adapter: "kettle.callbackWrappingPromiseDataSource",
-    //         testType: "asyncTest",
-    //         operation: "get",
-    //         directModel: {
-    //             expand: "not_found"
-    //         }
-    //     },
-    //     "Testing promise adapter with filesystem with expansion and static termMap": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "dataSourceTestFile"
-    //             }
-    //         },
-    //         testEnv: promiseAdapterDataSourceTester,
-    //         adapter: "kettle.callbackWrappingPromiseDataSource",
-    //         testType: "asyncTest",
-    //         operation: "get",
-    //         directModel: null,
-    //         testCases: {
-    //             "Data source should properly fetch data from a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     dataSource: "works"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     return options.data;
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing url datasource with filesystem and expansion": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             }
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "get",
-    //         directModel: {
-    //             expand: "dataSourceTestFile"
-    //         },
-    //         testCases: {
-    //             "Data source should properly fetch data from a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     dataSource: "works"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     return options.data;
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing couchdb datasource with filesystem and expansion": {
-    //         dataSourceType: "CouchDB",
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             }
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "get",
-    //         directModel: {
-    //             expand: "couchDataSourceTestFile"
-    //         },
-    //         testCases: {
-    //             "Data source should properly fetch data from a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     dataSource: "works"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     return options.data;
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing promise adapter with filesystem and expansion": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             }
-    //         },
-    //         testEnv: promiseAdapterDataSourceTester,
-    //         adapter: "kettle.callbackWrappingPromiseDataSource",
-    //         testType: "asyncTest",
-    //         operation: "get",
-    //         directModel: {
-    //             expand: "dataSourceTestFile"
-    //         },
-    //         testCases: {
-    //             "Data source should properly fetch data from a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     dataSource: "works"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     return options.data;
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing url datasource with filesystem - set": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/test.json",
-    //             writable: true
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "set",
-    //         directModel: null,
-    //         model: {
-    //             test: "test"
-    //         },
-    //         testCases: {
-    //             "Data source should properly save data to a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     test: "test"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     var path = options.dataSource.urlResolver.resolve(options.directModel).substring(7);
-    //                     return JSON.parse(fs.readFileSync(path, "utf8"));
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing couchdb datasource with filesystem - set": {
-    //         dataSourceType: "CouchDB",
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/test.json",
-    //             writable: true
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "set",
-    //         directModel: null,
-    //         model: {
-    //             test: "test"
-    //         },
-    //         testCases: {
-    //             "Data source should properly save data to a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     test: "test"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     var path = options.dataSource.urlResolver.resolve(options.directModel).substring(7);
-    //                     return JSON.parse(fs.readFileSync(path, "utf8"));
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing couchdb datasource with filesystem exiting doc - set": {
-    //         dataSourceType: "CouchDB",
-    //         preInit: setCouchDocument,
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/tmpCouchDataSourceTestFile.json",
-    //             writable: true
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "set",
-    //         directModel: null,
-    //         model: {
-    //             test: "test"
-    //         },
-    //         testCases: {
-    //             "Data source should properly save data to a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     value: {
-    //                         test: "test"
-    //                     },
-    //                     _rev: "test_rev",
-    //                     _id: "test_id"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     var path = options.dataSource.urlResolver.resolve(options.directModel).substring(7);
-    //                     return JSON.parse(fs.readFileSync(path, "utf8"));
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing promise adapter with filesystem - set": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/test.json",
-    //             writable: true
-    //         },
-    //         testEnv: promiseAdapterDataSourceTester,
-    //         adapter: "kettle.callbackWrappingPromiseDataSource",
-    //         testType: "asyncTest",
-    //         operation: "set",
-    //         directModel: null,
-    //         model: {
-    //             test: "test"
-    //         },
-    //         testCases: {
-    //             "Data source should properly save data to a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     test: "test"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     var path = options.dataSource.urlResolver.resolve(options.directModel).substring(7);
-    //                     return JSON.parse(fs.readFileSync(path, "utf8"));
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing url datasource with filesystem and expansion- set": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             },
-    //             writable: true
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "set",
-    //         directModel: {
-    //             expand: "test"
-    //         },
-    //         model: {
-    //             test: "test"
-    //         },
-    //         testCases: {
-    //             "Data source should properly save data to a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     test: "test"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     var path = options.dataSource.urlResolver.resolve(options.directModel).substring(7);
-    //                     return JSON.parse(fs.readFileSync(path, "utf8"));
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing couchdb datasource with filesystem and expansion- set": {
-    //         dataSourceType: "CouchDB",
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             },
-    //             writable: true
-    //         },
-    //         testType: "asyncTest",
-    //         operation: "set",
-    //         directModel: {
-    //             expand: "test"
-    //         },
-    //         model: {
-    //             test: "test"
-    //         },
-    //         testCases: {
-    //             "Data source should properly save data to a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     test: "test"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     var path = options.dataSource.urlResolver.resolve(options.directModel).substring(7);
-    //                     return JSON.parse(fs.readFileSync(path, "utf8"));
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Testing promise adapter with filesystem and expansion- set": {
-    //         dataSourceOptions: {
-    //             url: "file://%root/data/%expand.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             },
-    //             writable: true
-    //         },
-    //         testEnv: promiseAdapterDataSourceTester,
-    //         adapter: "kettle.callbackWrappingPromiseDataSource",
-    //         testType: "asyncTest",
-    //         operation: "set",
-    //         directModel: {
-    //             expand: "test"
-    //         },
-    //         model: {
-    //             test: "test"
-    //         },
-    //         testCases: {
-    //             "Data source should properly save data to a local file": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {
-    //                     test: "test"
-    //                 },
-    //                 getTestValue: function (options) {
-    //                     var path = options.dataSource.urlResolver.resolve(options.directModel).substring(7);
-    //                     return JSON.parse(fs.readFileSync(path, "utf8"));
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Initialization": {
-    //         testType: "test",
-    //         testCases: {
-    //             "Data source is initialized": {
-    //                 operation: "assertValue",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource;
-    //                 }
-    //             },
-    //             "Data source should have a get method": {
-    //                 operation: "assertValue",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.get;
-    //                 }
-    //             },
-    //             "Data source should have a correct write method": {
-    //                 operation: "assertEquals",
-    //                 expected: "POST",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.options.writeMethod;
-    //                 }
-    //             },
-    //             "Data source should not have a set method by default": {
-    //                 operation: "assertUndefined",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.set;
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "UrlResolver tests: dynamic expansion": {
-    //         testType: "test",
-    //         dataSourceOptions: {
-    //             url: "file://%expand/test.json",
-    //             termMap: {
-    //                 expand: "%expand"
-    //             }
-    //         },
-    //         testCases: {
-    //             "Data source should should expand urls based on termMap": {
-    //                 operation: "assertEquals",
-    //                 expected: "file://test/test.json",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.urlResolver.resolve({expand: "test"});
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "Initialization - CouchDB": {
-    //         testType: "test",
-    //         dataSourceType: "CouchDB",
-    //         testCases: {
-    //             "Data source is initialized": {
-    //                 operation: "assertValue",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource;
-    //                 }
-    //             },
-    //             "Data source should have a correct write method": {
-    //                 operation: "assertEquals",
-    //                 expected: "PUT",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.options.writeMethod;
-    //                 }
-    //             },
-    //             "Data source should have a termMap": {
-    //                 operation: "assertDeepEq",
-    //                 expected: {},
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.options.termMap;
-    //                 }
-    //             },
-    //             "urlResolver is initialized": {
-    //                 operation: "assertValue",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.urlResolver;
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     "UrlResolver tests: static expansion": {
-    //         testType: "test",
-    //         dataSourceOptions: {
-    //             url: "file://%expand/test.json",
-    //             termMap: {
-    //                 expand: "test"
-    //             }
-    //         },
-    //         testCases: {
-    //             "Data source should should expand urls based on termMap": {
-    //                 operation: "assertEquals",
-    //                 expected: "file://test/test.json",
-    //                 getTestValue: function (options) {
-    //                     return options.dataSource.urlResolver.resolve();
-    //                 }
-    //             }
-    //         }
-    //     }
-    // };
-
-    // var testRunner = function (testsConfig) {
-    //     fluid.each(testsConfig, function (config, testName) {
-    //         var testEnv = config.testEnv || dataSourceTester;
-    //         testEnv[config.testType](testName, function () {
-    //             var dataSourceType = config.dataSourceType || "URL",
-    //                 dataSource = testEnv.addToEnvironment("dataSource", fluid.model.composeSegments("kettle.dataSource", dataSourceType), config.dataSourceOptions),
-    //                 basicCallback = function (data) {
-    //                     fluid.each(config.testCases, function (testCase, name) {
-    //                         var args = [name], options = {
-    //                             dataSource: dataSource,
-    //                             data: data,
-    //                             directModel: config.directModel
-    //                         };
-    //                         if (testCase.expected) {
-    //                             args.push(testCase.expected);
-    //                         }
-    //                         args.push(testCase.getTestValue(options));
-    //                         jqUnit[testCase.operation].apply(null, args);
-    //                     });
-    //                 }, callback, adapter, args = [];
-    //             if (config.testType === "test") {
-    //                 basicCallback();
-    //                 return;
-    //             }
-    //             callback = function (data) {
-    //                 basicCallback(data);
-    //                 if (config.operation === "get") {
-    //                     jqUnit.start();
-    //                     return;
-    //                 }
-    //                 cleanUpAndContinue(dataSource.urlResolver.resolve(config.directModel));
-    //             };
-    //             args.push(config.directModel);
-    //             if (config.model) {
-    //                 args.push(config.model);
-    //             }
-    //             if (config.preInit) {
-    //                 config.preInit(config, dataSource);
-    //             }
-    //             if (config.adapter) {
-    //                 adapter = testEnv.addToEnvironment("adapter", config.adapter, {
-                        // components: {
-                        //     rawSource: "{dataSource}"
-                        // }
-    //                 });
-    //                 adapter[config.operation].apply(null, args).then(callback);
-    //             } else {
-    //                 args.push(callback);
-    //                 dataSource[config.operation].apply(null, args);
-    //             }
-    //         });
-    //     });
-    // };
 
 }());
