@@ -50,7 +50,7 @@ https://github.com/GPII/kettle/LICENSE.txt
         };
     };
 
-    fluid.test.setCouchDocument = function setCouchDocument(config, dataSource) {
+    fluid.test.setCouchDocument = function (config, dataSource) {
         var data = fluid.copy(config.model),
             fileName = dataSource.urlResolver.resolve(config.directModel);
         fileName = fileName.substring(7);
@@ -60,7 +60,7 @@ https://github.com/GPII/kettle/LICENSE.txt
         fs.writeFileSync(fileName, JSON.stringify(data), "utf8");
     };
 
-    fluid.test.makeResponseTester = function makeResponseTester(expected) {
+    fluid.test.makeResponseTester = function (expected) {
         return function testResponse(data) {
             jqUnit.assertDeepEq("Response is correct", expected, data);
         };
