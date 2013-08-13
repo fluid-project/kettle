@@ -13,8 +13,7 @@ https://github.com/GPII/kettle/LICENSE.txt
 /*global require, __dirname*/
 
 (function () {
-    // This loads universal.
-     var fluid = require("infusion"),
+    var fluid = require("infusion"),
          path = require("path"),
          kettle = fluid.require(path.resolve(__dirname, "../kettle.js"));
          fs = require("fs"),
