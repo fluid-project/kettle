@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Serverside declarative IoC framework.",
-    "version": "0.1.0",
+    "version": "0.1.0-SNAPSHOT",
     "author": "GPII",
     "bugs": "http://issues.gpii.net/browse/GPII",
     "homepage": "http://gpii.net/",
