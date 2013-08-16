@@ -23,7 +23,7 @@ Dependencies:
     express: ~3.1.0
     infusion: git://github.com/fluid-project/infusion.git#c0ee40396fe44407d374915262e753b8bdc6d457
     node-uuid: ~1.4.0
-    when": ~1.8.1
+    when: ~1.8.1
 
 Kettle apps
 -
