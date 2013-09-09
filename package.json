@@ -6,7 +6,7 @@
     "bugs": "http://issues.gpii.net/browse/GPII",
     "homepage": "http://gpii.net/",
     "dependencies": {
-        "express": "~3.1.0",
+        "express": "~3.2.0",
         "infusion": "git://github.com/fluid-project/infusion.git#c0ee40396fe44407d374915262e753b8bdc6d457",
         "node-uuid": "~1.4.0",
         "when": "~1.8.1"
