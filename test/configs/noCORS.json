@@ -1,0 +1,40 @@
+{
+    "typeName": "noCORS",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "handlers": {
+                                    "testGet": {
+                                        "route": "/",
+                                        "type": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "demands": [{
+        "demandingName": "kettle.requests.request.handler",
+        "contextNames": "testGet",
+        "demandSpec": {
+            "options": {
+                "invokers": {
+                    "handle": {
+                        "funcName": "kettle.tests.testGetCORS",
+                        "args": "{requestProxy}"
+                    }
+                }
+            }
+        }
+    }]
+}

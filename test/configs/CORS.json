@@ -1,0 +1,44 @@
+{
+    "typeName": "CORS",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "components": {
+                        "CORS": {
+                            "type": "kettle.middleware.CORS",
+                            "createOnEvent": "onMiddleware"
+                        },
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "handlers": {
+                                    "testGet": {
+                                        "route": "/",
+                                        "type": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "demands": [{
+        "demandingName": "kettle.requests.request.handler",
+        "contextNames": "testGet",
+        "demandSpec": {
+            "options": {
+                "invokers": {
+                    "handle": {
+                        "funcName": "kettle.tests.testGetCORS",
+                        "args": "{requestProxy}"
+                    }
+                }
+            }
+        }
+    }]
+}
