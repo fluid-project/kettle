@@ -20,6 +20,16 @@ var fluid = require("infusion"),
 
 fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
 
+fluid.defaults("kettle.requests.request.handler.testGet", {
+    gradeNames: ["fluid.littleComponent", "autoInit"],
+    invokers: {
+        handle: {
+            funcName: "kettle.tests.testGetCORS",
+            args: "{requestProxy}"
+        }
+    }
+});
+
 kettle.tests.testGetCORS = function (requestProxy) {
     jqUnit.assertTrue("The request was received.", true);
     requestProxy.events.onSuccess.fire({

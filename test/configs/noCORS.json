@@ -22,19 +22,5 @@
                 }
             }
         }
-    },
-    "demands": [{
-        "demandingName": "kettle.requests.request.handler",
-        "contextNames": "testGet",
-        "demandSpec": {
-            "options": {
-                "invokers": {
-                    "handle": {
-                        "funcName": "kettle.tests.testGetCORS",
-                        "args": "{requestProxy}"
-                    }
-                }
-            }
-        }
-    }]
+    }
 }
