@@ -19,21 +19,6 @@ https://github.com/GPII/kettle/LICENSE.txt
          fs = require("fs"),
          jqUnit = fluid.require("jqUnit");
 
-    fluid.demands("kettle.urlExpander", "fluid.test.testEnvironment", {
-        options: {
-            vars: {
-                root: __dirname
-            }
-        }
-    });
-
-    fluid.demands("kettle.dataSource.errback.handleError",
-        ["kettle.dataSource.errback", "fluid.test.testEnvironment"], {
-            funcName: "kettle.dataSource.errback.handleErrorTest",
-            args: "{arguments}.0"
-        }
-    );
-
     kettle.dataSource.errback.handleErrorTest = function (data) {
         jqUnit.assertTrue(
             "Data source should properly handle paths to non-existent or empty files",
@@ -93,6 +78,23 @@ https://github.com/GPII/kettle/LICENSE.txt
 
     fluid.defaults("fluid.test.dataSource", {
         gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+        mergePolicy: {
+            handleError: "noexpand"
+        },
+        distributeOptions: [{
+            source: "{that}.options.handleError",
+            target: "{that errback}.options.invokers.handleError"
+        }, {
+            source: "{that}.options.vars",
+            target: "{that urlExpander}.options.vars"
+        }],
+        handleError: {
+            funcName: "kettle.dataSource.errback.handleErrorTest",
+            args: "{arguments}.0"
+        },
+        vars: {
+            root: __dirname
+        },
         components: {
 
             // Data source test components.
