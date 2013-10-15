@@ -6,11 +6,8 @@
             "server": {
                 "type": "kettle.server",
                 "options": {
+                    "gradeNames": ["kettle.use.CORS"],
                     "components": {
-                        "CORS": {
-                            "type": "kettle.middleware.CORS",
-                            "createOnEvent": "onMiddleware"
-                        },
                         "app": {
                             "type": "kettle.app",
                             "options": {
@@ -26,19 +23,5 @@
                 }
             }
         }
-    },
-    "demands": [{
-        "demandingName": "kettle.requests.request.handler",
-        "contextNames": "testGet",
-        "demandSpec": {
-            "options": {
-                "invokers": {
-                    "handle": {
-                        "funcName": "kettle.tests.testGetCORS",
-                        "args": "{requestProxy}"
-                    }
-                }
-            }
-        }
-    }]
+    }
 }
