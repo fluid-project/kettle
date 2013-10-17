@@ -19,21 +19,6 @@ https://github.com/GPII/kettle/LICENSE.txt
          fs = require("fs"),
          jqUnit = fluid.require("jqUnit");
 
-    fluid.demands("kettle.urlExpander", "fluid.test.testEnvironment", {
-        options: {
-            vars: {
-                root: __dirname
-            }
-        }
-    });
-
-    fluid.demands("kettle.dataSource.errback.handleError",
-        ["kettle.dataSource.errback", "fluid.test.testEnvironment"], {
-            funcName: "kettle.dataSource.errback.handleErrorTest",
-            args: "{arguments}.0"
-        }
-    );
-
     kettle.dataSource.errback.handleErrorTest = function (data) {
         jqUnit.assertTrue(
             "Data source should properly handle paths to non-existent or empty files",
@@ -93,6 +78,23 @@ https://github.com/GPII/kettle/LICENSE.txt
 
     fluid.defaults("fluid.test.dataSource", {
         gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+        mergePolicy: {
+            handleError: "noexpand"
+        },
+        distributeOptions: [{
+            source: "{that}.options.handleError",
+            target: "{that errback}.options.invokers.handleError"
+        }, {
+            source: "{that}.options.vars",
+            target: "{that urlExpander}.options.vars"
+        }],
+        handleError: {
+            funcName: "kettle.dataSource.errback.handleErrorTest",
+            args: "{arguments}.0"
+        },
+        vars: {
+            root: __dirname
+        },
         components: {
 
             // Data source test components.
@@ -250,88 +252,44 @@ https://github.com/GPII/kettle/LICENSE.txt
             callbackWrapper: {
                 type: "kettle.requestContextCallbackWrapper"
             },
-            rawDataSource1: {
+            adapter1: {
                 type: "kettle.dataSource.URL",
                 options: {
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
                     url: "file://%root/data/dataSourceTestFile.json"
                 }
             },
-            adapter1: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource1}"
-                    }
-                }
-            },
-            rawDataSource2: {
+            adapter2: {
                 type: "kettle.dataSource.URL",
                 options: {
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
                     url: "file://%root/data/emptyDataSourceTestFile.json"
                 }
             },
-            adapter2: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource2}"
-                    }
-                }
-            },
-            rawDataSource3: {
+            adapter3: {
                 type: "kettle.dataSource.URL",
                 options: {
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
                     url: "file://%root/data/%expand.json",
                     termMap: {
                         expand: "%expand"
                     }
                 }
             },
-            adapter3: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource3}"
-                    }
-                }
-            },
-            rawDataSource4: {
+            adapter4: {
                 type: "kettle.dataSource.URL",
                 options: {
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
                     url: "file://%root/data/%expand.json",
                     termMap: {
                         expand: "dataSourceTestFile"
                     }
                 }
             },
-            adapter4: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource4}"
-                    }
-                }
-            },
-            rawDataSource5: {
+            adapter5: {
                 type: "kettle.dataSource.URL",
                 options: {
-                    url: "file://%root/data/%expand.json",
-                    termMap: {
-                        expand: "%expand"
-                    }
-                }
-            },
-            adapter5: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource5}"
-                    }
-                }
-            },
-            rawDataSource6: {
-                type: "kettle.dataSource.CouchDB",
-                options: {
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
                     url: "file://%root/data/%expand.json",
                     termMap: {
                         expand: "%expand"
@@ -339,44 +297,32 @@ https://github.com/GPII/kettle/LICENSE.txt
                 }
             },
             adapter6: {
-                type: "kettle.callbackWrappingPromiseDataSource",
+                type: "kettle.dataSource.CouchDB",
                 options: {
-                    components: {
-                        rawSource: "{rawDataSource6}"
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
+                    url: "file://%root/data/%expand.json",
+                    termMap: {
+                        expand: "%expand"
                     }
                 }
             },
-            rawDataSource7: {
+            adapter7: {
                 type: "kettle.dataSource.URL",
                 options: {
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
                     url: "file://%root/data/test.json",
                     writable: true
                 }
             },
-            adapter7: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource7}"
-                    }
-                }
-            },
-            rawDataSource8: {
+            adapter8: {
                 type: "kettle.dataSource.URL",
                 options: {
+                    gradeNames: ["kettle.dataSource.promiseCallbackWrapper"],
                     url: "file://%root/data/%expand.json",
                     termMap: {
                         expand: "%expand"
                     },
                     writable: true
-                }
-            },
-            adapter8: {
-                type: "kettle.callbackWrappingPromiseDataSource",
-                options: {
-                    components: {
-                        rawSource: "{rawDataSource8}"
-                    }
                 }
             },
 
@@ -680,7 +626,7 @@ https://github.com/GPII/kettle/LICENSE.txt
                 }, {
                     expander: {
                         func: "fluid.test.makeSetResponseTester",
-                        args: ["{rawDataSource7}", null, {
+                        args: ["{adapter7}", null, {
                             test: "test"
                         }]
                     }
@@ -696,7 +642,7 @@ https://github.com/GPII/kettle/LICENSE.txt
                 }, {
                     expander: {
                         func: "fluid.test.makeSetResponseTester",
-                        args: ["{rawDataSource8}", {
+                        args: ["{adapter8}", {
                             expand: "test"
                         }, {
                             test: "test"
