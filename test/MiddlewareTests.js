@@ -76,10 +76,10 @@ var testDefs = [{
     },
     components: {
         corsRequest: {
-            type: "kettle.tests.request"
+            type: "kettle.tests.request.http"
         },
         optionsCorsRequest: {
-            type: "kettle.tests.request",
+            type: "kettle.tests.request.http",
             options: {
                 requestOptions: {
                     method: "OPTIONS"
@@ -107,7 +107,7 @@ var testDefs = [{
     },
     components: {
         request: {
-            type: "kettle.tests.request"
+            type: "kettle.tests.request.http"
         }
     },
     sequence: [{

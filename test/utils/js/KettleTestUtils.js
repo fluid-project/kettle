@@ -24,19 +24,10 @@ var fluid = require("infusion"),
 
 fluid.registerNamespace("kettle.tests");
 
-// Definition and defaults of http request component
 fluid.defaults("kettle.tests.request", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
     invokers: {
-        send: {
-            funcName: "kettle.tests.request.send",
-            args: [
-                "{that}.options.requestOptions",
-                "{that}.options.termMap",
-                "{that}.events.onComplete.fire",
-                "{arguments}.0"
-            ]
-        }
+        send: "kettle.tests.request.send"
     },
     events: {
         onComplete: null
@@ -47,7 +38,79 @@ fluid.defaults("kettle.tests.request", {
     termMap: {}
 });
 
-kettle.tests.request.send = function (requestOptions, termMap, callback, model) {
+// Definition and defaults of socket.io request component
+fluid.defaults("kettle.tests.request.io", {
+    gradeNames: ["autoInit", "kettle.tests.request"],
+    invokers: {
+        send: {
+            funcName: "kettle.tests.request.io.send",
+            args: [
+                "{that}.socket",
+                "{that}.options.requestOptions",
+                "{that}.options.termMap",
+                "{that}.events.onComplete.fire",
+                "{arguments}.0"
+            ]
+        },
+        listen: {
+            funcName: "kettle.tests.request.io.listen",
+            args: [
+                "{that}",
+                "{that}.options.ioOptions",
+                "{that}.options.requestOptions",
+                "{that}.options.termMap",
+                "{that}.events.onMessage.fire"
+            ]
+        }
+    },
+    events: {
+        onMessage: null
+    },
+    listeners: {
+        onCreate: "{that}.listen"
+    },
+    requestOptions: {
+        hostname: "http://localhost"
+    },
+    ioOptions: {
+        transports: ["websocket"],
+        "force new connection": true
+    }
+});
+
+kettle.tests.request.io.listen = function (that, ioOptions, requestOptions, termMap, callback) {
+    var options = fluid.copy(requestOptions);
+    options.path = fluid.stringTemplate(options.path, termMap);
+    var url = options.hostname + ":" + options.port;
+    that.socket = require("socket.io")(url, ioOptions);
+    that.socket.on("connect", function () {
+        socket.on(options.path, callback);
+    });
+};
+
+kettle.tests.request.io.send = function (socket, requestOptions, termMap, callback, model) {
+    var options = fluid.copy(requestOptions);
+    options.path = fluid.stringTemplate(options.path, termMap);
+    socket.emit(options.path, model, callback);
+};
+
+// Definition and defaults of http request component
+fluid.defaults("kettle.tests.request.http", {
+    gradeNames: ["autoInit", "kettle.tests.request"],
+    invokers: {
+        send: {
+            funcName: "kettle.tests.request.http.send",
+            args: [
+                "{that}.options.requestOptions",
+                "{that}.options.termMap",
+                "{that}.events.onComplete.fire",
+                "{arguments}.0"
+            ]
+        }
+    }
+});
+
+kettle.tests.request.http.send = function (requestOptions, termMap, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
 
