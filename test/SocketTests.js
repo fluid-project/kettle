@@ -30,8 +30,11 @@ fluid.defaults("kettle.requests.request.handler.testSocket", {
     }
 });
 
+kettle.tests.testSocketCount = 0;
+
 kettle.tests.testSocket = function (requestProxy, data) {
     jqUnit.assertDeepEq("Socket message data is correct", {
+        index: kettle.tests.testSocketCount++,
         test: true
     }, data);
     requestProxy.events.onSuccess.fire({
@@ -47,7 +50,7 @@ kettle.tests.testSocketResponse = function (data) {
 
 var testDefs = [{
     name: "Socket tests.",
-    expect: 2,
+    expect: 4,
     config: {
         nodeEnv: "socket",
         configPath: configPath
@@ -65,6 +68,16 @@ var testDefs = [{
     sequence: [{
         func: "{ioRequest}.send",
         args: {
+            index: 0,
+            test: true
+        }
+    }, {
+        event: "{ioRequest}.events.onComplete",
+        listener: "kettle.tests.testSocketResponse"
+    }, {
+        func: "{ioRequest}.send",
+        args: {
+            index: 1,
             test: true
         }
     }, {
