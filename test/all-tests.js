@@ -16,3 +16,4 @@ var fluid = require("infusion");
 
 fluid.require("./DataSourceTests.js", require);
 fluid.require("./MiddlewareTests.js", require);
+fluid.require("./SocketTests.js", require);

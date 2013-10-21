@@ -1,0 +1,27 @@
+{
+    "typeName": "socket",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "gradeNames": ["kettle.use.io"],
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "handlers": {
+                                    "testSocket": {
+                                        "route": "socket_path",
+                                        "type": "io"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

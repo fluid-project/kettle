@@ -70,7 +70,7 @@ fluid.defaults("kettle.tests.request.io", {
         onCreate: "{that}.listen"
     },
     requestOptions: {
-        hostname: "http://localhost"
+        hostname: "ws://localhost"
     },
     ioOptions: {
         transports: ["websocket"],
@@ -82,9 +82,9 @@ kettle.tests.request.io.listen = function (that, ioOptions, requestOptions, term
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
     var url = options.hostname + ":" + options.port;
-    that.socket = require("socket.io")(url, ioOptions);
+    that.socket = require("socket.io-client").connect(url, ioOptions);
     that.socket.on("connect", function () {
-        socket.on(options.path, callback);
+        that.socket.on(options.path, callback);
     });
 };
 
@@ -148,13 +148,7 @@ kettle.tests.request.http.send = function (requestOptions, termMap, callback, mo
 
 // Component that contains the Kettle server under test.
 fluid.defaults("kettle.tests.server", {
-    gradeNames: ["autoInit", "fluid.littleComponent", "{that}.buildServerGrade"],
-    invokers: {
-        buildServerGrade: {
-            funcName: "fluid.identity",
-            args: "{kettle.tests.testCaseHolder}.options.serverName"
-        }
-    }
+    gradeNames: ["autoInit", "fluid.littleComponent", "{kettle.tests.testCaseHolder}.options.serverName"]
 });
 
 fluid.defaults("kettle.tests.testCaseHolder", {
