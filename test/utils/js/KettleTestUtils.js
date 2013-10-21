@@ -122,7 +122,6 @@ fluid.defaults("kettle.tests.request.http", {
 kettle.tests.request.http.send = function (requestOptions, termMap, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
-
     var req = http.request(options, function(res) {
         var data = "";
         res.setEncoding("utf8");

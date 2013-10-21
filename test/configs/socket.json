@@ -15,6 +15,10 @@
                                     "testSocket": {
                                         "route": "socket_path",
                                         "type": "io"
+                                    },
+                                    "testGet": {
+                                        "route": "/",
+                                        "type": "get"
                                     }
                                 }
                             }

@@ -30,6 +30,23 @@ fluid.defaults("kettle.requests.request.handler.testSocket", {
     }
 });
 
+fluid.defaults("kettle.requests.request.handler.testGet", {
+    gradeNames: ["fluid.littleComponent", "autoInit"],
+    invokers: {
+        handle: {
+            funcName: "kettle.tests.testGet",
+            args: "{requestProxy}"
+        }
+    }
+});
+
+kettle.tests.testGet = function (requestProxy) {
+    jqUnit.assertTrue("The request was received.", true);
+    requestProxy.events.onSuccess.fire({
+        success: true
+    });
+};
+
 kettle.tests.testSocketCount = 0;
 
 kettle.tests.testSocket = function (requestProxy, data) {
@@ -42,6 +59,12 @@ kettle.tests.testSocket = function (requestProxy, data) {
     });
 };
 
+kettle.tests.testResponse = function (data, headers) {
+    jqUnit.assertDeepEq("The response is correct.", {
+        success: true
+    }, JSON.parse(data));
+};
+
 kettle.tests.testSocketResponse = function (data) {
     jqUnit.assertDeepEq("Socket message delivered confirmed", {
         success: true
@@ -50,7 +73,7 @@ kettle.tests.testSocketResponse = function (data) {
 
 var testDefs = [{
     name: "Socket tests.",
-    expect: 4,
+    expect: 6,
     config: {
         nodeEnv: "socket",
         configPath: configPath
@@ -63,6 +86,9 @@ var testDefs = [{
                     path: "socket_path"
                 }
             }
+        },
+        httpRequest: {
+            type: "kettle.tests.request.http"
         }
     },
     sequence: [{
@@ -83,6 +109,11 @@ var testDefs = [{
     }, {
         event: "{ioRequest}.events.onComplete",
         listener: "kettle.tests.testSocketResponse"
+    }, {
+        func: "{httpRequest}.send"
+    }, {
+        event: "{httpRequest}.events.onComplete",
+        listener: "kettle.tests.testResponse"
     }]
 }];
 
