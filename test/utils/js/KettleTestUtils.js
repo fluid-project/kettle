@@ -61,13 +61,18 @@ fluid.defaults("kettle.tests.request.io", {
                 "{that}.options.termMap",
                 "{that}.events.onMessage.fire"
             ]
+        },
+        disconnect: {
+            funcName: "kettle.tests.request.io.disconnect",
+            args: "{that}.socket"
         }
     },
     events: {
         onMessage: null
     },
     listeners: {
-        onCreate: "{that}.listen"
+        onCreate: "{that}.listen",
+        onDestroy: "{that}.disconnect"
     },
     requestOptions: {
         hostname: "ws://localhost"
@@ -77,6 +82,10 @@ fluid.defaults("kettle.tests.request.io", {
         "force new connection": true
     }
 });
+
+kettle.tests.request.io.disconnect = function (socket) {
+    socket.disconnect();
+};
 
 kettle.tests.request.io.listen = function (that, ioOptions, requestOptions, termMap, callback) {
     var options = fluid.copy(requestOptions);
