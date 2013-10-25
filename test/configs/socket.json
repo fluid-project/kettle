@@ -6,7 +6,7 @@
             "server": {
                 "type": "kettle.server",
                 "options": {
-                    "gradeNames": ["kettle.use.io"],
+                    "gradeNames": ["kettle.server.io"],
                     "components": {
                         "app": {
                             "type": "kettle.app",
