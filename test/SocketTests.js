@@ -83,7 +83,7 @@ var testDefs = [{
             type: "kettle.tests.request.io",
             options: {
                 requestOptions: {
-                    path: "socket_path"
+                    path: "/socket_path"
                 }
             }
         },

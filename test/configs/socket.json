@@ -13,7 +13,7 @@
                             "options": {
                                 "handlers": {
                                     "testSocket": {
-                                        "route": "socket_path",
+                                        "route": "/socket_path",
                                         "type": "io"
                                     },
                                     "testGet": {

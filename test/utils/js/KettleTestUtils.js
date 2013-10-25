@@ -22,6 +22,8 @@ var fluid = require("infusion"),
     kettle = fluid.require(path.resolve(__dirname, "../../../kettle.js")),
     jqUnit = fluid.require("jqUnit");
 
+fluid.setLogging(true);
+
 fluid.registerNamespace("kettle.tests");
 
 fluid.defaults("kettle.tests.request", {
@@ -46,10 +48,8 @@ fluid.defaults("kettle.tests.request.io", {
             funcName: "kettle.tests.request.io.send",
             args: [
                 "{that}.socket",
-                "{that}.options.requestOptions",
-                "{that}.options.termMap",
-                "{that}.events.onComplete.fire",
-                "{arguments}.0"
+                "{arguments}.0",
+                "{that}.events.onComplete.fire"
             ]
         },
         listen: {
@@ -71,7 +71,10 @@ fluid.defaults("kettle.tests.request.io", {
         onMessage: null
     },
     listeners: {
-        onCreate: "{that}.listen",
+        "{tests}.events.onServerReady": {
+            listener: "{that}.listen",
+            priority: "first"
+        },
         onDestroy: "{that}.disconnect"
     },
     requestOptions: {
@@ -90,17 +93,15 @@ kettle.tests.request.io.disconnect = function (socket) {
 kettle.tests.request.io.listen = function (that, ioOptions, requestOptions, termMap, callback) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
-    var url = options.hostname + ":" + options.port;
+    var url = options.hostname + ":" + options.port + options.path;
+    fluid.log("connecting to: " + url);
     that.socket = require("socket.io-client").connect(url, ioOptions);
-    that.socket.on("connect", function () {
-        that.socket.on(options.path, callback);
-    });
+    that.socket.on("message", callback);
 };
 
-kettle.tests.request.io.send = function (socket, requestOptions, termMap, callback, model) {
-    var options = fluid.copy(requestOptions);
-    options.path = fluid.stringTemplate(options.path, termMap);
-    socket.emit(options.path, model, callback);
+kettle.tests.request.io.send = function (socket, model, callback) {
+    fluid.log("sending: " + JSON.stringify(model));
+    socket.emit("message", model, callback);
 };
 
 // Definition and defaults of http request component
@@ -154,20 +155,30 @@ kettle.tests.request.http.send = function (requestOptions, termMap, callback, mo
     req.end();
 };
 
-// Component that contains the Kettle server under test.
-fluid.defaults("kettle.tests.server", {
-    gradeNames: ["autoInit", "fluid.littleComponent", "{kettle.tests.testCaseHolder}.options.serverName"]
+// Component that contains the Kettle configuration under test.
+fluid.defaults("kettle.tests.configuration", {
+    gradeNames: ["autoInit", "fluid.eventedComponent", "{kettle.tests.testCaseHolder}.options.configurationName"],
+    components: {
+        server: {
+            options: {
+                listeners: {
+                    onListen: "{kettle.tests.testCaseHolder}.events.onServerReady"
+                }
+            }
+        }
+    }
 });
 
 fluid.defaults("kettle.tests.testCaseHolder", {
     gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
     events: {
-        createServer: null
+        applyConfiguration: null,
+        onServerReady: null
     },
     components: {
-        server: {
-            type: "kettle.tests.server",
-            createOnEvent: "createServer"
+        configuration: {
+            type: "kettle.tests.configuration",
+            createOnEvent: "applyConfiguration"
         }
     }
 });
@@ -176,11 +187,7 @@ fluid.defaults("kettle.tests.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment", "autoInit"]
 });
 
-kettle.tests.startServer = function (tests) {
-    tests.events.createServer.fire();
-};
-
-kettle.tests.buildTestCase = function (serverName, testDef) {
+kettle.tests.buildTestCase = function (configurationName, testDef) {
     var fixture = {
         name: testDef.name,
         expect: testDef.expect,
@@ -188,15 +195,17 @@ kettle.tests.buildTestCase = function (serverName, testDef) {
     };
 
     fixture.sequence.unshift({
-        func: "kettle.tests.startServer",
-        args: "{tests}"
+        func: "{tests}.events.applyConfiguration.fire"
+    }, {
+        event: "{tests}.events.onServerReady",
+        listener: "fluid.identity"
     });
 
     return {
-        serverName: serverName,
+        configurationName: configurationName,
         components: testDef.components,
         modules: [{
-            name: serverName + " tests.",
+            name: configurationName + " tests.",
             tests: [fixture]
         }]
     };
@@ -205,14 +214,15 @@ kettle.tests.buildTestCase = function (serverName, testDef) {
 
 kettle.tests.runTests = function (testDefs) {
     var tests = fluid.transform(testDefs, function (testDef) {
-        var serverName = kettle.config.createDefaults(testDef.config);
+        var configurationName = kettle.config.createDefaults(testDef.config);
         return {
             type: "kettle.tests.testEnvironment",
             options: {
                 components: {
                     tests: {
                         type: "kettle.tests.testCaseHolder",
-                        options: kettle.tests.buildTestCase(serverName, testDef)
+                        options: kettle.tests.buildTestCase(configurationName,
+                            testDef)
                     }
                 }
             }
