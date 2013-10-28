@@ -1,0 +1,41 @@
+{
+    "typeName": "session",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "gradeNames": ["kettle.server.io"],
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "handlers": {
+                                    "testSessionSocket": {
+                                        "route": "/testSessionSocket",
+                                        "type": "io",
+                                        "needSession": true
+                                    },
+                                    "testSessionRequest": {
+                                        "route": "/testSessionRequest",
+                                        "type": "get",
+                                        "needSession": true
+                                    },
+                                    "testSessionStart": {
+                                        "route": "/testSessionStart",
+                                        "type": "get"
+                                    },
+                                    "testSessionEnd": {
+                                        "route": "/testSessionStart",
+                                        "type": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -15,7 +15,6 @@ var fluid = require("infusion"),
 
 var loader = fluid.getLoader(__dirname);
 
-loader.require("./lib/utils.js");
 loader.require("./lib/app.js");
 loader.require("./lib/configLoader.js");
 loader.require("./lib/dataSource.js");
@@ -24,5 +23,6 @@ loader.require("./lib/request.js");
 loader.require("./lib/request.io.js");
 loader.require("./lib/server.js");
 loader.require("./lib/server.io.js");
+loader.require("./lib/utils.js");
 
 module.exports = kettle;
