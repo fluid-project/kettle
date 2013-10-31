@@ -26,6 +26,13 @@ fluid.setLogging(true);
 
 fluid.registerNamespace("kettle.tests");
 
+fluid.defaults("kettle.tests.cookieJar", {
+    gradeNames: ["fluid.littleComponent", "autoInit"],
+    members: {
+        cookie: ""
+    }
+});
+
 fluid.defaults("kettle.tests.request", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
     invokers: {
@@ -113,6 +120,7 @@ fluid.defaults("kettle.tests.request.http", {
             args: [
                 "{that}.options.requestOptions",
                 "{that}.options.termMap",
+                "{cookieJar}",
                 "{that}.events.onComplete.fire",
                 "{arguments}.0"
             ]
@@ -120,9 +128,14 @@ fluid.defaults("kettle.tests.request.http", {
     }
 });
 
-kettle.tests.request.http.send = function (requestOptions, termMap, callback, model) {
+kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
+    fluid.log("Sending a request to: " + options.path);
+    options.headers = options.headers || {};
+    if (cookieJar.cookie) {
+        options.headers.Cookie = cookieJar.cookie;
+    }
     var req = http.request(options, function(res) {
         var data = "";
         res.setEncoding("utf8");
@@ -139,6 +152,10 @@ kettle.tests.request.http.send = function (requestOptions, termMap, callback, mo
         });
 
         res.on("end", function() {
+            var cookie = res.headers["set-cookie"];
+            if (cookie) {
+                cookieJar.cookie = cookie;
+            }
             callback(data, res.headers);
         });
     });
@@ -176,6 +193,9 @@ fluid.defaults("kettle.tests.testCaseHolder", {
         onServerReady: null
     },
     components: {
+        cookieJar: {
+            type: "kettle.tests.cookieJar"
+        },
         configuration: {
             type: "kettle.tests.configuration",
             createOnEvent: "applyConfiguration"

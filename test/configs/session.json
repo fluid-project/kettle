@@ -6,7 +6,7 @@
             "server": {
                 "type": "kettle.server",
                 "options": {
-                    "gradeNames": ["kettle.server.io"],
+                    "gradeNames": ["kettle.server.io", "kettle.tests.sessionServer"],
                     "components": {
                         "app": {
                             "type": "kettle.app",
@@ -15,20 +15,22 @@
                                     "testSessionSocket": {
                                         "route": "/testSessionSocket",
                                         "type": "io",
-                                        "needSession": true
+                                        "needValidSession": true
                                     },
                                     "testSessionRequest": {
                                         "route": "/testSessionRequest",
                                         "type": "get",
-                                        "needSession": true
+                                        "needValidSession": true
                                     },
                                     "testSessionStart": {
-                                        "route": "/testSessionStart",
-                                        "type": "get"
+                                        "route": "/testSessionStart/:token",
+                                        "type": "get",
+                                        "needSession": true
                                     },
                                     "testSessionEnd": {
-                                        "route": "/testSessionStart",
-                                        "type": "get"
+                                        "route": "/testSessionEnd/:token",
+                                        "type": "get",
+                                        "needSession": true
                                     }
                                 }
                             }
