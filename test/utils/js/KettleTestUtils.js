@@ -29,9 +29,19 @@ fluid.registerNamespace("kettle.tests");
 fluid.defaults("kettle.tests.cookieJar", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     members: {
-        cookie: ""
+        cookie: "",
+        parser: {
+            expander: {
+                func: "kettle.tests.makeCookieParser",
+                args: "{that}.options.secret"
+            }
+        }
     }
 });
+
+kettle.tests.makeCookieParser = function (secret) {
+    return kettle.utils.cookieParser(secret);
+};
 
 fluid.defaults("kettle.tests.request", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
@@ -153,10 +163,22 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
 
         res.on("end", function() {
             var cookie = res.headers["set-cookie"];
+            var pseudoReq = {};
             if (cookie) {
                 cookieJar.cookie = cookie;
+                // Use connect's cookie parser with set secret to parse the
+                // cookies from the kettle.server.
+                pseudoReq = {
+                    headers: {
+                        cookie: cookie[0]
+                    }
+                };
+                // pseudoReq will get its cookies and signedCookis fields
+                // populated by the cookie parser.
+                cookieJar.parser(pseudoReq, {}, fluid.identity);
             }
-            callback(data, res.headers);
+            callback(data, res.headers, pseudoReq.cookies,
+                pseudoReq.signedCookies);
         });
     });
 
@@ -192,6 +214,14 @@ fluid.defaults("kettle.tests.testCaseHolder", {
         applyConfiguration: null,
         onServerReady: null
     },
+    secret: "kettle tests secret",
+    distributeOptions: [{
+        source: "{that}.options.secret",
+        target: "{that > cookieJar}.options.secret"
+    }, {
+        source: "{that}.options.secret",
+        target: "{that server}.options.secret"
+    }],
     components: {
         cookieJar: {
             type: "kettle.tests.cookieJar"

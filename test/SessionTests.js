@@ -134,13 +134,15 @@ kettle.tests.testSessionSocket = function (requestProxy, data) {
 };
 
 
-kettle.tests.testSessionStartSuccessResponse = function (data, headers) {
+kettle.tests.testSessionStartSuccessResponse = function (data, headers, cookies, signedCookies) {
     kettle.tests.testSuccessResponse(data);
     jqUnit.assertValue("Cookie is set", headers["set-cookie"]);
+    jqUnit.assertTrue("kettle session cookie is set", !!signedCookies["kettle.sid"]);
 };
 
-kettle.tests.testSessionEndSuccessResponse = function (data, headers) {
+kettle.tests.testSessionEndSuccessResponse = function (data, headers, cookies, signedCookies) {
     kettle.tests.testSuccessResponse(data);
+    jqUnit.assertEquals("kettle session cookie is unset", "", cookies["kettle.sid"]);
 };
 
 function testResponse (expected, data) {
@@ -159,7 +161,7 @@ kettle.tests.testSuccessResponse = function (data) {
 
 var testDefs = [{
     name: "Session tests.",
-    expect: 12,
+    expect: 14,
     config: {
         nodeEnv: "session",
         configPath: configPath
