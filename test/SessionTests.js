@@ -36,7 +36,8 @@ fluid.defaults("kettle.requests.request.handler.testSessionSocket", {
     invokers: {
         handle: {
             funcName: "kettle.tests.testSessionSocket",
-            args: ["{requestProxy}", "{request}.data"]
+            args: ["{requestProxy}", "{request}"],
+            dynamic: true
         }
     }
 });
@@ -46,7 +47,8 @@ fluid.defaults("kettle.requests.request.handler.testSessionRequest", {
     invokers: {
         handle: {
             funcName: "kettle.tests.testSessionRequest",
-            args: ["{requestProxy}", "{request}.req.session"]
+            args: ["{requestProxy}", "{request}.req.session"],
+            dynamic: true
         }
     }
 });
@@ -121,15 +123,18 @@ kettle.tests.testSessionStart = function (requestProxy, token, session) {
 
 kettle.tests.testSessionRequest = function (requestProxy, session) {
     jqUnit.assertTrue("The request was received.", true);
-    jqUnit.assertValue("Session is started.", session);
+    jqUnit.assertValue("Session exists.", session);
     jqUnit.assertEquals("Session is correct and has a current token.",
         kettle.tests.token, session.token);
     requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
 };
 
-kettle.tests.testSessionSocket = function (requestProxy, data) {
+kettle.tests.testSessionSocket = function (requestProxy, request) {
+    jqUnit.assertValue("Session exists.", request.session);
+    jqUnit.assertEquals("Session is correct and has a current token.",
+        kettle.tests.token, request.session.token);
     jqUnit.assertDeepEq("Socket message data is correct",
-        kettle.tests.testSessionSocketModel, data);
+        kettle.tests.testSessionSocketModel, request.data);
     requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
 };
 
@@ -155,26 +160,38 @@ kettle.tests.testFailureResponse = function (data) {
     testResponse(kettle.tests.testSessionFailureResponse, data);
 };
 
+kettle.tests.testInvalidIoRequest = function (reason) {
+    jqUnit.assertTrue("Authorization failed as expected", true);
+};
+
 kettle.tests.testSuccessResponse = function (data) {
     testResponse(kettle.tests.testSessionSuccessResponse, data);
 };
 
 var testDefs = [{
     name: "Session tests.",
-    expect: 14,
+    expect: 19,
     config: {
         nodeEnv: "session",
         configPath: configPath
     },
     components: {
-        // ioRequest: {
-        //     type: "kettle.tests.request.io",
-        //     options: {
-        //         requestOptions: {
-        //             path: "/testSessionSocket"
-        //         }
-        //     }
-        // },
+        invalidIoRequest: {
+            type: "kettle.tests.request.io",
+            options: {
+                requestOptions: {
+                    path: "/testSessionSocket"
+                }
+            }
+        },
+        ioRequest: {
+            type: "kettle.tests.request.io",
+            options: {
+                requestOptions: {
+                    path: "/testSessionSocket"
+                }
+            }
+        },
         httpTestSessionStart: {
             type: "kettle.tests.request.http",
             options: {
@@ -207,6 +224,12 @@ var testDefs = [{
         }
     },
     sequence: [{
+        func: "{invalidIoRequest}.send",
+        args: "You shall not pass!!"
+    }, {
+        event: "{invalidIoRequest}.events.onError",
+        listener: "kettle.tests.testInvalidIoRequest"
+    }, {
         func: "{httpTestSessionRequest}.send"
     }, {
         event: "{httpTestSessionRequest}.events.onComplete",
@@ -222,16 +245,16 @@ var testDefs = [{
         event: "{httpTestSessionRequest}.events.onComplete",
         listener: "kettle.tests.testSuccessResponse"
     }, {
+        func: "{ioRequest}.send",
+        args: kettle.tests.testSessionSocketModel
+    }, {
+        event: "{ioRequest}.events.onComplete",
+        listener: "kettle.tests.testSuccessResponse"
+    }, {
         func: "{httpTestSessionEnd}.send"
     }, {
         event: "{httpTestSessionEnd}.events.onComplete",
         listener: "kettle.tests.testSessionEndSuccessResponse"
-    // }, {
-    //     func: "{ioRequest}.send",
-    //     args: kettle.tests.testSessionSocketModel
-    // }, {
-    //     event: "{ioRequest}.events.onComplete",
-    //     listener: "kettle.tests.testSuccessResponse"
     }]
 }];
 

@@ -64,36 +64,45 @@ fluid.defaults("kettle.tests.request.io", {
         send: {
             funcName: "kettle.tests.request.io.send",
             args: [
-                "{that}.socket",
+                "{that}",
                 "{arguments}.0",
                 "{that}.events.onComplete.fire"
             ]
         },
         listen: {
             funcName: "kettle.tests.request.io.listen",
-            args: [
-                "{that}",
-                "{that}.options.ioOptions",
-                "{that}.options.requestOptions",
-                "{that}.options.termMap",
-                "{that}.events.onMessage.fire"
-            ]
+            args: "{that}"
+        },
+        connect: {
+            funcName: "kettle.tests.request.io.connect",
+            args: "{that}"
         },
         disconnect: {
             funcName: "kettle.tests.request.io.disconnect",
             args: "{that}.socket"
+        },
+        setCookie: {
+            funcName: "kettle.tests.request.io.setCookie",
+            args: ["{cookieJar}", "{arguments}.0"]
+        },
+        updateDependencies: {
+            funcName: "kettle.tests.request.io.updateDependencies",
+            args: "{that}"
         }
     },
     events: {
-        onMessage: null
+        onMessage: null,
+        onError: null
     },
     listeners: {
+        onCreate: "{that}.updateDependencies",
         "{tests}.events.onServerReady": {
             listener: "{that}.listen",
             priority: "first"
         },
         onDestroy: "{that}.disconnect"
     },
+    listenOnInit: false,
     requestOptions: {
         hostname: "ws://localhost"
     },
@@ -107,18 +116,62 @@ kettle.tests.request.io.disconnect = function (socket) {
     socket.disconnect();
 };
 
-kettle.tests.request.io.listen = function (that, ioOptions, requestOptions, termMap, callback) {
-    var options = fluid.copy(requestOptions);
-    options.path = fluid.stringTemplate(options.path, termMap);
+kettle.tests.request.io.connect = function (that) {
+    var options = fluid.copy(that.options.requestOptions);
+    options.path = fluid.stringTemplate(options.path, that.options.termMap);
     var url = options.hostname + ":" + options.port + options.path;
     fluid.log("connecting to: " + url);
-    that.socket = require("socket.io-client").connect(url, ioOptions);
-    that.socket.on("message", callback);
+    // Create a socket.
+    that.socket = that.io.connect(url, that.options.ioOptions);
+    that.socket.on("error", that.events.onError.fire);
+    that.socket.on("message", that.events.onMessage.fire);
 };
 
-kettle.tests.request.io.send = function (socket, model, callback) {
-    fluid.log("sending: " + JSON.stringify(model));
-    socket.emit("message", model, callback);
+kettle.tests.request.io.updateDependencies = function (that) {
+    // Set io.
+    that.io = require("socket.io-client");
+
+    // Handle cookie
+    // NOTE: version of xmlhttprequest that socket.io-client depends on does not
+    // permit cookies to be set. The newer version has a setDisableHeaderCheck
+    // method to permit restricted headers. This magic below is simply replacing
+    // the socket.io-client's XMLHttpRequest object with the newer one.
+    var newRequest = require("xmlhttprequest").XMLHttpRequest;
+    require("socket.io-client/node_modules/xmlhttprequest").XMLHttpRequest =
+        function () {
+            newRequest.apply(this, arguments);
+            this.setDisableHeaderCheck(true);
+            var originalOpen = this.open;
+            this.open = function() {
+                originalOpen.apply(this, arguments);
+                that.setCookie(this);
+            };
+        };
+};
+
+kettle.tests.request.io.listen = function (that) {
+    if (that.options.listenOnInit) {
+        that.connect();
+    }
+};
+
+kettle.tests.request.io.setCookie = function (cookieJar, request) {
+    if (cookieJar.cookie) {
+        request.setRequestHeader("cookie", cookieJar.cookie);
+    }
+};
+
+kettle.tests.request.io.send = function (that, model, callback) {
+    if (!that.options.listenOnInit) {
+        that.connect();
+        that.socket.on("connect", function () {
+            fluid.log("sending: " + JSON.stringify(model));
+            that.socket.emit("message", model, callback);
+        });
+    } else {
+        fluid.log("sending: " + JSON.stringify(model));
+        that.socket.emit("message", model, callback);
+    }
 };
 
 // Definition and defaults of http request component

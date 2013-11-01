@@ -25,7 +25,8 @@ fluid.defaults("kettle.requests.request.handler.testSocket", {
     invokers: {
         handle: {
             funcName: "kettle.tests.testSocket",
-            args: ["{requestProxy}", "{request}.data"]
+            args: ["{requestProxy}", "{request}.data"],
+            dynamic: true
         }
     }
 });
@@ -84,7 +85,8 @@ var testDefs = [{
             options: {
                 requestOptions: {
                     path: "/socket_path"
-                }
+                },
+                listenOnInit: true
             }
         },
         httpRequest: {
