@@ -136,6 +136,8 @@ kettle.tests.request.io.updateDependencies = function (that) {
     // permit cookies to be set. The newer version has a setDisableHeaderCheck
     // method to permit restricted headers. This magic below is simply replacing
     // the socket.io-client's XMLHttpRequest object with the newer one.
+    // See https://github.com/LearnBoost/socket.io-client/issues/344 for more
+    // info.
     var newRequest = require("xmlhttprequest").XMLHttpRequest;
     require("socket.io-client/node_modules/xmlhttprequest").XMLHttpRequest =
         function () {
