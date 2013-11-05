@@ -196,7 +196,7 @@ fluid.defaults("kettle.tests.request.http", {
 kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
-    fluid.log("Sending a request to: " + options.path);
+    fluid.log("Sending a request to:", options.path || "/");
     options.headers = options.headers || {};
     if (cookieJar.cookie) {
         options.headers.Cookie = cookieJar.cookie;
@@ -236,6 +236,8 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
                 pseudoReq.signedCookies);
         });
     });
+
+    req.shouldKeepAlive = false;
 
     req.on("error", function(err) {
         jqUnit.assertFalse("Error making request to " + options.path + ": " +
@@ -303,6 +305,13 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
         func: "{tests}.events.applyConfiguration.fire"
     }, {
         event: "{tests}.events.onServerReady",
+        listener: "fluid.identity"
+    });
+
+    fixture.sequence.push({
+        func: "{tests}.configuration.server.stop"
+    }, {
+        event: "{tests}.configuration.server.events.onStopped",
         listener: "fluid.identity"
     });
 
