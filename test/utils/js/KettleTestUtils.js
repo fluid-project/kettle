@@ -325,23 +325,32 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
     };
 };
 
-
-kettle.tests.runTests = function (testDefs) {
-    var tests = fluid.transform(testDefs, function (testDef) {
+kettle.tests.buildTests = function (testDefs) {
+    return fluid.transform(testDefs, function (testDef) {
         var configurationName = kettle.config.createDefaults(testDef.config);
-        return {
-            type: "kettle.tests.testEnvironment",
-            options: {
-                components: {
-                    tests: {
-                        type: "kettle.tests.testCaseHolder",
-                        options: kettle.tests.buildTestCase(configurationName,
-                            testDef)
-                    }
+        var testName = fluid.model.composeSegments("kettle.tests",
+            fluid.allocateGuid());
+        fluid.defaults(testName, {
+            gradeNames: ["kettle.tests.testEnvironment", "autoInit"],
+            components: {
+                tests: {
+                    type: "kettle.tests.testCaseHolder",
+                    options: kettle.tests.buildTestCase(configurationName,
+                        testDef)
                 }
             }
-        };
+        });
+        return testName;
     });
+};
 
+
+kettle.tests.runTests = function (testDefs) {
+    var tests = kettle.tests.buildTests(testDefs);
     fluid.test.runTests(tests);
+};
+
+kettle.tests.bootstrap = function (testDefs) {
+    return kettle.tests.allTests ? kettle.tests.buildTests(testDefs) :
+        kettle.tests.runTests(testDefs);
 };

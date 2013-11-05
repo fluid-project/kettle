@@ -258,4 +258,4 @@ var testDefs = [{
     }]
 }];
 
-kettle.tests.runTests(testDefs);
+module.exports = kettle.tests.bootstrap(testDefs);

@@ -12,9 +12,27 @@
 
 /*global require*/
 
-var fluid = require("infusion");
+var fluid = require("infusion"),
+    path = require("path"),
+    kettle = fluid.require(path.resolve(__dirname, "../kettle.js"));
 
-fluid.require("./DataSourceTests.js", require);
-fluid.require("./MiddlewareTests.js", require);
-fluid.require("./SessionTests.js", require);
-fluid.require("./SocketTests.js", require);
+fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
+
+kettle.tests.allTests = true;
+
+var testIncludes = [
+
+    // Run all tests included in the list.
+    "./DataSourceTests.js",
+    "./MiddlewareTests.js",
+    "./SessionTests.js",
+    "./SocketTests.js"
+
+];
+var tests = [];
+
+fluid.each(testIncludes, function (path) {
+    tests = tests.concat(fluid.require(path, require));
+});
+
+fluid.test.runTests(tests);
