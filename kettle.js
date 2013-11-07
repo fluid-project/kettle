@@ -24,6 +24,7 @@ loader.require("./lib/request.io.js");
 loader.require("./lib/server.js");
 loader.require("./lib/server.io.js");
 loader.require("./lib/session.js");
+loader.require("./lib/session.io.js");
 loader.require("./lib/utils.js");
 
 module.exports = kettle;
