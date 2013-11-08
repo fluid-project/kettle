@@ -24,7 +24,7 @@ fluid.defaults("kettle.tests.sessionServer", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     distributeOptions: {
         source: "{that}.options.validateToken",
-        target: "{that sessionManager}.options.invokers.validate"
+        target: "{that > sessionManager}.options.invokers.validate"
     },
     validateToken: {
         funcName: "kettle.tests.validateToken"
