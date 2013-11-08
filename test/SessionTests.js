@@ -47,7 +47,7 @@ fluid.defaults("kettle.requests.request.handler.testSessionRequest", {
     invokers: {
         handle: {
             funcName: "kettle.tests.testSessionRequest",
-            args: ["{requestProxy}", "{request}.req.session"],
+            args: ["{requestProxy}", "{request}.session.session"],
             dynamic: true
         }
     }
@@ -61,7 +61,7 @@ fluid.defaults("kettle.requests.request.handler.testSessionStart", {
             args: [
                 "{requestProxy}",
                 "{request}.req.params.token",
-                "{request}.req.session"
+                "{request}.session.session"
             ],
             dynamic: true
         }
@@ -69,8 +69,24 @@ fluid.defaults("kettle.requests.request.handler.testSessionStart", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testSessionEnd", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.eventedComponent", "autoInit"],
+    listeners: {
+        "{request}.session.events.afterDestroySession": [
+            "{that}.clearCookie",
+            "{that}.testSessionClear"
+        ]
+    },
     invokers: {
+        clearCookie: {
+            funcName: "kettle.tests.clearCookie",
+            args: "{request}.res",
+            dynamic: true
+        },
+        testSessionClear: {
+            funcName: "kettle.tests.testSessionClear",
+            args: ["{request}.req", "{request}.res"],
+            dynamic: true
+        },
         handle: {
             funcName: "kettle.tests.testSessionEnd",
             args: [
@@ -99,7 +115,7 @@ kettle.tests.testSessionFailureResponse = {
 };
 
 kettle.tests.validateToken = function (request) {
-    return request.req.session && !!request.req.session.token;
+    return request.session && !!request.session.session.token;
 };
 
 kettle.tests.testSessionEnd = function (requestProxy, token, request) {
@@ -107,12 +123,17 @@ kettle.tests.testSessionEnd = function (requestProxy, token, request) {
     var res = request.res;
     jqUnit.assertTrue("The session end request was received.", true);
     jqUnit.assertEquals("Token matches the session token.",
-        req.session.token, token);
-    req.session.destroy(function () {
-        res.clearCookie("kettle.sid");
-        jqUnit.assertUndefined("Session is destroyed", req.session);
-        res.send(200, kettle.tests.testSessionSuccessResponse);
-    });
+        request.session.session.token, token);
+    request.session.events.onDestroySession.fire();
+};
+
+kettle.tests.testSessionClear = function (req, res) {
+    jqUnit.assertUndefined("Session is destroyed", req.session);
+    res.send(200, kettle.tests.testSessionSuccessResponse);
+};
+
+kettle.tests.clearCookie = function (res) {
+    res.clearCookie("kettle.sid");
 };
 
 kettle.tests.testSessionStart = function (requestProxy, token, session) {
@@ -132,7 +153,7 @@ kettle.tests.testSessionRequest = function (requestProxy, session) {
 kettle.tests.testSessionSocket = function (requestProxy, request) {
     jqUnit.assertValue("Session exists.", request.session);
     jqUnit.assertEquals("Session is correct and has a current token.",
-        kettle.tests.token, request.session.token);
+        kettle.tests.token, request.session.session.token);
     jqUnit.assertDeepEq("Socket message data is correct",
         kettle.tests.testSessionSocketModel, request.data);
     requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
