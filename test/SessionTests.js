@@ -115,7 +115,7 @@ kettle.tests.testSessionFailureResponse = {
 };
 
 kettle.tests.validateToken = function (request) {
-    return request.session && !!request.session.session.token;
+    return !!request.session && !!request.session.session.token;
 };
 
 kettle.tests.testSessionEnd = function (requestProxy, token, request) {
