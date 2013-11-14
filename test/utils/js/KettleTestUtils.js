@@ -198,6 +198,11 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
     options.path = fluid.stringTemplate(options.path, termMap);
     fluid.log("Sending a request to:", options.path || "/");
     options.headers = options.headers || {};
+    if (model) {
+        model = typeof model === "string" ? model : JSON.stringify(model);
+        options.headers["Content-Type"] = "application/json";
+        options.headers["Content-Length"] = model.length;
+    }
     if (cookieJar.cookie) {
         options.headers.Cookie = cookieJar.cookie;
     }
@@ -317,6 +322,7 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
 
     return {
         configurationName: configurationName,
+        listeners: testDef.listeners,
         components: testDef.components,
         modules: [{
             name: configurationName + " tests.",
