@@ -15,22 +15,22 @@
                                     "testSessionSocket": {
                                         "route": "/testSessionSocket",
                                         "type": "io",
-                                        "needValidSession": true
+                                        "needSession": "valid"
                                     },
                                     "testSessionRequest": {
                                         "route": "/testSessionRequest",
                                         "type": "get",
-                                        "needValidSession": true
+                                        "needSession": "valid"
                                     },
                                     "testSessionStart": {
                                         "route": "/testSessionStart/:token",
                                         "type": "get",
-                                        "needSession": true
+                                        "needSession": "lazy"
                                     },
                                     "testSessionEnd": {
                                         "route": "/testSessionEnd/:token",
                                         "type": "get",
-                                        "needSession": true
+                                        "needSession": "lazy"
                                     }
                                 }
                             }
