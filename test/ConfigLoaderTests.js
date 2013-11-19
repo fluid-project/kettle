@@ -113,13 +113,18 @@ var expectedSubcomponentOptions = {
 
 function testConfigToGrade () {
     var head = arguments[0],
-        componentName = kettle.config.createDefaults({
+        componentName = arguments[0] = kettle.config.createDefaults({
             nodeEnv: head,
             configPath: configPath
         });
 
-    jqUnit.assertEquals("Head component name is correct: ", head,
-        componentName);
+    if (componentName.indexOf("kettle.config.") === 0) {
+        jqUnit.assertTrue("Head component is given a name", true);
+    } else {
+        jqUnit.assertEquals("Head component name is correct: ", head,
+            componentName);
+    }
+
     fluid.each(arguments, function (configOrTypeName) {
         var defaults = fluid.defaults(configOrTypeName);
         jqUnit.assertValue("Grade is created for config " + configOrTypeName,
