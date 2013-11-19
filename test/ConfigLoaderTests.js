@@ -17,8 +17,7 @@ var fluid = require("infusion"),
     kettle = fluid.require(path.resolve(__dirname, "../kettle.js"));
     fs = require("fs"),
     jqUnit = fluid.require("jqUnit"),
-    configPath = path.resolve(__dirname, "./configs"),
-    nodeEnv = "config1";
+    configPath = path.resolve(__dirname, "./configs");
 
 fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
 
@@ -95,6 +94,14 @@ var expectedDefaults = {
                 }
             }
         }
+    },
+    config5: {
+        gradeNames: ["config5", "config6", "fluid.littleComponent"],
+        option6: "OPTION6"
+    },
+    config6: {
+        gradeNames: ["config6", "fluid.littleComponent", "autoInit"],
+        option6: "OPTION6"
     }
 };
 
@@ -104,25 +111,34 @@ var expectedSubcomponentOptions = {
     option: "OVERRIDE"
 };
 
-kettle.tests.testCreateDefaults = function () {
-    var componentName = kettle.config.createDefaults({
-        nodeEnv: nodeEnv,
-        configPath: configPath
-    }),
-        defaults = {};
-    jqUnit.assertEquals("Head component name is correct: ", nodeEnv,
+function testConfigToGrade () {
+    var head = arguments[0],
+        componentName = kettle.config.createDefaults({
+            nodeEnv: head,
+            configPath: configPath
+        });
+
+    jqUnit.assertEquals("Head component name is correct: ", head,
         componentName);
-    fluid.each(["config1", "config2", "config3", "config4"], function (name) {
-        defaults[name] = fluid.defaults(name);
-        jqUnit.assertValue("Grade is created for config " + name,
-            defaults[name]);
-        jqUnit.assertLeftHand("Config " + name +
-            " is correctly converted into a grade", expectedDefaults[name],
-            defaults[name]);
+    fluid.each(arguments, function (configOrTypeName) {
+        var defaults = fluid.defaults(configOrTypeName);
+        jqUnit.assertValue("Grade is created for config " + configOrTypeName,
+            defaults);
+        jqUnit.assertLeftHand("Config " + configOrTypeName +
+            " is correctly converted into a grade",
+            expectedDefaults[configOrTypeName], defaults);
     });
+};
+
+kettle.tests.testCreateDefaults = function () {
+    testConfigToGrade("config1", "config2", "config3", "config4");
     var config1 = fluid.invokeGlobalFunction("config1");
     jqUnit.assertLeftHand("Subcomponent options are correct",
         expectedSubcomponentOptions, config1.subcomponent1.options);
+};
+
+kettle.tests.testCreateNoTypeNameDefaults = function () {
+    testConfigToGrade("config5", "config6");
 };
 
 fluid.defaults("kettle.tests.configLoaderTester", {
@@ -133,6 +149,10 @@ fluid.defaults("kettle.tests.configLoaderTester", {
             expect: 10,
             name: "kettle.config.createDefaults",
             func: "kettle.tests.testCreateDefaults"
+        }, {
+            expect: 5,
+            name: "kettle.config.createDefaults no typeName",
+            func: "kettle.tests.testCreateNoTypeNameDefaults"
         }]
     }]
 });
