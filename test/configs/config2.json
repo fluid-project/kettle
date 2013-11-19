@@ -1,0 +1,13 @@
+{
+    "typeName": "config2",
+    "options": {
+        "gradeNames": ["fluid.eventedComponent"],
+        "option2": "OPTION2",
+        "components": {
+            "subcomponent1": {
+                "type": "kettle.tests.subcomponent1"
+            }
+        }
+    },
+    "includes": ["./config4.json"]
+}

@@ -23,6 +23,7 @@ kettle.tests.allTests = true;
 var testIncludes = [
 
     // Run all tests included in the list.
+    "./ConfigLoaderTests.js",
     "./DataSourceTests.js",
     "./MiddlewareTests.js",
     "./SessionTests.js",
