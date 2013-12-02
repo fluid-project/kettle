@@ -300,35 +300,31 @@ fluid.defaults("kettle.tests.testEnvironment", {
 });
 
 kettle.tests.buildTestCase = function (configurationName, testDef) {
-    var fixture = {
-        name: testDef.name,
-        expect: testDef.expect,
-        sequence: fluid.copy(testDef.sequence)
-    };
-
-    fixture.sequence.unshift({
+    var sequence = fluid.copy(testDef.sequence);
+    sequence.unshift({
         func: "{tests}.events.applyConfiguration.fire"
     }, {
         event: "{tests}.events.onServerReady",
         listener: "fluid.identity"
     });
 
-    fixture.sequence.push({
+    sequence.push({
         func: "{tests}.configuration.server.stop"
     }, {
         event: "{tests}.configuration.server.events.onStopped",
         listener: "fluid.identity"
     });
 
-    return {
-        configurationName: configurationName,
-        listeners: testDef.listeners,
-        components: testDef.components,
-        modules: [{
-            name: configurationName + " tests.",
-            tests: [fixture]
+    testDef.configurationName = configurationName;
+    testDef.modules = [{
+        name: configurationName + " tests.",
+        tests: [{
+            name: testDef.name,
+            expect: testDef.expect,
+            sequence: sequence
         }]
-    };
+    }];
+    return testDef;
 };
 
 kettle.tests.buildTests = function (testDefs) {
