@@ -99,6 +99,26 @@ fluid.defaults("kettle.requests.request.handler.testSessionEnd", {
     }
 });
 
+fluid.defaults("kettle.requests.request.handler.testNoneSessionRequest", {
+    gradeNames: ["fluid.littleComponent", "autoInit"],
+    invokers: {
+        handle: {
+            funcName: "kettle.tests.testNoneNoSessionRequest",
+            args: "{requestProxy}"
+        }
+    }
+});
+
+fluid.defaults("kettle.requests.request.handler.testNoSessionRequest", {
+    gradeNames: ["fluid.littleComponent", "autoInit"],
+    invokers: {
+        handle: {
+            funcName: "kettle.tests.testNoneNoSessionRequest",
+            args: "{requestProxy}"
+        }
+    }
+});
+
 kettle.tests.token = 123;
 
 kettle.tests.testSessionSocketModel = {
@@ -150,6 +170,11 @@ kettle.tests.testSessionRequest = function (requestProxy, session) {
     requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
 };
 
+kettle.tests.testNoneNoSessionRequest = function (requestProxy) {
+    jqUnit.assertTrue("The request was received.", true);
+    requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
+};
+
 kettle.tests.testSessionSocket = function (requestProxy, request) {
     jqUnit.assertValue("Session exists.", request.session);
     jqUnit.assertEquals("Session is correct and has a current token.",
@@ -158,7 +183,6 @@ kettle.tests.testSessionSocket = function (requestProxy, request) {
         kettle.tests.testSessionSocketModel, request.data);
     requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
 };
-
 
 kettle.tests.testSessionStartSuccessResponse = function (data, headers, cookies, signedCookies) {
     kettle.tests.testSuccessResponse(data);
@@ -191,7 +215,7 @@ kettle.tests.testSuccessResponse = function (data) {
 
 var testDefs = [{
     name: "Session tests.",
-    expect: 19,
+    expect: 27,
     config: {
         nodeEnv: "session",
         configPath: configPath
@@ -242,9 +266,35 @@ var testDefs = [{
                     path: "/testSessionRequest"
                 }
             }
+        },
+        httpTestNoneSessionRequest: {
+            type: "kettle.tests.request.http",
+            options: {
+                requestOptions: {
+                    path: "/testNoneSessionRequest"
+                }
+            }
+        },
+        httpTestNoSessionRequest: {
+            type: "kettle.tests.request.http",
+            options: {
+                requestOptions: {
+                    path: "/testNoSessionRequest"
+                }
+            }
         }
     },
     sequence: [{
+        func: "{httpTestNoneSessionRequest}.send"
+    }, {
+        event: "{httpTestNoneSessionRequest}.events.onComplete",
+        listener: "kettle.tests.testSuccessResponse"
+    }, {
+        func: "{httpTestNoSessionRequest}.send"
+    }, {
+        event: "{httpTestNoSessionRequest}.events.onComplete",
+        listener: "kettle.tests.testSuccessResponse"
+    }, {
         func: "{invalidIoRequest}.send",
         args: "You shall not pass!!"
     }, {
@@ -270,6 +320,16 @@ var testDefs = [{
         args: kettle.tests.testSessionSocketModel
     }, {
         event: "{ioRequest}.events.onComplete",
+        listener: "kettle.tests.testSuccessResponse"
+    }, {
+        func: "{httpTestNoneSessionRequest}.send"
+    }, {
+        event: "{httpTestNoneSessionRequest}.events.onComplete",
+        listener: "kettle.tests.testSuccessResponse"
+    }, {
+        func: "{httpTestNoSessionRequest}.send"
+    }, {
+        event: "{httpTestNoSessionRequest}.events.onComplete",
         listener: "kettle.tests.testSuccessResponse"
     }, {
         func: "{httpTestSessionEnd}.send"
