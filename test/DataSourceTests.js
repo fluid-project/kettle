@@ -19,6 +19,8 @@ https://github.com/GPII/kettle/LICENSE.txt
          fs = require("fs"),
          jqUnit = fluid.require("jqUnit");
 
+    fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
+
     kettle.dataSource.errback.handleErrorTest = function (data) {
         jqUnit.assertTrue(
             "Data source should properly handle paths to non-existent or empty files",
@@ -691,8 +693,10 @@ https://github.com/GPII/kettle/LICENSE.txt
         }]
     });
 
-    fluid.test.runTests([
-        "fluid.test.dataSource"
-    ]);
+    if (kettle.tests.allTests) {
+        module.exports = "fluid.test.dataSource";
+    } else {
+        fluid.test.runTests(["fluid.test.dataSource"]);
+    }
 
 }());

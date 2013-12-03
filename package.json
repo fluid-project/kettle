@@ -6,10 +6,13 @@
     "bugs": "http://issues.gpii.net/browse/GPII",
     "homepage": "http://gpii.net/",
     "dependencies": {
-        "express": "~3.1.0",
-        "infusion": "git://github.com/fluid-project/infusion.git#04a85a490a05d6ddb5de6e2dbf9a9b1e83e476dd",
+        "express": "~3.4.3",
+        "socket.io": "~0.9.16",
+        "infusion": "git://github.com/fluid-project/infusion.git#e4d30d167cecee9069b28d9b6cc3591cc767ca53",
         "node-uuid": "~1.4.0",
-        "when": "~1.8.1"
+        "when": "~1.8.1",
+        "xmlhttprequest": "~1.6.0",
+        "socket.io-client": "~0.9.16"
     },
     "devDependencies": {
         "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#e9bf72445bd343a4f3aabe3ba96a1087d3498612"

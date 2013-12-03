@@ -1,0 +1,14 @@
+{
+    "typeName": "config3",
+    "options": {
+        "gradeNames": ["fluid.modelComponent"],
+        "option3": "OPTION3",
+        "components": {
+            "subcomponent1": {
+                "options": {
+                    "gradeNames": ["kettle.tests.subcomponent2"]
+                }
+            }
+        }
+    }
+}
