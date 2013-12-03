@@ -1,0 +1,7 @@
+{
+    "typeName": "config6",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "option6": "OPTION6"
+    }
+}

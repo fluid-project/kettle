@@ -1,0 +1,12 @@
+{
+    "typeName": "config4",
+    "options": {
+        "components": {
+            "subcomponent1": {
+                "options": {
+                    "gradeNames": ["kettle.tests.subcomponent3"]
+                }
+            }
+        }
+    }
+}
