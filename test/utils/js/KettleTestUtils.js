@@ -316,14 +316,14 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
     });
 
     testDef.configurationName = configurationName;
-    testDef.modules = [{
+    testDef.moduleSource = {
         name: configurationName + " tests.",
         tests: [{
             name: testDef.name,
             expect: testDef.expect,
             sequence: sequence
         }]
-    }];
+    };
     return testDef;
 };
 
