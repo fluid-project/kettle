@@ -8,7 +8,7 @@
     "dependencies": {
         "express": "~3.4.3",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/fluid-project/infusion.git#e4d30d167cecee9069b28d9b6cc3591cc767ca53",
+        "infusion": "git://github.com/fluid-project/infusion.git#2c9d4c1a4b5bc72041c49ca4f819bd6ebb3fdb2b",
         "node-uuid": "~1.4.0",
         "when": "~1.8.1",
         "xmlhttprequest": "~1.6.0",
