@@ -1,0 +1,27 @@
+{
+    "typeName": "CORS_noCred",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "gradeNames": ["kettle.tests.CORS_noCred"],
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "handlers": {
+                                    "testGet": {
+                                        "route": "/",
+                                        "type": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
