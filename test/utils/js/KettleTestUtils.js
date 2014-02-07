@@ -338,7 +338,6 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
             sequence: sequence
         }]
     }];
-    console.log("Built testDef ", testDef);
     return testDef;
 };
 

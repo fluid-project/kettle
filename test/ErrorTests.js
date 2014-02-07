@@ -49,9 +49,7 @@ kettle.tests.triggerGlobalErrorAsync = function () {
 Error.stackTraceLimit = 100;
 
 kettle.tests.awaitGlobalError = function (priority, message) {
-    console.log("!!!!!!!!!!! Received global error: ", priority, message);
     var stack = new Error().stack;
-    console.log( stack );
     jqUnit.assert(message);
 };
 
