@@ -299,8 +299,22 @@ fluid.defaults("kettle.tests.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment", "autoInit"]
 });
 
+/** Builds a Fluid IoC testing framework fixture (in fact, the "options" to a TestCaseHolder) given a configuration
+ * name and a "testDef". The testDef must include a <code>sequence</code> element which will be fleshed out with the following
+ * additions - i) At the front, two elements - firstly a firing of the <code>applyConfiguration</code> event of the TestCaseHolder,
+ * secondly, a listener for the <code>onServerReady</code> event of the TestCaseHolder - ii) at the back, two elements - firstly,
+ * an invocation of the <code>stop</code> method of the server. The resulting holder will be a <code>kettle.tests.testCaseHolder</code> holding
+ * a Kettle server as a subcomponent of its <code>configuration</code> component.
+ * @param configurationName {String} A configuration name which will become the "name" (in QUnit terms, "module name") of the
+ * resulting fixture
+ * @param testDef {Object} A partial test fixture specification. This includes most of the elements expected in a Fluid IoC testing
+ * framework "module" specification, with required elements <code>sequence</code>, <code>name</code> and optional element <code>expect</code>
+ * @return {Object} a fully-fleshed out set of options for a TestCaseHolder, incuding extra sequence elements as described above.
+ */
+
 kettle.tests.buildTestCase = function (configurationName, testDef) {
     var sequence = fluid.copy(testDef.sequence);
+    delete testDef.sequence;
     sequence.unshift({
         func: "{tests}.events.applyConfiguration.fire"
     }, {
@@ -317,7 +331,7 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
 
     testDef.configurationName = configurationName;
     testDef.modules = [{
-        name: configurationName + " tests.",
+        name: configurationName + " tests",
         tests: [{
             name: testDef.name,
             expect: testDef.expect,
@@ -330,15 +344,13 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
 kettle.tests.buildTests = function (testDefs) {
     return fluid.transform(testDefs, function (testDef) {
         var configurationName = kettle.config.createDefaults(testDef.config);
-        var testName = fluid.model.composeSegments("kettle.tests",
-            fluid.allocateGuid());
+        var testName = fluid.model.composeSegments("kettle.tests", fluid.allocateGuid());
         fluid.defaults(testName, {
             gradeNames: ["kettle.tests.testEnvironment", "autoInit"],
             components: {
                 tests: {
                     type: "kettle.tests.testCaseHolder",
-                    options: kettle.tests.buildTestCase(configurationName,
-                        testDef)
+                    options: kettle.tests.buildTestCase(configurationName, testDef)
                 }
             }
         });
