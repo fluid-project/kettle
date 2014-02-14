@@ -1,0 +1,26 @@
+{
+    "typeName": "error",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "handlers": {
+                                    "requestError": {
+                                        "route": "/",
+                                        "type": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

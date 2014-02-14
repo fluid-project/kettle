@@ -46,13 +46,14 @@ kettle.tests.makeCookieParser = function (secret) {
 fluid.defaults("kettle.tests.request", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
     invokers: {
-        send: "kettle.tests.request.send"
+        send: "kettle.tests.request.send" // This is a dummy entry to be overridden by subclasses
     },
     events: {
         onComplete: null
     },
     requestOptions: {
-        port: 8080
+        port: 8080,
+        storeCookies: false
     },
     termMap: {}
 });
@@ -120,7 +121,7 @@ kettle.tests.request.io.connect = function (that) {
     var options = fluid.copy(that.options.requestOptions);
     options.path = fluid.stringTemplate(options.path, that.options.termMap);
     var url = options.hostname + ":" + options.port + options.path;
-    fluid.log("connecting to: " + url);
+    fluid.log("connecting socket.io to: " + url);
     // Create a socket.
     that.socket = that.io.connect(url, that.options.ioOptions);
     that.socket.on("error", that.events.onError.fire);
@@ -193,6 +194,22 @@ fluid.defaults("kettle.tests.request.http", {
     }
 });
 
+// A variety of HTTP request that stores received cookies in a "jar" higher in the component tree
+fluid.defaults("kettle.tests.request.httpCookie", {
+    gradeNames: ["autoInit", "kettle.tests.request.http"],
+    requestOptions: {
+        storeCookies: true
+    }
+});
+
+// A variety of request that both uses socket.io as well as storing received cookies in a "jar" higher in the component tree
+fluid.defaults("kettle.tests.request.ioCookie", {
+    gradeNames: ["autoInit", "kettle.tests.request.io"],
+    requestOptions: {
+        storeCookies: true
+    }
+});
+
 kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
@@ -203,7 +220,7 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
         options.headers["Content-Type"] = "application/json";
         options.headers["Content-Length"] = model.length;
     }
-    if (cookieJar.cookie) {
+    if (cookieJar.cookie && options.storeCookies) {
         options.headers.Cookie = cookieJar.cookie;
     }
     var req = http.request(options, function(res) {
@@ -224,7 +241,7 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
         res.on("end", function() {
             var cookie = res.headers["set-cookie"];
             var pseudoReq = {};
-            if (cookie) {
+            if (cookie && options.storeCookies) {
                 cookieJar.cookie = cookie;
                 // Use connect's cookie parser with set secret to parse the
                 // cookies from the kettle.server.
@@ -233,12 +250,11 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
                         cookie: cookie[0]
                     }
                 };
-                // pseudoReq will get its cookies and signedCookis fields
+                // pseudoReq will get its cookies and signedCookie fields
                 // populated by the cookie parser.
                 cookieJar.parser(pseudoReq, {}, fluid.identity);
             }
-            callback(data, res.headers, pseudoReq.cookies,
-                pseudoReq.signedCookies);
+            callback(data, res.headers, pseudoReq.cookies, pseudoReq.signedCookies);
         });
     });
 
@@ -299,8 +315,22 @@ fluid.defaults("kettle.tests.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment", "autoInit"]
 });
 
+/** Builds a Fluid IoC testing framework fixture (in fact, the "options" to a TestCaseHolder) given a configuration
+ * name and a "testDef". The testDef must include a <code>sequence</code> element which will be fleshed out with the following
+ * additions - i) At the front, two elements - firstly a firing of the <code>applyConfiguration</code> event of the TestCaseHolder,
+ * secondly, a listener for the <code>onServerReady</code> event of the TestCaseHolder - ii) at the back, two elements - firstly,
+ * an invocation of the <code>stop</code> method of the server. The resulting holder will be a <code>kettle.tests.testCaseHolder</code> holding
+ * a Kettle server as a subcomponent of its <code>configuration</code> component.
+ * @param configurationName {String} A configuration name which will become the "name" (in QUnit terms, "module name") of the
+ * resulting fixture
+ * @param testDef {Object} A partial test fixture specification. This includes most of the elements expected in a Fluid IoC testing
+ * framework "module" specification, with required elements <code>sequence</code>, <code>name</code> and optional element <code>expect</code>
+ * @return {Object} a fully-fleshed out set of options for a TestCaseHolder, incuding extra sequence elements as described above.
+ */
+
 kettle.tests.buildTestCase = function (configurationName, testDef) {
     var sequence = fluid.copy(testDef.sequence);
+    delete testDef.sequence;
     sequence.unshift({
         func: "{tests}.events.applyConfiguration.fire"
     }, {
@@ -317,7 +347,7 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
 
     testDef.configurationName = configurationName;
     testDef.modules = [{
-        name: configurationName + " tests.",
+        name: configurationName + " tests",
         tests: [{
             name: testDef.name,
             expect: testDef.expect,
@@ -330,15 +360,13 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
 kettle.tests.buildTests = function (testDefs) {
     return fluid.transform(testDefs, function (testDef) {
         var configurationName = kettle.config.createDefaults(testDef.config);
-        var testName = fluid.model.composeSegments("kettle.tests",
-            fluid.allocateGuid());
+        var testName = fluid.model.composeSegments("kettle.tests", fluid.allocateGuid());
         fluid.defaults(testName, {
             gradeNames: ["kettle.tests.testEnvironment", "autoInit"],
             components: {
                 tests: {
                     type: "kettle.tests.testCaseHolder",
-                    options: kettle.tests.buildTestCase(configurationName,
-                        testDef)
+                    options: kettle.tests.buildTestCase(configurationName, testDef)
                 }
             }
         });
