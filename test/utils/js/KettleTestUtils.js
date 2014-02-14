@@ -46,13 +46,14 @@ kettle.tests.makeCookieParser = function (secret) {
 fluid.defaults("kettle.tests.request", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
     invokers: {
-        send: "kettle.tests.request.send"
+        send: "kettle.tests.request.send" // This is a dummy entry to be overridden by subclasses
     },
     events: {
         onComplete: null
     },
     requestOptions: {
-        port: 8080
+        port: 8080,
+        storeCookies: false
     },
     termMap: {}
 });
@@ -120,7 +121,7 @@ kettle.tests.request.io.connect = function (that) {
     var options = fluid.copy(that.options.requestOptions);
     options.path = fluid.stringTemplate(options.path, that.options.termMap);
     var url = options.hostname + ":" + options.port + options.path;
-    fluid.log("connecting to: " + url);
+    fluid.log("connecting socket.io to: " + url);
     // Create a socket.
     that.socket = that.io.connect(url, that.options.ioOptions);
     that.socket.on("error", that.events.onError.fire);
@@ -193,6 +194,22 @@ fluid.defaults("kettle.tests.request.http", {
     }
 });
 
+// A variety of HTTP request that stores received cookies in a "jar" higher in the component tree
+fluid.defaults("kettle.tests.request.httpCookie", {
+    gradeNames: ["autoInit", "kettle.tests.request.http"],
+    requestOptions: {
+        storeCookies: true
+    }
+});
+
+// A variety of request that both uses socket.io as well as storing received cookies in a "jar" higher in the component tree
+fluid.defaults("kettle.tests.request.ioCookie", {
+    gradeNames: ["autoInit", "kettle.tests.request.io"],
+    requestOptions: {
+        storeCookies: true
+    }
+});
+
 kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
@@ -203,7 +220,7 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
         options.headers["Content-Type"] = "application/json";
         options.headers["Content-Length"] = model.length;
     }
-    if (cookieJar.cookie) {
+    if (cookieJar.cookie && options.storeCookies) {
         options.headers.Cookie = cookieJar.cookie;
     }
     var req = http.request(options, function(res) {
@@ -224,7 +241,7 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
         res.on("end", function() {
             var cookie = res.headers["set-cookie"];
             var pseudoReq = {};
-            if (cookie) {
+            if (cookie && options.storeCookies) {
                 cookieJar.cookie = cookie;
                 // Use connect's cookie parser with set secret to parse the
                 // cookies from the kettle.server.
@@ -233,12 +250,11 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
                         cookie: cookie[0]
                     }
                 };
-                // pseudoReq will get its cookies and signedCookis fields
+                // pseudoReq will get its cookies and signedCookie fields
                 // populated by the cookie parser.
                 cookieJar.parser(pseudoReq, {}, fluid.identity);
             }
-            callback(data, res.headers, pseudoReq.cookies,
-                pseudoReq.signedCookies);
+            callback(data, res.headers, pseudoReq.cookies, pseudoReq.signedCookies);
         });
     });
 
