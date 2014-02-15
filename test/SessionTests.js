@@ -197,8 +197,7 @@ kettle.tests.testSessionEndSuccessResponse = function (data, headers, cookies, s
 
 function testResponse (expected, data) {
     data = typeof data === "string" ? JSON.parse(data) : data;
-    jqUnit.assertDeepEq("Request response is correct",
-        expected, data);
+    jqUnit.assertDeepEq("Request response is correct", expected, data);
 }
 
 kettle.tests.testFailureResponse = function (data) {
@@ -222,7 +221,7 @@ var testDefs = [{
     },
     components: {
         invalidIoRequest: {
-            type: "kettle.tests.request.io",
+            type: "kettle.tests.request.ioCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionSocket"
@@ -230,7 +229,7 @@ var testDefs = [{
             }
         },
         ioRequest: {
-            type: "kettle.tests.request.io",
+            type: "kettle.tests.request.ioCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionSocket"
@@ -238,7 +237,7 @@ var testDefs = [{
             }
         },
         httpTestSessionStart: {
-            type: "kettle.tests.request.http",
+            type: "kettle.tests.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionStart/%token"
@@ -249,7 +248,7 @@ var testDefs = [{
             }
         },
         httpTestSessionEnd: {
-            type: "kettle.tests.request.http",
+            type: "kettle.tests.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionEnd/%token"
@@ -260,7 +259,7 @@ var testDefs = [{
             }
         },
         httpTestSessionRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.tests.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionRequest"
@@ -268,7 +267,7 @@ var testDefs = [{
             }
         },
         httpTestNoneSessionRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.tests.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testNoneSessionRequest"
@@ -276,7 +275,7 @@ var testDefs = [{
             }
         },
         httpTestNoSessionRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.tests.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testNoSessionRequest"

@@ -21,14 +21,13 @@ fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
 kettle.tests.allTests = true;
 
 var testIncludes = [
-
     // Run all tests included in the list.
+    "./SessionTests.js",
     "./ConfigLoaderTests.js",
     "./DataSourceTests.js",
     "./MiddlewareTests.js",
-    "./SessionTests.js",
-    "./SocketTests.js"
-
+    "./SocketTests.js",
+    "./ErrorTests.js"
 ];
 var tests = [];
 
