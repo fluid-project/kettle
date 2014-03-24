@@ -1,7 +1,8 @@
 /**
  * Kettle Config Loader Tests
  *
- * Copyright 2012 Raising the Floor - International
+ * Copyright 2013 OCAD University
+ * CopyRight 2014 Raising the Floor - International
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -48,7 +49,7 @@ var expectedDefaults = {
     config1: {
         gradeNames: ["config1", "fluid.littleComponent", "config2",
             "fluid.eventedComponent", "config4", "config3",
-            "fluid.modelComponent", "autoInit"],
+            "fluid.modelComponent", "fluid.commonModelComponent", "autoInit"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -75,7 +76,7 @@ var expectedDefaults = {
         option2: "OPTION2"
     },
     config3: {
-        gradeNames: ["config3", "fluid.modelComponent", "fluid.littleComponent"],
+        gradeNames: ["config3", "fluid.modelComponent", "fluid.commonModelComponent", "fluid.littleComponent"],
         components: {
             subcomponent1: {
                 options: {
