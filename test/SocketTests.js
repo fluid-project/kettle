@@ -10,15 +10,13 @@
  * https://github.com/GPII/kettle/LICENSE.txt
  */
 
-/*global require, __dirname*/
+"use strict";
 
 var fluid = require("infusion"),
     path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
+    kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
-
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
 
 fluid.defaults("kettle.requests.request.handler.testSocket", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
@@ -41,6 +39,8 @@ fluid.defaults("kettle.requests.request.handler.testGet", {
     }
 });
 
+fluid.registerNamespace("kettle.tests");
+
 kettle.tests.testGet = function (requestProxy) {
     jqUnit.assertTrue("The request was received.", true);
     requestProxy.events.onSuccess.fire({
@@ -60,7 +60,7 @@ kettle.tests.testSocket = function (requestProxy, data) {
     });
 };
 
-kettle.tests.testResponse = function (data, headers) {
+kettle.tests.testResponse = function (data /*, headers*/ ) {
     jqUnit.assertDeepEq("The response is correct.", {
         success: true
     }, JSON.parse(data));
@@ -73,7 +73,7 @@ kettle.tests.testSocketResponse = function (data) {
 };
 
 var testDefs = [{
-    name: "Socket tests.",
+    name: "Socket tests",
     expect: 6,
     config: {
         nodeEnv: "socket",
@@ -81,7 +81,7 @@ var testDefs = [{
     },
     components: {
         ioRequest: {
-            type: "kettle.tests.request.io",
+            type: "kettle.test.request.io",
             options: {
                 requestOptions: {
                     path: "/socket_path"
@@ -90,7 +90,7 @@ var testDefs = [{
             }
         },
         httpRequest: {
-            type: "kettle.tests.request.http"
+            type: "kettle.test.request.http"
         }
     },
     sequence: [{
@@ -119,4 +119,4 @@ var testDefs = [{
     }]
 }];
 
-module.exports = kettle.tests.bootstrap(testDefs);
+module.exports = kettle.test.bootstrapServer(testDefs);

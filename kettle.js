@@ -28,4 +28,6 @@ loader.require("./lib/server.io.js");
 loader.require("./lib/session.js");
 loader.require("./lib/session.io.js");
 
+require("./test/utils/js/KettleTestUtils.js");
+
 module.exports = kettle;

@@ -10,15 +10,13 @@
  * https://github.com/GPII/kettle/LICENSE.txt
  */
 
-/*global require, __dirname*/
+"use strict";
 
 var fluid = require("infusion"),
     path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
+    kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
-
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
 
 fluid.defaults("kettle.requests.request.handler.testGet", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
@@ -109,7 +107,7 @@ var testDefs = [{
     },
     components: {
         corsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -119,7 +117,7 @@ var testDefs = [{
             }
         },
         optionsCorsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     method: "OPTIONS",
@@ -150,7 +148,7 @@ var testDefs = [{
     },
     components: {
         corsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -175,7 +173,7 @@ var testDefs = [{
     },
     components: {
         corsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -185,7 +183,7 @@ var testDefs = [{
             }
         },
         invalidCorsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -215,7 +213,7 @@ var testDefs = [{
     },
     components: {
         request: {
-            type: "kettle.tests.request.http"
+            type: "kettle.test.request.http"
         }
     },
     sequence: [{
@@ -226,4 +224,4 @@ var testDefs = [{
     }]
 }];
 
-module.exports = kettle.tests.bootstrap(testDefs);
+module.exports = kettle.test.bootstrapServer(testDefs);

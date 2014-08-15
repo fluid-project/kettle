@@ -10,17 +10,15 @@
  * You may obtain a copy of the License at
  * https://github.com/GPII/kettle/LICENSE.txt
  */
-
-/*global require, __dirname*/
+ 
+"use strict";
 
 var fluid = require("infusion"),
     path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js"));
-    fs = require("fs"),
+    kettle = require("../kettle.js"), // TODO: New module loader
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
-
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
+       
 
 fluid.defaults("kettle.tests.configLoader", {
     gradeNames: ["fluid.test.testEnvironment", "autoInit"],
@@ -112,24 +110,24 @@ var expectedSubcomponentOptions = {
     option: "OVERRIDE"
 };
 
-function testConfigToGrade () {
-    var head = arguments[0],
-        componentName = arguments[0] = kettle.config.createDefaults({
-            nodeEnv: head,
+kettle.test.testConfigToGrade = function (headName, configNames) {
+    var componentName = kettle.config.createDefaults({
+            nodeEnv: configNames[0],
             configPath: configPath
         });
+    var expectedParents = fluid.copy(configNames);
 
-    if (componentName.indexOf("kettle.config.") === 0) {
-        jqUnit.assertTrue("Head component is given a name", true);
+    if (headName) {
+        jqUnit.assertEquals("Head component name is correct", headName, componentName);
     } else {
-        jqUnit.assertEquals("Head component name is correct: ", head,
-            componentName);
+        jqUnit.assertTrue("Head component is named a nonce grade", componentName.indexOf("kettle.config.") === 0);
+        expectedParents.shift(); // white box testing - in this case the system won't need to allocate a dedicated grade
     }
+    jqUnit.assertValue("Head component defaults are allocated", fluid.defaults(componentName));
 
-    fluid.each(arguments, function (configOrTypeName) {
+    fluid.each(expectedParents, function (configOrTypeName) {
         var defaults = fluid.defaults(configOrTypeName);
-        jqUnit.assertValue("Grade is created for config " + configOrTypeName,
-            defaults);
+        jqUnit.assertValue("Grade is created for config " + configOrTypeName, defaults);
         jqUnit.assertLeftHand("Config " + configOrTypeName +
             " is correctly converted into a grade",
             expectedDefaults[configOrTypeName], defaults);
@@ -137,14 +135,14 @@ function testConfigToGrade () {
 };
 
 kettle.tests.testCreateDefaults = function () {
-    testConfigToGrade("config1", "config2", "config3", "config4");
+    kettle.test.testConfigToGrade ("config1", ["config1", "config2", "config3", "config4"]);
     var config1 = fluid.invokeGlobalFunction("config1");
     jqUnit.assertLeftHand("Subcomponent options are correct",
         expectedSubcomponentOptions, config1.subcomponent1.options);
 };
 
 kettle.tests.testCreateNoTypeNameDefaults = function () {
-    testConfigToGrade("config5", "config6");
+    kettle.test.testConfigToGrade(null, ["config5", "config6"]);
 };
 
 fluid.defaults("kettle.tests.configLoaderTester", {
@@ -152,19 +150,16 @@ fluid.defaults("kettle.tests.configLoaderTester", {
     modules: [{
         name: "Config Loader",
         tests: [{
-            expect: 10,
+            expect: 11,
             name: "kettle.config.createDefaults",
             func: "kettle.tests.testCreateDefaults"
         }, {
-            expect: 5,
+            expect: 4,
             name: "kettle.config.createDefaults no typeName",
             func: "kettle.tests.testCreateNoTypeNameDefaults"
         }]
     }]
 });
 
-if (kettle.tests.allTests) {
-    module.exports = "kettle.tests.configLoader";
-} else {
-    fluid.test.runTests(["kettle.tests.configLoader"]);
-}
+module.exports = kettle.test.bootstrap("kettle.tests.configLoader");
+

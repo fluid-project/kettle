@@ -12,41 +12,37 @@
  * https://github.com/gpii/universal/LICENSE.txt
  */
 
-/*global require, __dirname*/
+/*global require*/
 
 "use strict";
 
 var fluid = require("infusion"),
     http = require("http"),
-    path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../../../kettle.js")),
     jqUnit = fluid.require("jqUnit");
 
-fluid.setLogging(true);
+var kettle = fluid.registerNamespace("kettle");
 
-fluid.registerNamespace("kettle.tests");
-
-fluid.defaults("kettle.tests.cookieJar", {
+fluid.defaults("kettle.test.cookieJar", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     members: {
         cookie: "",
         parser: {
             expander: {
-                func: "kettle.tests.makeCookieParser",
+                func: "kettle.test.makeCookieParser",
                 args: "{that}.options.secret"
             }
         }
     }
 });
 
-kettle.tests.makeCookieParser = function (secret) {
+kettle.test.makeCookieParser = function (secret) {
     return kettle.utils.cookieParser(secret);
 };
 
-fluid.defaults("kettle.tests.request", {
+fluid.defaults("kettle.test.request", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
     invokers: {
-        send: "kettle.tests.request.send" // This is a dummy entry to be overridden by subclasses
+        send: "kettle.test.request.send" // This is a dummy entry to be overridden by subclasses
     },
     events: {
         onComplete: null
@@ -59,11 +55,11 @@ fluid.defaults("kettle.tests.request", {
 });
 
 // Definition and defaults of socket.io request component
-fluid.defaults("kettle.tests.request.io", {
-    gradeNames: ["autoInit", "kettle.tests.request"],
+fluid.defaults("kettle.test.request.io", {
+    gradeNames: ["autoInit", "kettle.test.request"],
     invokers: {
         send: {
-            funcName: "kettle.tests.request.io.send",
+            funcName: "kettle.test.request.io.send",
             args: [
                 "{that}",
                 "{arguments}.0",
@@ -71,23 +67,23 @@ fluid.defaults("kettle.tests.request.io", {
             ]
         },
         listen: {
-            funcName: "kettle.tests.request.io.listen",
+            funcName: "kettle.test.request.io.listen",
             args: "{that}"
         },
         connect: {
-            funcName: "kettle.tests.request.io.connect",
+            funcName: "kettle.test.request.io.connect",
             args: "{that}"
         },
         disconnect: {
-            funcName: "kettle.tests.request.io.disconnect",
+            funcName: "kettle.test.request.io.disconnect",
             args: "{that}.socket"
         },
         setCookie: {
-            funcName: "kettle.tests.request.io.setCookie",
+            funcName: "kettle.test.request.io.setCookie",
             args: ["{cookieJar}", "{arguments}.0"]
         },
         updateDependencies: {
-            funcName: "kettle.tests.request.io.updateDependencies",
+            funcName: "kettle.test.request.io.updateDependencies",
             args: "{that}"
         }
     },
@@ -97,7 +93,7 @@ fluid.defaults("kettle.tests.request.io", {
     },
     listeners: {
         onCreate: "{that}.updateDependencies",
-        "{tests}.events.onServerReady": {
+        "{serverEnvironment}.events.onServerReady": {
             listener: "{that}.listen",
             priority: "first"
         },
@@ -113,11 +109,11 @@ fluid.defaults("kettle.tests.request.io", {
     }
 });
 
-kettle.tests.request.io.disconnect = function (socket) {
+kettle.test.request.io.disconnect = function (socket) {
     socket.disconnect();
 };
 
-kettle.tests.request.io.connect = function (that) {
+kettle.test.request.io.connect = function (that) {
     var options = fluid.copy(that.options.requestOptions);
     options.path = fluid.stringTemplate(options.path, that.options.termMap);
     var url = options.hostname + ":" + options.port + options.path;
@@ -128,7 +124,7 @@ kettle.tests.request.io.connect = function (that) {
     that.socket.on("message", that.events.onMessage.fire);
 };
 
-kettle.tests.request.io.updateDependencies = function (that) {
+kettle.test.request.io.updateDependencies = function (that) {
     // Set io.
     that.io = require("socket.io-client");
 
@@ -152,19 +148,19 @@ kettle.tests.request.io.updateDependencies = function (that) {
         };
 };
 
-kettle.tests.request.io.listen = function (that) {
+kettle.test.request.io.listen = function (that) {
     if (that.options.listenOnInit) {
         that.connect();
     }
 };
 
-kettle.tests.request.io.setCookie = function (cookieJar, request) {
+kettle.test.request.io.setCookie = function (cookieJar, request) {
     if (cookieJar.cookie) {
         request.setRequestHeader("cookie", cookieJar.cookie);
     }
 };
 
-kettle.tests.request.io.send = function (that, model, callback) {
+kettle.test.request.io.send = function (that, model, callback) {
     if (!that.options.listenOnInit) {
         that.connect();
         that.socket.on("connect", function () {
@@ -178,11 +174,11 @@ kettle.tests.request.io.send = function (that, model, callback) {
 };
 
 // Definition and defaults of http request component
-fluid.defaults("kettle.tests.request.http", {
-    gradeNames: ["autoInit", "kettle.tests.request"],
+fluid.defaults("kettle.test.request.http", {
+    gradeNames: ["autoInit", "kettle.test.request"],
     invokers: {
         send: {
-            funcName: "kettle.tests.request.http.send",
+            funcName: "kettle.test.request.http.send",
             args: [
                 "{that}.options.requestOptions",
                 "{that}.options.termMap",
@@ -195,22 +191,22 @@ fluid.defaults("kettle.tests.request.http", {
 });
 
 // A variety of HTTP request that stores received cookies in a "jar" higher in the component tree
-fluid.defaults("kettle.tests.request.httpCookie", {
-    gradeNames: ["autoInit", "kettle.tests.request.http"],
+fluid.defaults("kettle.test.request.httpCookie", {
+    gradeNames: ["autoInit", "kettle.test.request.http"],
     requestOptions: {
         storeCookies: true
     }
 });
 
 // A variety of request that both uses socket.io as well as storing received cookies in a "jar" higher in the component tree
-fluid.defaults("kettle.tests.request.ioCookie", {
-    gradeNames: ["autoInit", "kettle.tests.request.io"],
+fluid.defaults("kettle.test.request.ioCookie", {
+    gradeNames: ["autoInit", "kettle.test.request.io"],
     requestOptions: {
         storeCookies: true
     }
 });
 
-kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, callback, model) {
+kettle.test.request.http.send = function (requestOptions, termMap, cookieJar, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
     fluid.log("Sending a request to:", options.path || "/");
@@ -272,22 +268,26 @@ kettle.tests.request.http.send = function (requestOptions, termMap, cookieJar, c
     req.end();
 };
 
-// Component that contains the Kettle configuration under test.
-fluid.defaults("kettle.tests.configuration", {
-    gradeNames: ["autoInit", "fluid.eventedComponent", "{kettle.tests.testCaseHolder}.options.configurationName"],
+// Component that contains the Kettle configuration (server) under test.
+fluid.defaults("kettle.test.configuration", {
+    gradeNames: ["autoInit", "fluid.eventedComponent", "{kettle.test.testCaseHolder}.options.configurationName"],
     components: {
         server: {
             options: {
                 listeners: {
-                    onListen: "{kettle.tests.testCaseHolder}.events.onServerReady"
+                    onListen: "{serverEnvironment}.events.onServerReady"
                 }
             }
         }
     }
 });
 
-fluid.defaults("kettle.tests.testCaseHolder", {
-    gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
+fluid.defaults("kettle.test.testCaseHolder", {
+    gradeNames: ["autoInit", "fluid.test.testCaseHolder"]
+});
+
+fluid.defaults("kettle.test.serverEnvironment", {
+    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
     events: {
         applyConfiguration: null,
         onServerReady: null
@@ -302,24 +302,25 @@ fluid.defaults("kettle.tests.testCaseHolder", {
     }],
     components: {
         cookieJar: {
-            type: "kettle.tests.cookieJar"
+            type: "kettle.test.cookieJar"
         },
         configuration: {
-            type: "kettle.tests.configuration",
+            type: "kettle.test.configuration",
             createOnEvent: "applyConfiguration"
+        },
+        testCaseHolder: {
+            type: "kettle.test.testCaseHolder"
         }
     }
 });
 
-fluid.defaults("kettle.tests.testEnvironment", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"]
-});
-
 /** Builds a Fluid IoC testing framework fixture (in fact, the "options" to a TestCaseHolder) given a configuration
- * name and a "testDef". The testDef must include a <code>sequence</code> element which will be fleshed out with the following
- * additions - i) At the front, two elements - firstly a firing of the <code>applyConfiguration</code> event of the TestCaseHolder,
- * secondly, a listener for the <code>onServerReady</code> event of the TestCaseHolder - ii) at the back, two elements - firstly,
- * an invocation of the <code>stop</code> method of the server. The resulting holder will be a <code>kettle.tests.testCaseHolder</code> holding
+ * name and a "testDef". This fixture will automatically be supplied as a subcomponent of an environment of type 
+ * <code>kettle.test.serverEnvironment</code>.
+ * The testDef must include a <code>sequence</code> element which will be fleshed out with the following
+ * additions - i) At the front, two elements - firstly a firing of the <code>applyConfiguration</code> event of the TestEnvironment,
+ * secondly, a listener for the <code>onServerReady</code> event of the TestEnvironment - ii) at the back, two elements - firstly,
+ * an invocation of the <code>stop</code> method of the server. The resulting holder will be a <code>kettle.test.testCaseHolder</code> holding
  * a Kettle server as a subcomponent of its <code>configuration</code> component.
  * @param configurationName {String} A configuration name which will become the "name" (in QUnit terms, "module name") of the
  * resulting fixture
@@ -328,20 +329,20 @@ fluid.defaults("kettle.tests.testEnvironment", {
  * @return {Object} a fully-fleshed out set of options for a TestCaseHolder, incuding extra sequence elements as described above.
  */
 
-kettle.tests.buildTestCase = function (configurationName, testDef) {
+kettle.test.testDefToServerOptions = function (configurationName, testDef) {
     var sequence = fluid.copy(testDef.sequence);
     delete testDef.sequence;
     sequence.unshift({
-        func: "{tests}.events.applyConfiguration.fire"
+        func: "{serverEnvironment}.events.applyConfiguration.fire"
     }, {
-        event: "{tests}.events.onServerReady",
+        event: "{serverEnvironment}.events.onServerReady",
         listener: "fluid.identity"
     });
 
     sequence.push({
-        func: "{tests}.configuration.server.stop"
+        func: "{serverEnvironment}.configuration.server.stop"
     }, {
-        event: "{tests}.configuration.server.events.onStopped",
+        event: "{serverEnvironment}.configuration.server.events.onStopped",
         listener: "fluid.identity"
     });
 
@@ -357,30 +358,47 @@ kettle.tests.buildTestCase = function (configurationName, testDef) {
     return testDef;
 };
 
-kettle.tests.buildTests = function (testDefs) {
-    return fluid.transform(testDefs, function (testDef) {
-        var configurationName = kettle.config.createDefaults(testDef.config);
-        var testName = fluid.model.composeSegments("kettle.tests", fluid.allocateGuid());
-        fluid.defaults(testName, {
-            gradeNames: ["kettle.tests.testEnvironment", "autoInit"],
+kettle.test.testDefToServerEnvironment = function (testDef) {
+    var configurationName = kettle.config.createDefaults(testDef.config);
+    return {
+        type: "kettle.test.serverEnvironment",
+        options: {
             components: {
-                tests: {
-                    type: "kettle.tests.testCaseHolder",
-                    options: kettle.tests.buildTestCase(configurationName, testDef)
+                testCaseHolder: {
+                    options: kettle.test.testDefToServerOptions(configurationName, testDef)
                 }
             }
-        });
-        return testName;
-    });
+        }
+    };
 };
 
-
-kettle.tests.runTests = function (testDefs) {
-    var tests = kettle.tests.buildTests(testDefs);
-    fluid.test.runTests(tests);
+kettle.test.buildTests = function (testDefs) {
+    return fluid.transform(testDefs, kettle.test.testDefToEnvironment);
 };
 
-kettle.tests.bootstrap = function (testDefs) {
-    return kettle.tests.allTests ? kettle.tests.buildTests(testDefs) :
-        kettle.tests.runTests(testDefs);
+/** These functions assist the use of individual files run as tests, as well as assisting a complete
+ * module's test suites run in aggregate. It makes use of the global flag kettle.test.allTests
+ * to distinguish these situations.
+ *
+ * When run without the kettle.test.allTests flag, the module returning the bootstrap return will run its
+ * tests immediately. When run with the flag, it instead returns the configuration which should be
+ * sent to fluid.test.runTests later.
+ *
+ * In time this should probably be fixed by improving the IoC testing framework - we can't just accumulate
+ * standard async QUnit fixtures since we instead run lock the creation and destruction of component trees
+ * for test fixtures in lockstep. But we should try to find a means for the system to "autonomously" contribute
+ * fixtures into a queue just as we could in plain QUnit/jQUnit. Note that we have serious bugs currently in 
+ * mixing plain fixtures with IoC testing fixtures. 
+ */
+kettle.test.bootstrap = function (testDefs, transformer) {
+    transformer = transformer || fluid.identity;
+    var tests = fluid.transform(fluid.makeArray(testDefs), transformer);
+    return kettle.test.allTests ? tests : fluid.test.runTests(tests);
+};
+
+/** As for kettle.test.bootstrap, only transform the supplied definitions by converting them into kettle
+ * server tests, bracketed by special server start and stop sequence points */
+ 
+kettle.test.bootstrapServer = function (testDefs) {
+    return kettle.test.bootstrap(testDefs, kettle.test.testDefToServerEnvironment);
 };

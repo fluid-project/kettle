@@ -10,15 +10,15 @@
  * https://github.com/GPII/kettle/LICENSE.txt
  */
 
-/*global require, __dirname*/
+"use strict";
 
 var fluid = require("infusion"),
     path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
+    kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
 
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
+fluid.registerNamespace("kettle.tests");
 
 /** Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's **/
 
@@ -35,21 +35,20 @@ fluid.defaults("kettle.requests.request.handler.requestError", {
 });
 
 kettle.tests.triggerGlobalErrorSync = function () {
-    "Global Error Triggered".triggerError(); 
+    "Global Error Triggered".triggerError();
 };
 
 
 kettle.tests.triggerGlobalErrorAsync = function () {
-    process.nextTick(function () { 
+    process.nextTick(function () {
          // Trigger this error asynchronously to avoid infuriating any of the testing frameworks 
-         kettle.tests.triggerGlobalErrorSync();
+        kettle.tests.triggerGlobalErrorSync();
     });
 };
 
 Error.stackTraceLimit = 100;
 
 kettle.tests.awaitGlobalError = function (priority, message) {
-    var stack = new Error().stack;
     jqUnit.assert(message);
 };
 
@@ -63,17 +62,17 @@ fluid.defaults("kettle.tests.logNotifierHolder", {
 fluid.staticEnvironment.logNotifierHolder = kettle.tests.logNotifierHolder();
 
 kettle.tests.instrumentLogging = function () {
-   kettle.tests.originalFluidLog = fluid.log;
-   var notifying = false;
-   fluid.log = function (logLevel) {
-       var togo = kettle.tests.originalFluidLog.apply(null, arguments); 
-       if (!notifying && logLevel.priority <= fluid.logLevel.FAIL.priority) {
-           notifying = true;          
-           fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
-           notifying = false;
-       }
-       return togo;
-   };
+    kettle.tests.originalFluidLog = fluid.log;
+    var notifying = false;
+    fluid.log = function (logLevel) {
+        var togo = kettle.tests.originalFluidLog.apply(null, arguments);
+        if (!notifying && logLevel.priority <= fluid.logLevel.FAIL.priority) {
+            notifying = true;
+            fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
+            notifying = false;
+        }
+        return togo;
+    };
 };
 
 kettle.tests.unInstrumentLogging = function () {
@@ -97,7 +96,7 @@ var testDefs = [{
             }
         },
         httpRequest: {
-            type: "kettle.tests.request.http"
+            type: "kettle.test.request.http"
         }
     },
     sequence: [{
@@ -107,15 +106,15 @@ var testDefs = [{
         args: "{testCaseHolder}"
     }, {
         event: "{eventHolder}.events.logNotifier",
-        listener: "kettle.tests.awaitGlobalError",
+        listener: "kettle.tests.awaitGlobalError"
     }, {
         func: "{httpRequest}.send"
     }, {
         event: "{eventHolder}.events.logNotifier",
-        listener: "kettle.tests.awaitGlobalError",
+        listener: "kettle.tests.awaitGlobalError"
     }, {
         func: "kettle.tests.unInstrumentLogging"
     }]
 }];
 
-module.exports = kettle.tests.bootstrap(testDefs);
+module.exports = kettle.test.bootstrapServer(testDefs);

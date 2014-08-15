@@ -10,15 +10,13 @@
  * https://github.com/GPII/kettle/LICENSE.txt
  */
 
-/*global require, __dirname*/
+"use strict";
 
 var fluid = require("infusion"),
     path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
+    kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
-
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
 
 fluid.defaults("kettle.tests.sessionServer", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
@@ -139,11 +137,8 @@ kettle.tests.validateToken = function (request) {
 };
 
 kettle.tests.testSessionEnd = function (requestProxy, token, request) {
-    var req = request.req;
-    var res = request.res;
     jqUnit.assertTrue("The session end request was received.", true);
-    jqUnit.assertEquals("Token matches the session token.",
-        request.session.session.token, token);
+    jqUnit.assertEquals("Token matches the session token.", request.session.session.token, token);
     request.session.events.onDestroySession.fire();
 };
 
@@ -190,7 +185,7 @@ kettle.tests.testSessionStartSuccessResponse = function (data, headers, cookies,
     jqUnit.assertTrue("kettle session cookie is set", !!signedCookies["kettle.sid"]);
 };
 
-kettle.tests.testSessionEndSuccessResponse = function (data, headers, cookies, signedCookies) {
+kettle.tests.testSessionEndSuccessResponse = function (data, headers, cookies) {
     kettle.tests.testSuccessResponse(data);
     jqUnit.assertEquals("kettle session cookie is unset", "", cookies["kettle.sid"]);
 };
@@ -204,7 +199,7 @@ kettle.tests.testFailureResponse = function (data) {
     testResponse(kettle.tests.testSessionFailureResponse, data);
 };
 
-kettle.tests.testInvalidIoRequest = function (reason) {
+kettle.tests.testInvalidIoRequest = function (/*reason*/) {
     jqUnit.assertTrue("Authorization failed as expected", true);
 };
 
@@ -221,7 +216,7 @@ var testDefs = [{
     },
     components: {
         invalidIoRequest: {
-            type: "kettle.tests.request.ioCookie",
+            type: "kettle.test.request.ioCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionSocket"
@@ -229,7 +224,7 @@ var testDefs = [{
             }
         },
         ioRequest: {
-            type: "kettle.tests.request.ioCookie",
+            type: "kettle.test.request.ioCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionSocket"
@@ -237,7 +232,7 @@ var testDefs = [{
             }
         },
         httpTestSessionStart: {
-            type: "kettle.tests.request.httpCookie",
+            type: "kettle.test.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionStart/%token"
@@ -248,7 +243,7 @@ var testDefs = [{
             }
         },
         httpTestSessionEnd: {
-            type: "kettle.tests.request.httpCookie",
+            type: "kettle.test.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionEnd/%token"
@@ -259,7 +254,7 @@ var testDefs = [{
             }
         },
         httpTestSessionRequest: {
-            type: "kettle.tests.request.httpCookie",
+            type: "kettle.test.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testSessionRequest"
@@ -267,7 +262,7 @@ var testDefs = [{
             }
         },
         httpTestNoneSessionRequest: {
-            type: "kettle.tests.request.httpCookie",
+            type: "kettle.test.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testNoneSessionRequest"
@@ -275,7 +270,7 @@ var testDefs = [{
             }
         },
         httpTestNoSessionRequest: {
-            type: "kettle.tests.request.httpCookie",
+            type: "kettle.test.request.httpCookie",
             options: {
                 requestOptions: {
                     path: "/testNoSessionRequest"
@@ -338,4 +333,4 @@ var testDefs = [{
     }]
 }];
 
-module.exports = kettle.tests.bootstrap(testDefs);
+module.exports = kettle.test.bootstrapServer(testDefs);
