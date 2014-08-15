@@ -372,15 +372,14 @@ kettle.test.testDefToServerEnvironment = function (testDef) {
     };
 };
 
-kettle.test.buildTests = function (testDefs) {
-    return fluid.transform(testDefs, kettle.test.testDefToEnvironment);
-};
-
 /** These functions assist the use of individual files run as tests, as well as assisting a complete
- * module's test suites run in aggregate. It makes use of the global flag kettle.test.allTests
+ * module's test suites run in aggregate. They makes use of the global flag <code>kettle.test.allTests</code>
  * to distinguish these situations.
  *
- * When run without the kettle.test.allTests flag, the module returning the bootstrap return will run its
+ * The expected usage of these functions is as the last line of a node.js-aware file containing some test definitions.
+ * This last line will read: <code>module.exports = kettle.test.bootstrap(testDefs, ...)</code>. 
+ *
+ * When run without the kettle.test.allTests flag, the module exporting the bootstrap return will run its
  * tests immediately. When run with the flag, it instead returns the configuration which should be
  * sent to fluid.test.runTests later.
  *
@@ -388,17 +387,23 @@ kettle.test.buildTests = function (testDefs) {
  * standard async QUnit fixtures since we instead run lock the creation and destruction of component trees
  * for test fixtures in lockstep. But we should try to find a means for the system to "autonomously" contribute
  * fixtures into a queue just as we could in plain QUnit/jQUnit. Note that we have serious bugs currently in 
- * mixing plain fixtures with IoC testing fixtures. 
+ * mixing plain fixtures with IoC testing fixtures.
+ * @param testDefs {Object} or {Array of Object} an array of objects, each representing a test fixture
+ * @param transformer {Function} or {Array of Function} an array of transform functions, accepting an object representing a test fixture and returning a "more processed" one. The entire chain
+ * of functions will be applied to each member of <code>testDefs</code>, with the result that it becomes a fully fleshed out TestCaseHolder as required by Fluid's 
+ * <a href="http://wiki.fluidproject.org/display/docs/The+IoC+Testing+Framework">IoC Testing Framework</a>  
  */
+ 
 kettle.test.bootstrap = function (testDefs, transformer) {
-    transformer = transformer || fluid.identity;
-    var tests = fluid.transform(fluid.makeArray(testDefs), transformer);
+    var transformArgs = [fluid.makeArray(testDefs)].concat(fluid.makeArray(transformer));
+    var tests = fluid.transform.apply(null, transformArgs);
     return kettle.test.allTests ? tests : fluid.test.runTests(tests);
 };
 
 /** As for kettle.test.bootstrap, only transform the supplied definitions by converting them into kettle
- * server tests, bracketed by special server start and stop sequence points */
+ * server tests, bracketed by special server start and stop sequence points. Any supplied transforms in the 2nd 
+ * argument will be run after the standard transform to construct server-aware test cases */
  
-kettle.test.bootstrapServer = function (testDefs) {
-    return kettle.test.bootstrap(testDefs, kettle.test.testDefToServerEnvironment);
+kettle.test.bootstrapServer = function (testDefs, transformer) {
+    return kettle.test.bootstrap(testDefs, [kettle.test.testDefToServerEnvironment].concat(fluid.makeArray(transformer)));
 };
