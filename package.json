@@ -10,7 +10,7 @@
         "socket.io": "~0.9.16",
         "infusion": "git://github.com/amb26/infusion.git#448be739b30ca2d004f75f89b58c7e38c79951e0",
         "node-uuid": "~1.4.0",
-        "when": "~3.4.4",
+        "when": "1.8.1",
         "xmlhttprequest": "~1.6.0",
         "socket.io-client": "~0.9.16"
     },

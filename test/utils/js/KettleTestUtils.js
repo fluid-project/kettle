@@ -402,8 +402,8 @@ kettle.test.bootstrap = function (testDefs, transformer) {
 
 /** As for kettle.test.bootstrap, only transform the supplied definitions by converting them into kettle
  * server tests, bracketed by special server start and stop sequence points. Any supplied transforms in the 2nd 
- * argument will be run after the standard transform to construct server-aware test cases */
+ * argument will be run before the standard transform to construct server-aware test cases */
  
 kettle.test.bootstrapServer = function (testDefs, transformer) {
-    return kettle.test.bootstrap(testDefs, [kettle.test.testDefToServerEnvironment].concat(fluid.makeArray(transformer)));
+    return kettle.test.bootstrap(testDefs, fluid.makeArray(transformer).concat([kettle.test.testDefToServerEnvironment]));
 };
