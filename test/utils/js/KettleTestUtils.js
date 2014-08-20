@@ -219,7 +219,7 @@ kettle.test.request.http.send = function (requestOptions, termMap, cookieJar, ca
     if (cookieJar.cookie && options.storeCookies) {
         options.headers.Cookie = cookieJar.cookie;
     }
-    var req = http.request(options, function(res) {
+    var req = http.request(options, function (res) {
         var data = "";
         res.setEncoding("utf8");
 
@@ -255,10 +255,9 @@ kettle.test.request.http.send = function (requestOptions, termMap, cookieJar, ca
     });
 
     req.shouldKeepAlive = false;
-
-    req.on("error", function(err) {
-        jqUnit.assertFalse("Error making request to " + options.path + ": " +
-            err.message, true);
+    
+    req.on("error", function (err) {
+        jqUnit.fail("Error making request to " + options.path + ": " + err.message);
     });
 
     if (model) {

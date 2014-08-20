@@ -17,6 +17,8 @@ var fluid = require("infusion"),
      fs = require("fs"),
      jqUnit = fluid.require("jqUnit");
  
+kettle.loadTestingSupport();
+ 
 fluid.registerNamespace("kettle.tests.dataSource");
 
 kettle.tests.dataSource.handleError = function (data) {

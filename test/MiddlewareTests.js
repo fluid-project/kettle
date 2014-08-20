@@ -18,6 +18,8 @@ var fluid = require("infusion"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
 
+kettle.loadTestingSupport();
+
 fluid.defaults("kettle.requests.request.handler.testGet", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {

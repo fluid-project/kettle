@@ -15,6 +15,8 @@
 var fluid = require("infusion"),
     kettle = require("../kettle.js");
 
+kettle.loadTestingSupport();
+
 kettle.test.allTests = true;
 
 var testIncludes = [

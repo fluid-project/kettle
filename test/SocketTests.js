@@ -17,6 +17,8 @@ var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
+    
+kettle.loadTestingSupport();
 
 fluid.defaults("kettle.requests.request.handler.testSocket", {
     gradeNames: ["fluid.littleComponent", "autoInit"],

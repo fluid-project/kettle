@@ -18,7 +18,8 @@ var fluid = require("infusion"),
     kettle = require("../kettle.js"), // TODO: New module loader
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
-       
+
+kettle.loadTestingSupport();
 
 fluid.defaults("kettle.tests.configLoader", {
     gradeNames: ["fluid.test.testEnvironment", "autoInit"],
@@ -110,7 +111,7 @@ var expectedSubcomponentOptions = {
     option: "OVERRIDE"
 };
 
-kettle.test.testConfigToGrade = function (headName, configNames) {
+kettle.tests.testConfigToGrade = function (headName, configNames) {
     var componentName = kettle.config.createDefaults({
             nodeEnv: configNames[0],
             configPath: configPath
@@ -135,14 +136,14 @@ kettle.test.testConfigToGrade = function (headName, configNames) {
 };
 
 kettle.tests.testCreateDefaults = function () {
-    kettle.test.testConfigToGrade ("config1", ["config1", "config2", "config3", "config4"]);
+    kettle.tests.testConfigToGrade("config1", ["config1", "config2", "config3", "config4"]);
     var config1 = fluid.invokeGlobalFunction("config1");
     jqUnit.assertLeftHand("Subcomponent options are correct",
         expectedSubcomponentOptions, config1.subcomponent1.options);
 };
 
 kettle.tests.testCreateNoTypeNameDefaults = function () {
-    kettle.test.testConfigToGrade(null, ["config5", "config6"]);
+    kettle.tests.testConfigToGrade(null, ["config5", "config6"]);
 };
 
 fluid.defaults("kettle.tests.configLoaderTester", {

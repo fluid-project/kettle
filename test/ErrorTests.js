@@ -18,6 +18,8 @@ var fluid = require("infusion"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
 
+kettle.loadTestingSupport();
+
 fluid.registerNamespace("kettle.tests");
 
 /** Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's **/
@@ -67,9 +69,11 @@ kettle.tests.instrumentLogging = function () {
     fluid.log = function (logLevel) {
         var togo = kettle.tests.originalFluidLog.apply(null, arguments);
         if (!notifying && logLevel.priority <= fluid.logLevel.FAIL.priority) {
-            notifying = true;
-            fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
-            notifying = false;
+            process.nextTick(function () { // make this async to avoid destroying the server whilst the request is still active
+                notifying = true;
+                fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
+                notifying = false;
+            }, 100);
         }
         return togo;
     };
