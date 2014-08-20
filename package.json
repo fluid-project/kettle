@@ -2,13 +2,17 @@
     "name": "kettle",
     "description": "Serverside declarative IoC framework.",
     "version": "0.1.0-SNAPSHOT",
-    "author": "The Fluid Project",
-    "bugs": "http://issues.fluidproject.org/browse/KETTLE",
+    "author": {
+        "name": "The Fluid Project"
+    },
+    "bugs": {
+        "url": "http://issues.fluidproject.org/browse/KETTLE"
+    },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
         "express": "~3.4.3",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/amb26/infusion.git#448be739b30ca2d004f75f89b58c7e38c79951e0",
+        "infusion": "git://github.com/amb26/infusion.git#3e0e2ac5906e6981df4cc0bf2f943c13ed17f1d7",
         "node-uuid": "~1.4.0",
         "when": "1.8.1",
         "xmlhttprequest": "~1.6.0",
@@ -23,13 +27,27 @@
         "grunt": "~0.4.4"
     },
     "licenses": [
-         {
-             "type": "BSD-3-Clause",
-             "url": "http://www.opensource.org/licenses/BSD-3-Clause"
-         }
+        {
+            "type": "BSD-3-Clause",
+            "url": "http://www.opensource.org/licenses/BSD-3-Clause"
+        }
     ],
-    "keywords": ["infusion", "framework", "application", "fluid", "IoC", "Inversion of Control", "MVC", "evented"],
-    "repository": "git://github.com/GPII/kettle.git",
+    "keywords": [
+        "infusion",
+        "framework",
+        "application",
+        "fluid",
+        "IoC",
+        "Inversion of Control",
+        "MVC",
+        "evented"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/GPII/kettle.git"
+    },
     "main": "./kettle.js",
-    "engines": { "node" : ">=0.8" }
+    "engines": {
+        "node": ">=0.8"
+    }
 }

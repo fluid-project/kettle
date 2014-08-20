@@ -26,12 +26,13 @@ kettle.tests.dataSource.handleError = function (data) {
 };
 
 kettle.tests.makeSetResponseTester = function (dataSource, directModel, expected) {
-    return function testResponse() {
+    var testResponse = function () {
         var fileName = dataSource.urlResolver.resolve(directModel).substring(7),
             data = JSON.parse(fs.readFileSync(fileName, "utf8"));
         jqUnit.assertDeepEq("Response is correct", expected, data);
         fs.unlink(fileName);
     };
+    return testResponse;
 };
 
 kettle.tests.setCouchDocument = function (config, dataSource) {
@@ -249,9 +250,6 @@ fluid.defaults("kettle.tests.dataSource", {
         },
 
         // Adapter test components.
-        callbackWrapper: {
-            type: "kettle.requestContextCallbackWrapper"
-        },
         adapter1: {
             type: "kettle.dataSource.URL",
             options: {

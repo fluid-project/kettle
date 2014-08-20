@@ -48,7 +48,7 @@ fluid.defaults("kettle.test.request", {
         onComplete: null
     },
     requestOptions: {
-        port: 8080,
+        port: 8081,
         storeCookies: false
     },
     termMap: {}
@@ -93,7 +93,7 @@ fluid.defaults("kettle.test.request.io", {
     },
     listeners: {
         onCreate: "{that}.updateDependencies",
-        "{serverEnvironment}.events.onServerReady": {
+        "{tests}.events.onServerReady": {
             listener: "{that}.listen",
             priority: "first"
         },
@@ -270,12 +270,12 @@ kettle.test.request.http.send = function (requestOptions, termMap, cookieJar, ca
 
 // Component that contains the Kettle configuration (server) under test.
 fluid.defaults("kettle.test.configuration", {
-    gradeNames: ["autoInit", "fluid.eventedComponent", "{kettle.test.testCaseHolder}.options.configurationName"],
+    gradeNames: ["autoInit", "fluid.eventedComponent", "{testCaseHolder}.options.configurationName"],
     components: {
         server: {
             options: {
                 listeners: {
-                    onListen: "{serverEnvironment}.events.onServerReady"
+                    onListen: "{tests}.events.onServerReady"
                 }
             }
         }
@@ -283,11 +283,7 @@ fluid.defaults("kettle.test.configuration", {
 });
 
 fluid.defaults("kettle.test.testCaseHolder", {
-    gradeNames: ["autoInit", "fluid.test.testCaseHolder"]
-});
-
-fluid.defaults("kettle.test.serverEnvironment", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+    gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
     events: {
         applyConfiguration: null,
         onServerReady: null
@@ -301,14 +297,20 @@ fluid.defaults("kettle.test.serverEnvironment", {
         target: "{that server}.options.secret"
     }],
     components: {
-        cookieJar: {
-            type: "kettle.test.cookieJar"
-        },
         configuration: {
-            type: "kettle.test.configuration",
+            type: "kettle.test.configuration", // The server and all its tree lie under here
             createOnEvent: "applyConfiguration"
         },
-        testCaseHolder: {
+        cookieJar: {
+            type: "kettle.test.cookieJar"
+        }
+    }
+});
+
+fluid.defaults("kettle.test.serverEnvironment", {
+    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+    components: {
+        tests: {
             type: "kettle.test.testCaseHolder"
         }
     }
@@ -333,16 +335,16 @@ kettle.test.testDefToServerOptions = function (configurationName, testDef) {
     var sequence = fluid.copy(testDef.sequence);
     delete testDef.sequence;
     sequence.unshift({
-        func: "{serverEnvironment}.events.applyConfiguration.fire"
+        func: "{tests}.events.applyConfiguration.fire"
     }, {
-        event: "{serverEnvironment}.events.onServerReady",
+        event: "{tests}.events.onServerReady",
         listener: "fluid.identity"
     });
 
     sequence.push({
-        func: "{serverEnvironment}.configuration.server.stop"
+        func: "{tests}.configuration.server.stop"
     }, {
-        event: "{serverEnvironment}.configuration.server.events.onStopped",
+        event: "{tests}.configuration.server.events.onStopped",
         listener: "fluid.identity"
     });
 
@@ -364,7 +366,7 @@ kettle.test.testDefToServerEnvironment = function (testDef) {
         type: "kettle.test.serverEnvironment",
         options: {
             components: {
-                testCaseHolder: {
+                tests: {
                     options: kettle.test.testDefToServerOptions(configurationName, testDef)
                 }
             }

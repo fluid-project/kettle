@@ -29,7 +29,7 @@ fluid.defaults("kettle.requests.request.handler.requestError", {
     invokers: {
         handle: {
             funcName: "fluid.fail",
-            args: "Assertion failed in request"
+            args: "Assertion failed in request - this failure is expected: "
         }
     }
 });
