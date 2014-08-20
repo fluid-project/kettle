@@ -386,8 +386,8 @@ kettle.test.testDefToServerEnvironment = function (testDef) {
  * sent to fluid.test.runTests later.
  *
  * In time this should probably be fixed by improving the IoC testing framework - we can't just accumulate
- * standard async QUnit fixtures since we instead run lock the creation and destruction of component trees
- * for test fixtures in lockstep. But we should try to find a means for the system to "autonomously" contribute
+ * standard async QUnit fixtures since we instead drive fixtures in lockstep with the creation and destruction 
+ * of component trees. But we should try to find a means for the system to "autonomously" contribute
  * fixtures into a queue just as we could in plain QUnit/jQUnit. Note that we have serious bugs currently in 
  * mixing plain fixtures with IoC testing fixtures.
  * @param testDefs {Object} or {Array of Object} an array of objects, each representing a test fixture
