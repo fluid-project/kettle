@@ -272,6 +272,7 @@ fluid.defaults("kettle.test.configuration", {
     gradeNames: ["autoInit", "fluid.eventedComponent", "{testCaseHolder}.options.configurationName"],
     components: {
         server: {
+            createOnEvent: "{tests}.events.constructServer",
             options: {
                 listeners: {
                     onListen: "{tests}.events.onServerReady"
@@ -284,8 +285,8 @@ fluid.defaults("kettle.test.configuration", {
 fluid.defaults("kettle.test.testCaseHolder", {
     gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
     events: {
-        applyConfiguration: null,
-        onServerReady: null
+        onServerReady: null,
+        constructServer: null,
     },
     secret: "kettle tests secret",
     distributeOptions: [{
@@ -297,8 +298,7 @@ fluid.defaults("kettle.test.testCaseHolder", {
     }],
     components: {
         configuration: {
-            type: "kettle.test.configuration", // The server and all its tree lie under here
-            createOnEvent: "applyConfiguration"
+            type: "kettle.test.configuration" // The server and all its tree lie under here
         },
         cookieJar: {
             type: "kettle.test.cookieJar"
@@ -319,7 +319,7 @@ fluid.defaults("kettle.test.serverEnvironment", {
  * name and a "testDef". This fixture will automatically be supplied as a subcomponent of an environment of type 
  * <code>kettle.test.serverEnvironment</code>.
  * The testDef must include a <code>sequence</code> element which will be fleshed out with the following
- * additions - i) At the front, two elements - firstly a firing of the <code>applyConfiguration</code> event of the TestEnvironment,
+ * additions - i) At the front, two elements - firstly a firing of the <code>constructServer</code> event of the TestEnvironment,
  * secondly, a listener for the <code>onServerReady</code> event of the TestEnvironment - ii) at the back, two elements - firstly,
  * an invocation of the <code>stop</code> method of the server. The resulting holder will be a <code>kettle.test.testCaseHolder</code> holding
  * a Kettle server as a subcomponent of its <code>configuration</code> component.
@@ -333,8 +333,8 @@ fluid.defaults("kettle.test.serverEnvironment", {
 kettle.test.testDefToServerOptions = function (configurationName, testDef) {
     var sequence = fluid.copy(testDef.sequence);
     delete testDef.sequence;
-    sequence.unshift({
-        func: "{tests}.events.applyConfiguration.fire"
+    sequence.unshift({ // This sequence point is required because of a QUnit bug - it defers the start of sequence by 13ms "to avoid any current callbacks" in its words
+        func: "{tests}.events.constructServer.fire"
     }, {
         event: "{tests}.events.onServerReady",
         listener: "fluid.identity"
