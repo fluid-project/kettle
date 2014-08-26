@@ -289,7 +289,7 @@ fluid.defaults("kettle.test.testCaseHolder", {
     gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
     events: {
         onServerReady: null,
-        constructServer: null,
+        constructServer: null
     },
     secret: "kettle tests secret",
     distributeOptions: [{
