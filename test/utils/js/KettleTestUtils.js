@@ -105,7 +105,10 @@ fluid.defaults("kettle.test.request.io", {
     },
     ioOptions: {
         transports: ["websocket"],
-        "force new connection": true
+        reconnect: false, // This option prevents corruption of test cases on Windows, where slow terminal scrolling may block I/O and
+        // cause tests to consider that a retry is necessary on failed I/O
+        "force new connection": true // TODO: This option is undocumented and is not supported with the current version of socket.io node client - 
+        // we need to understand why it was added. It appears the current name will be "forceNew"
     }
 });
 
