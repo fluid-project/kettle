@@ -46,7 +46,7 @@ fluid.defaults("kettle.tests.subcomponent3", {
 
 var expectedDefaults = {
     config1: {
-        gradeNames: ["config1", "fluid.littleComponent", "config2",
+        gradeNames: ["config1", "fluid.littleComponent", "kettle.config", "config2",
             "fluid.eventedComponent", "config4", "config3",
             "fluid.modelComponent", "fluid.commonModelComponent", "autoInit"],
         components: {
@@ -62,8 +62,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config2: {
-        gradeNames: ["config2", "fluid.eventedComponent",
-            "fluid.littleComponent", "config4"],
+        gradeNames: ["config2", "fluid.eventedComponent", "fluid.littleComponent", "kettle.config", "config4"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -75,7 +74,7 @@ var expectedDefaults = {
         option2: "OPTION2"
     },
     config3: {
-        gradeNames: ["config3", "fluid.modelComponent", "fluid.commonModelComponent", "fluid.littleComponent"],
+        gradeNames: ["config3", "fluid.modelComponent", "fluid.commonModelComponent", "fluid.littleComponent", "kettle.config"],
         components: {
             subcomponent1: {
                 options: {
@@ -86,7 +85,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config4: {
-        gradeNames: ["config4"],
+        gradeNames: ["config4", "kettle.config", "fluid.littleComponent"],
         components: {
             subcomponent1: {
                 options: {
@@ -95,12 +94,12 @@ var expectedDefaults = {
             }
         }
     },
-    config5: {
+    config5: { // never becomes a top-level config and so does not acquire the kettle.config grade
         gradeNames: ["config5", "config6", "fluid.littleComponent"],
         option6: "OPTION6"
     },
     config6: {
-        gradeNames: ["config6", "fluid.littleComponent", "autoInit"],
+        gradeNames: ["config6", "fluid.littleComponent", "kettle.config", "autoInit"],
         option6: "OPTION6"
     }
 };
