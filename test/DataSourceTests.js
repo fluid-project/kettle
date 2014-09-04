@@ -1,7 +1,8 @@
 /*!
 Kettle Data Source Tests
 
-Copyright 2012 Raising the Floor - International
+Copyright 2012 OCAD University
+Copyright 2014 Raising the Floor - International
 
 Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
@@ -10,12 +11,12 @@ You may obtain a copy of the License at
 https://github.com/GPII/kettle/LICENSE.txt
 */
 
-/*global require, __dirname*/
+/*global require, module, __dirname*/
 
 (function () {
     var fluid = require("infusion"),
          path = require("path"),
-         kettle = fluid.require(path.resolve(__dirname, "../kettle.js"));
+         kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
          fs = require("fs"),
          jqUnit = fluid.require("jqUnit");
 
@@ -36,17 +37,13 @@ https://github.com/GPII/kettle/LICENSE.txt
         return function testResponse() {
             var fileName = dataSource.urlResolver.resolve(directModel).substring(7),
                 data = JSON.parse(fs.readFileSync(fileName, "utf8"));
-            console.log("==== filename: "+JSON.stringify(fileName)+"====\n");
-            console.log("==== data from file: "+JSON.stringify(data)+"====\n");
-            // console.log("==== : "+JSON.stringify(filename)+"====\n");
 
             jqUnit.assertDeepEq("Response is correct", expected, data);
             fs.unlink(fileName);
         };
     };
 
-    //TODO - should we delete this? check once all tests are done.
-    fluid.test.setCouchDocument = function (config, dataSource) {
+     fluid.test.setCouchDocument = function (config, dataSource) {
         var data = fluid.copy(config.model),
             fileName = dataSource.urlResolver.resolve(config.directModel);
         fileName = fileName.substring(7);
@@ -441,32 +438,32 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }
                     }
                 }]
-                }, {
-                    expect: 1,
-                    name: "Testing couchdb datasource with filesystem with expansion and static termMap",
-                    func: "{dataSource9}.get",
-                    args: [null, {
-                        expander: {
-                            func: "fluid.test.makeResponseTester",
-                            args: {
-                                dataSource: "works"
-                            }
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem with expansion and static termMap",
+                func: "{dataSource9}.get",
+                args: [null, {
+                    expander: {
+                        func: "fluid.test.makeResponseTester",
+                        args: {
+                            dataSource: "works"
                         }
-                    }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing url datasource with filesystem and expansion",
+                func: "{dataSource10}.get",
+                args: [{
+                    expand: "dataSourceTestFile"
                 }, {
-                    expect: 1,
-                    name: "Testing url datasource with filesystem and expansion",
-                    func: "{dataSource10}.get",
-                    args: [{
-                        expand: "dataSourceTestFile"
-                    }, {
-                        expander: {
-                            func: "fluid.test.makeResponseTester",
-                            args: {
-                                dataSource: "works"
-                            }
+                    expander: {
+                        func: "fluid.test.makeResponseTester",
+                        args: {
+                            dataSource: "works"
                         }
-                    }]
+                    }
+                }]
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem and expansion",
@@ -563,7 +560,7 @@ https://github.com/GPII/kettle/LICENSE.txt
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem and expansion- set",
-                 sequence: [{
+                sequence: [{
                     func: "fluid.test.setCouchDocument",
                     args: [{
                         model: {
@@ -614,12 +611,12 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }
                     }
                 }]
-            }, { //TODO - is this correct behavior -- ie. expecting the callback to be called with 'undefined' as argument
+            }, {
                 expect: 1,
                 name: "Testing promise adapter with empty response",
                 func: "fluid.test.makePromise",
                 args: ["{adapter2}", "get", null, fluid.test.emptyResponseTester]
-            }, { //TODO - same here is this correct behavior -- ie. expecting the callback to be called with 'undefined' as argument
+            }, {
                 expect: 1,
                 name: "Testing promise adapter with filesystem with expansion and no file",
                 func: "fluid.test.makePromise",
