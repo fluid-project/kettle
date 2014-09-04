@@ -482,67 +482,67 @@ https://github.com/GPII/kettle/LICENSE.txt
                     }
                 }]
             }, {
-            //     expect: 1,
-            //     name: "Testing url datasource with filesystem - set",
-            //     func: "{dataSource12}.set",
-            //     args: [null, {
-            //         test: "test"
-            //     }, {
-            //         expander: {
-            //             func: "fluid.test.makeSetResponseTester",
-            //             args: ["{dataSource12}", null, {
-            //                 test: "test"
-            //             }]
-            //         }
-            //     }]
-            // }, {
-            //     expect: 1,
-            //     name: "Testing couchdb datasource with filesystem - set (non-existent file)",
-            //     func: "{dataSource13}.set",
-            //     args: [null, {
-            //         test: "test"
-            //     }, {
-            //         expander: {
-            //             func: "fluid.test.makeSetResponseTester",
-            //             args: ["{dataSource13}", null, {
-            //                 value:  {
-            //                     test: "test"
-            //                 }
-            //             }]
-            //         }
-            //     }]
-            // }, {
-            //     expect: 1,
-            //     name: "Testing couchdb datasource with filesystem exiting doc - set",
-            //     sequence: [{
-            //         func: "fluid.test.setCouchDocument",
-            //         args: [{
-            //             model: {
-            //                 bogus: "text"
-            //             }
-            //         },
-            //         "{dataSource14}"
+                expect: 1,
+                name: "Testing url datasource with filesystem - set",
+                func: "{dataSource12}.set",
+                args: [null, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{dataSource12}", null, {
+                            test: "test"
+                        }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem - set (non-existent file)",
+                func: "{dataSource13}.set",
+                args: [null, {
+                    test: "test"
+                }, {
+                    expander: {
+                        func: "fluid.test.makeSetResponseTester",
+                        args: ["{dataSource13}", null, {
+                            value:  {
+                                test: "test"
+                            }
+                        }]
+                    }
+                }]
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem exiting doc - set",
+                sequence: [{
+                    func: "fluid.test.setCouchDocument",
+                    args: [{
+                        model: {
+                            bogus: "text"
+                        }
+                    },
+                    "{dataSource14}"
 
-            //         ]
-            //     }, {
-            //         func: "{dataSource14}.set",
-            //         args: [null, {
-            //             test: "test"
-            //         }, {
-            //             expander: {
-            //                 func: "fluid.test.makeSetResponseTester",
-            //                 args: ["{dataSource14}", null, {
-            //                     value: {
-            //                         test: "test"
-            //                     },
-            //                     _rev: "test_rev",
-            //                     _id: "test_id"
-            //                 }]
-            //             }
-            //         }]
-            //     }]
+                    ]
+                }, {
+                    func: "{dataSource14}.set",
+                    args: [null, {
+                        test: "test"
+                    }, {
+                        expander: {
+                            func: "fluid.test.makeSetResponseTester",
+                            args: ["{dataSource14}", null, {
+                                value: {
+                                    test: "test"
+                                },
+                                _rev: "test_rev",
+                                _id: "test_id"
+                            }]
+                        }
+                    }]
+                }]
 
-            // }, {
+            }, {
                 expect: 1,
                 name: "Testing url datasource with filesystem and expansion- set",
                 func: "{dataSource15}.set",
@@ -560,40 +560,40 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }]
                     }
                 }]
-            // }, {
-            //     expect: 1,
-            //     name: "Testing couchdb datasource with filesystem and expansion- set",
-            //      sequence: [{
-            //         func: "fluid.test.setCouchDocument",
-            //         args: [{
-            //             model: {
-            //                 bogus: "text"
-            //             },
-            //             directModel: {
-            //                 expand: "test"
-            //             }
-            //         }, "{dataSource16}" ]
-            //     }, {
-            //         func: "{dataSource16}.set",
-            //         args: [{
-            //             expand: "test"
-            //         }, {
-            //             test: "test"
-            //         }, {
-            //             expander: {
-            //                 func: "fluid.test.makeSetResponseTester",
-            //                 args: ["{dataSource16}", {
-            //                     expand: "test"
-            //                 }, {
-            //                     value: {
-            //                         test: "test"
-            //                     },
-            //                     _rev: "test_rev",
-            //                     _id: "test_id"
-            //                 }]
-            //             }
-            //         }]
-            //     }]
+            }, {
+                expect: 1,
+                name: "Testing couchdb datasource with filesystem and expansion- set",
+                 sequence: [{
+                    func: "fluid.test.setCouchDocument",
+                    args: [{
+                        model: {
+                            bogus: "text"
+                        },
+                        directModel: {
+                            expand: "test"
+                        }
+                    }, "{dataSource16}" ]
+                }, {
+                    func: "{dataSource16}.set",
+                    args: [{
+                        expand: "test"
+                    }, {
+                        test: "test"
+                    }, {
+                        expander: {
+                            func: "fluid.test.makeSetResponseTester",
+                            args: ["{dataSource16}", {
+                                expand: "test"
+                            }, {
+                                value: {
+                                    test: "test"
+                                },
+                                _rev: "test_rev",
+                                _id: "test_id"
+                            }]
+                        }
+                    }]
+                }]
             }]
         }]
     });
@@ -614,18 +614,18 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }
                     }
                 }]
-            }, {
+            }, { //TODO - is this correct behavior -- ie. expecting the callback to be called with 'undefined' as argument
                 expect: 1,
                 name: "Testing promise adapter with empty response",
                 func: "fluid.test.makePromise",
-                args: ["{adapter2}", "get", null, fluid.identity]
-            }, {
+                args: ["{adapter2}", "get", null, fluid.test.emptyResponseTester]
+            }, { //TODO - same here is this correct behavior -- ie. expecting the callback to be called with 'undefined' as argument
                 expect: 1,
                 name: "Testing promise adapter with filesystem with expansion and no file",
                 func: "fluid.test.makePromise",
                 args: ["{adapter3}", "get", {
                     expand: "not_found"
-                }, fluid.identity]
+                }, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing promise adapter with filesystem with expansion and static termMap",
