@@ -37,13 +37,12 @@ https://github.com/GPII/kettle/LICENSE.txt
         return function testResponse() {
             var fileName = dataSource.urlResolver.resolve(directModel).substring(7),
                 data = JSON.parse(fs.readFileSync(fileName, "utf8"));
-
             jqUnit.assertDeepEq("Response is correct", expected, data);
             fs.unlink(fileName);
         };
     };
 
-     fluid.test.setCouchDocument = function (config, dataSource) {
+    fluid.test.setCouchDocument = function (config, dataSource) {
         var data = fluid.copy(config.model),
             fileName = dataSource.urlResolver.resolve(config.directModel);
         fileName = fileName.substring(7);
