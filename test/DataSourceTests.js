@@ -27,15 +27,25 @@ https://github.com/GPII/kettle/LICENSE.txt
             data.isError);
     };
 
+    fluid.test.emptyResponseTester = function (data) {
+        jqUnit.assertEquals("Expecting empty response on get to non-existent file/record",
+            data, undefined);
+    };
+
     fluid.test.makeSetResponseTester = function (dataSource, directModel, expected) {
         return function testResponse() {
             var fileName = dataSource.urlResolver.resolve(directModel).substring(7),
                 data = JSON.parse(fs.readFileSync(fileName, "utf8"));
+            console.log("==== filename: "+JSON.stringify(fileName)+"====\n");
+            console.log("==== data from file: "+JSON.stringify(data)+"====\n");
+            // console.log("==== : "+JSON.stringify(filename)+"====\n");
+
             jqUnit.assertDeepEq("Response is correct", expected, data);
             fs.unlink(fileName);
         };
     };
 
+    //TODO - should we delete this? check once all tests are done.
     fluid.test.setCouchDocument = function (config, dataSource) {
         var data = fluid.copy(config.model),
             fileName = dataSource.urlResolver.resolve(config.directModel);
@@ -249,6 +259,12 @@ https://github.com/GPII/kettle/LICENSE.txt
                     writable: true
                 }
             },
+            dataSource17: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/idontexist.json"
+                }
+            },
 
             // Adapter test components.
             callbackWrapper: {
@@ -352,7 +368,11 @@ https://github.com/GPII/kettle/LICENSE.txt
                 expect: 1,
                 name: "Testing url datasource with empty response.",
                 func: "{dataSource1}.get",
-                args: [null, fluid.identity]
+                args: [null, fluid.test.emptyResponseTester]
+            }, {
+                name: "Testing get on url datasource for non-existent file.",
+                func: "{dataSource17}.get",
+                args: [null, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing url datasource with filesystem",
@@ -381,7 +401,7 @@ https://github.com/GPII/kettle/LICENSE.txt
                 expect: 1,
                 name: "Testing couchdb datasource with empty response",
                 func: "{dataSource4}.get",
-                args: [null, fluid.identity]
+                args: [null, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem and error response",
@@ -401,14 +421,14 @@ https://github.com/GPII/kettle/LICENSE.txt
                 func: "{dataSource6}.get",
                 args: [{
                     expand: "not_found"
-                }, fluid.identity]
+                }, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem with expansion and no file",
                 func: "{dataSource7}.get",
                 args: [{
                     expand: "not_found"
-                }, fluid.identity]
+                }, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing url datasource with filesystem with expansion and static termMap",
@@ -421,32 +441,32 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }
                     }
                 }]
-            }, {
-                expect: 1,
-                name: "Testing couchdb datasource with filesystem with expansion and static termMap",
-                func: "{dataSource9}.get",
-                args: [null, {
-                    expander: {
-                        func: "fluid.test.makeResponseTester",
-                        args: {
-                            dataSource: "works"
-                        }
-                    }
-                }]
-            }, {
-                expect: 1,
-                name: "Testing url datasource with filesystem and expansion",
-                func: "{dataSource10}.get",
-                args: [{
-                    expand: "dataSourceTestFile"
                 }, {
-                    expander: {
-                        func: "fluid.test.makeResponseTester",
-                        args: {
-                            dataSource: "works"
+                    expect: 1,
+                    name: "Testing couchdb datasource with filesystem with expansion and static termMap",
+                    func: "{dataSource9}.get",
+                    args: [null, {
+                        expander: {
+                            func: "fluid.test.makeResponseTester",
+                            args: {
+                                dataSource: "works"
+                            }
                         }
-                    }
-                }]
+                    }]
+                }, {
+                    expect: 1,
+                    name: "Testing url datasource with filesystem and expansion",
+                    func: "{dataSource10}.get",
+                    args: [{
+                        expand: "dataSourceTestFile"
+                    }, {
+                        expander: {
+                            func: "fluid.test.makeResponseTester",
+                            args: {
+                                dataSource: "works"
+                            }
+                        }
+                    }]
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem and expansion",
@@ -462,52 +482,67 @@ https://github.com/GPII/kettle/LICENSE.txt
                     }
                 }]
             }, {
-                expect: 1,
-                name: "Testing url datasource with filesystem - set",
-                func: "{dataSource12}.set",
-                args: [null, {
-                    test: "test"
-                }, {
-                    expander: {
-                        func: "fluid.test.makeSetResponseTester",
-                        args: ["{dataSource12}", null, {
-                            test: "test"
-                        }]
-                    }
-                }]
-            }, {
-                expect: 1,
-                name: "Testing couchdb datasource with filesystem - set",
-                func: "{dataSource13}.set",
-                args: [null, {
-                    test: "test"
-                }, {
-                    expander: {
-                        func: "fluid.test.makeSetResponseTester",
-                        args: ["{dataSource13}", null, {
-                            test: "test"
-                        }]
-                    }
-                }]
-            }, {
-                expect: 1,
-                name: "Testing couchdb datasource with filesystem exiting doc - set",
-                func: "{dataSource14}.set",
-                args: [null, {
-                    test: "test"
-                }, {
-                    expander: {
-                        func: "fluid.test.makeSetResponseTester",
-                        args: ["{dataSource14}", null, {
-                            value: {
-                                test: "test"
-                            },
-                            _rev: "test_rev",
-                            _id: "test_id"
-                        }]
-                    }
-                }]
-            }, {
+            //     expect: 1,
+            //     name: "Testing url datasource with filesystem - set",
+            //     func: "{dataSource12}.set",
+            //     args: [null, {
+            //         test: "test"
+            //     }, {
+            //         expander: {
+            //             func: "fluid.test.makeSetResponseTester",
+            //             args: ["{dataSource12}", null, {
+            //                 test: "test"
+            //             }]
+            //         }
+            //     }]
+            // }, {
+            //     expect: 1,
+            //     name: "Testing couchdb datasource with filesystem - set (non-existent file)",
+            //     func: "{dataSource13}.set",
+            //     args: [null, {
+            //         test: "test"
+            //     }, {
+            //         expander: {
+            //             func: "fluid.test.makeSetResponseTester",
+            //             args: ["{dataSource13}", null, {
+            //                 value:  {
+            //                     test: "test"
+            //                 }
+            //             }]
+            //         }
+            //     }]
+            // }, {
+            //     expect: 1,
+            //     name: "Testing couchdb datasource with filesystem exiting doc - set",
+            //     sequence: [{
+            //         func: "fluid.test.setCouchDocument",
+            //         args: [{
+            //             model: {
+            //                 bogus: "text"
+            //             }
+            //         },
+            //         "{dataSource14}"
+
+            //         ]
+            //     }, {
+            //         func: "{dataSource14}.set",
+            //         args: [null, {
+            //             test: "test"
+            //         }, {
+            //             expander: {
+            //                 func: "fluid.test.makeSetResponseTester",
+            //                 args: ["{dataSource14}", null, {
+            //                     value: {
+            //                         test: "test"
+            //                     },
+            //                     _rev: "test_rev",
+            //                     _id: "test_id"
+            //                 }]
+            //             }
+            //         }]
+            //     }]
+
+            // }, {
                 expect: 1,
                 name: "Testing url datasource with filesystem and expansion- set",
                 func: "{dataSource15}.set",
@@ -525,28 +560,40 @@ https://github.com/GPII/kettle/LICENSE.txt
                         }]
                     }
                 }]
-            }, {
-                expect: 1,
-                name: "Testing couchdb datasource with filesystem and expansion- set",
-                func: "{dataSource16}.set",
-                args: [{
-                    expand: "test"
-                }, {
-                    test: "test"
-                }, {
-                    expander: {
-                        func: "fluid.test.makeSetResponseTester",
-                        args: ["{dataSource16}", {
-                            expand: "test"
-                        }, {
-                            value: {
-                                test: "test"
-                            },
-                            _rev: "test_rev",
-                            _id: "test_id"
-                        }]
-                    }
-                }]
+            // }, {
+            //     expect: 1,
+            //     name: "Testing couchdb datasource with filesystem and expansion- set",
+            //      sequence: [{
+            //         func: "fluid.test.setCouchDocument",
+            //         args: [{
+            //             model: {
+            //                 bogus: "text"
+            //             },
+            //             directModel: {
+            //                 expand: "test"
+            //             }
+            //         }, "{dataSource16}" ]
+            //     }, {
+            //         func: "{dataSource16}.set",
+            //         args: [{
+            //             expand: "test"
+            //         }, {
+            //             test: "test"
+            //         }, {
+            //             expander: {
+            //                 func: "fluid.test.makeSetResponseTester",
+            //                 args: ["{dataSource16}", {
+            //                     expand: "test"
+            //                 }, {
+            //                     value: {
+            //                         test: "test"
+            //                     },
+            //                     _rev: "test_rev",
+            //                     _id: "test_id"
+            //                 }]
+            //             }
+            //         }]
+            //     }]
             }]
         }]
     });
