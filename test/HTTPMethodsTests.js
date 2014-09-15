@@ -164,6 +164,54 @@ var testDefs = [{
         event: "{putRequest}.events.onComplete",
         listener: "kettle.tests.testHTTPMethods.testPutResponse"
     }]
+}, { //PUT & POST combo test
+    name: "HTTPMethods PUT & POST in sequence test",
+    expect: 6,
+    config: {
+        nodeEnv: "HTTPMethods",
+        configPath: configPath
+    },
+    components: {
+        postRequest: {
+            type: "kettle.tests.request.http",
+            options: {
+                requestOptions: {
+                    path: "/",
+                    method: "POST",
+                    port: 8081
+                }
+            }
+        },
+        putRequest: {
+            type: "kettle.tests.request.http",
+            options: {
+                requestOptions: {
+                    path: "/",
+                    method: "PUT",
+                    port: 8081
+                }
+            }
+        }
+    },
+    sequence: [{
+        func: "{postRequest}.send",
+        args: { "msg": "I am a post request" }
+    }, {
+        event: "{postRequest}.events.onComplete",
+        listener: "kettle.tests.testHTTPMethods.testPostResponse"
+    }, {
+        func: "{putRequest}.send",
+        args: { "msg": "I am a put request" }
+    }, {
+        event: "{putRequest}.events.onComplete",
+        listener: "kettle.tests.testHTTPMethods.testPutResponse"
+    }, {
+        func: "{postRequest}.send",
+        args: { "msg": "I am a post request" }
+    }, {
+        event: "{postRequest}.events.onComplete",
+        listener: "kettle.tests.testHTTPMethods.testPostResponse"
+    }]
 }];
 
 module.exports = kettle.tests.bootstrap(testDefs);
