@@ -1,0 +1,35 @@
+{
+    "typeName": "HTTPMethods",
+    "options": {
+        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "port": 8081,
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "handlers": {
+                                    "testGet": {
+                                        "route": "/",
+                                        "type": "get"
+                                    },
+                                    "testPost": {
+                                        "route": "/",
+                                        "type": "post"
+                                    },
+                                    "testPut": {
+                                        "route": "/",
+                                        "type": "put"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

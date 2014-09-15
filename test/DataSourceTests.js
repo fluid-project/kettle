@@ -1,7 +1,8 @@
 /*!
 Kettle Data Source Tests
 
-Copyright 2012 Raising the Floor - International
+Copyright 2012 OCAD University
+Copyright 2014 Raising the Floor - International
 
 Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
@@ -10,12 +11,12 @@ You may obtain a copy of the License at
 https://github.com/GPII/kettle/LICENSE.txt
 */
 
-/*global require, __dirname*/
+/*global require, module, __dirname*/
 
 (function () {
     var fluid = require("infusion"),
          path = require("path"),
-         kettle = fluid.require(path.resolve(__dirname, "../kettle.js"));
+         kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
          fs = require("fs"),
          jqUnit = fluid.require("jqUnit");
 
@@ -25,6 +26,11 @@ https://github.com/GPII/kettle/LICENSE.txt
         jqUnit.assertTrue(
             "Data source should properly handle paths to non-existent or empty files",
             data.isError);
+    };
+
+    fluid.test.emptyResponseTester = function (data) {
+        jqUnit.assertEquals("Expecting empty response on get to non-existent file/record",
+            data, undefined);
     };
 
     fluid.test.makeSetResponseTester = function (dataSource, directModel, expected) {
@@ -249,6 +255,12 @@ https://github.com/GPII/kettle/LICENSE.txt
                     writable: true
                 }
             },
+            dataSource17: {
+                type: "kettle.dataSource.URL",
+                options: {
+                    url: "file://%root/data/idontexist.json"
+                }
+            },
 
             // Adapter test components.
             callbackWrapper: {
@@ -352,7 +364,11 @@ https://github.com/GPII/kettle/LICENSE.txt
                 expect: 1,
                 name: "Testing url datasource with empty response.",
                 func: "{dataSource1}.get",
-                args: [null, fluid.identity]
+                args: [null, fluid.test.emptyResponseTester]
+            }, {
+                name: "Testing get on url datasource for non-existent file.",
+                func: "{dataSource17}.get",
+                args: [null, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing url datasource with filesystem",
@@ -381,7 +397,7 @@ https://github.com/GPII/kettle/LICENSE.txt
                 expect: 1,
                 name: "Testing couchdb datasource with empty response",
                 func: "{dataSource4}.get",
-                args: [null, fluid.identity]
+                args: [null, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem and error response",
@@ -401,14 +417,14 @@ https://github.com/GPII/kettle/LICENSE.txt
                 func: "{dataSource6}.get",
                 args: [{
                     expand: "not_found"
-                }, fluid.identity]
+                }, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem with expansion and no file",
                 func: "{dataSource7}.get",
                 args: [{
                     expand: "not_found"
-                }, fluid.identity]
+                }, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing url datasource with filesystem with expansion and static termMap",
@@ -477,7 +493,7 @@ https://github.com/GPII/kettle/LICENSE.txt
                 }]
             }, {
                 expect: 1,
-                name: "Testing couchdb datasource with filesystem - set",
+                name: "Testing couchdb datasource with filesystem - set (non-existent file)",
                 func: "{dataSource13}.set",
                 args: [null, {
                     test: "test"
@@ -485,28 +501,43 @@ https://github.com/GPII/kettle/LICENSE.txt
                     expander: {
                         func: "fluid.test.makeSetResponseTester",
                         args: ["{dataSource13}", null, {
-                            test: "test"
+                            value:  {
+                                test: "test"
+                            }
                         }]
                     }
                 }]
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem exiting doc - set",
-                func: "{dataSource14}.set",
-                args: [null, {
-                    test: "test"
+                sequence: [{
+                    func: "fluid.test.setCouchDocument",
+                    args: [{
+                        model: {
+                            bogus: "text"
+                        }
+                    },
+                    "{dataSource14}"
+
+                    ]
                 }, {
-                    expander: {
-                        func: "fluid.test.makeSetResponseTester",
-                        args: ["{dataSource14}", null, {
-                            value: {
-                                test: "test"
-                            },
-                            _rev: "test_rev",
-                            _id: "test_id"
-                        }]
-                    }
+                    func: "{dataSource14}.set",
+                    args: [null, {
+                        test: "test"
+                    }, {
+                        expander: {
+                            func: "fluid.test.makeSetResponseTester",
+                            args: ["{dataSource14}", null, {
+                                value: {
+                                    test: "test"
+                                },
+                                _rev: "test_rev",
+                                _id: "test_id"
+                            }]
+                        }
+                    }]
                 }]
+
             }, {
                 expect: 1,
                 name: "Testing url datasource with filesystem and expansion- set",
@@ -528,24 +559,36 @@ https://github.com/GPII/kettle/LICENSE.txt
             }, {
                 expect: 1,
                 name: "Testing couchdb datasource with filesystem and expansion- set",
-                func: "{dataSource16}.set",
-                args: [{
-                    expand: "test"
-                }, {
-                    test: "test"
-                }, {
-                    expander: {
-                        func: "fluid.test.makeSetResponseTester",
-                        args: ["{dataSource16}", {
+                sequence: [{
+                    func: "fluid.test.setCouchDocument",
+                    args: [{
+                        model: {
+                            bogus: "text"
+                        },
+                        directModel: {
                             expand: "test"
-                        }, {
-                            value: {
-                                test: "test"
-                            },
-                            _rev: "test_rev",
-                            _id: "test_id"
-                        }]
-                    }
+                        }
+                    }, "{dataSource16}" ]
+                }, {
+                    func: "{dataSource16}.set",
+                    args: [{
+                        expand: "test"
+                    }, {
+                        test: "test"
+                    }, {
+                        expander: {
+                            func: "fluid.test.makeSetResponseTester",
+                            args: ["{dataSource16}", {
+                                expand: "test"
+                            }, {
+                                value: {
+                                    test: "test"
+                                },
+                                _rev: "test_rev",
+                                _id: "test_id"
+                            }]
+                        }
+                    }]
                 }]
             }]
         }]
@@ -571,14 +614,14 @@ https://github.com/GPII/kettle/LICENSE.txt
                 expect: 1,
                 name: "Testing promise adapter with empty response",
                 func: "fluid.test.makePromise",
-                args: ["{adapter2}", "get", null, fluid.identity]
+                args: ["{adapter2}", "get", null, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing promise adapter with filesystem with expansion and no file",
                 func: "fluid.test.makePromise",
                 args: ["{adapter3}", "get", {
                     expand: "not_found"
-                }, fluid.identity]
+                }, fluid.test.emptyResponseTester]
             }, {
                 expect: 1,
                 name: "Testing promise adapter with filesystem with expansion and static termMap",
