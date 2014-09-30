@@ -20,11 +20,10 @@ kettle.loadTestingSupport();
 kettle.test.allTests = true;
 
 var testIncludes = [
-    // Run all tests included in the list.
     "./DataSourceTests.js",
+    "./MiddlewareTests.js",
     "./SessionTests.js",
     "./ConfigLoaderTests.js",
-    "./MiddlewareTests.js",
     "./SocketTests.js",
     "./ErrorTests.js"
 ];

@@ -101,7 +101,7 @@ kettle.tests.testNoCORSResponse = function (data, headers) {
 };
 
 var testDefs = [{
-    name: "CORS middleware tests.",
+    name: "CORS middleware tests",
     expect: 10,
     config: {
         nodeEnv: "CORS",
@@ -142,7 +142,7 @@ var testDefs = [{
         listener: "kettle.tests.testCORSResponseHeaders"
     }]
 }, {
-    name: "CORS middleware no credential tests.",
+    name: "CORS middleware no credential tests",
     expect: 6,
     config: {
         nodeEnv: "CORS_noCred",
@@ -167,7 +167,7 @@ var testDefs = [{
         listener: "kettle.tests.testCORSResponse_NoCred"
     }]
 }, {
-    name: "CORS middleware custon origin tests.",
+    name: "CORS middleware custom origin tests",
     expect: 12,
     config: {
         nodeEnv: "CORS_origin",
@@ -207,7 +207,7 @@ var testDefs = [{
         listener: "kettle.tests.testCORSResponse_Origin"
     }]
 }, {
-    name: "No CORS middleware tests.",
+    name: "No CORS middleware tests",
     expect: 5,
     config: {
         nodeEnv: "noCORS",

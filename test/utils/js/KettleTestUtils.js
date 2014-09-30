@@ -12,18 +12,56 @@
  * https://github.com/gpii/universal/LICENSE.txt
  */
 
-/*global require*/
-
 "use strict";
 
 var fluid = require("infusion"),
+    kettle = fluid.registerNamespace("kettle"),
     http = require("http"),
-    jqUnit = fluid.require("jqUnit");
+    fs = require("fs"),
+    jqUnit = fluid.require("jqUnit"),
+    QUnit = fluid.registerNamespace("QUnit"),
+    ioClient = require("socket.io-client");
+
+fluid.registerNamespace("kettle.test");
+
+// Register an uncaught exception handler that will cause any active test fixture to unconditionally fail
+
+kettle.test.handleUncaughtException = function (err) {
+    if (QUnit.config.current) {
+        QUnit.ok(false, "Unexpected failure in test case (see following log for more details): " + err.message);
+    }
+};
+
+fluid.onUncaughtException.addListener(kettle.test.handleUncaughtException, "fail", null,
+        fluid.handlerPriorities.uncaughtException.fail);
+
+// Some low-quality synchronous file utilities, suitable for use in test fixtures
+    
+// Utility to recursively delete a directory and its contents from http://www.geedew.com/2012/10/24/remove-a-directory-that-is-not-empty-in-nodejs/
+// Useful for cleaning up before and after test cases
+
+kettle.test.deleteFolderRecursive = function (path) {
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach(function (file) {
+            var curPath = path + "/" + file;
+            if (fs.lstatSync(curPath).isDirectory()) {
+                kettle.test.deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+
+kettle.test.copyFileSync = function (sourceFile, targetFile) {
+    fs.writeFileSync(targetFile, fs.readFileSync(sourceFile));
+};
 
 var kettle = fluid.registerNamespace("kettle");
 
 fluid.defaults("kettle.test.cookieJar", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.eventedComponent", "autoInit"],
     members: {
         cookie: "",
         parser: {
@@ -35,8 +73,20 @@ fluid.defaults("kettle.test.cookieJar", {
     }
 });
 
+kettle.test.diagnose = function (that) {
+    var instantiator = fluid.getInstantiator(that);
+    var path = instantiator.idToPath(that.id);
+    
+    fluid.log("Constructed component " + that.typeName + " with id " + that.id + " at path " + path);
+    fluid.log(new Error().stack);
+};
+
+kettle.test.diagnoseDestroy = function (that) {
+    fluid.log("DESTROYED component " + that.typeName + " with id " + that.id);
+};
+
 kettle.test.makeCookieParser = function (secret) {
-    return kettle.utils.cookieParser(secret);
+    return kettle.connect.cookieParser(secret);
 };
 
 fluid.defaults("kettle.test.request", {
@@ -122,14 +172,19 @@ kettle.test.request.io.connect = function (that) {
     var url = options.hostname + ":" + options.port + options.path;
     fluid.log("connecting socket.io to: " + url);
     // Create a socket.
-    that.socket = that.io.connect(url, that.options.ioOptions);
+    that.socket = ioClient.connect(url, that.options.ioOptions);
     that.socket.on("error", that.events.onError.fire);
     that.socket.on("message", that.events.onMessage.fire);
 };
 
+var oldRequest = ioClient.util.request;
+
+ioClient.util.request = function (xdomain) {
+    fluid.log("Invoked new XHR request: " + new Error().stack);
+    return oldRequest(xdomain);
+};
+
 kettle.test.request.io.updateDependencies = function (that) {
-    // Set io.
-    that.io = require("socket.io-client");
 
     // Handle cookie
     // NOTE: version of xmlhttprequest that socket.io-client depends on does not
@@ -158,6 +213,9 @@ kettle.test.request.io.listen = function (that) {
 };
 
 kettle.test.request.io.setCookie = function (cookieJar, request) {
+    if (fluid.isDestroyed(cookieJar)) {
+        fluid.fail("Supplied destroyed cookieJar");
+    }
     if (cookieJar.cookie) {
         request.setRequestHeader("cookie", cookieJar.cookie);
     }
@@ -167,11 +225,9 @@ kettle.test.request.io.send = function (that, model, callback) {
     if (!that.options.listenOnInit) {
         that.connect();
         that.socket.on("connect", function () {
-            fluid.log("sending: " + JSON.stringify(model));
             that.socket.emit("message", model, callback);
         });
     } else {
-        fluid.log("sending: " + JSON.stringify(model));
         that.socket.emit("message", model, callback);
     }
 };
@@ -183,6 +239,7 @@ fluid.defaults("kettle.test.request.http", {
         send: {
             funcName: "kettle.test.request.http.send",
             args: [
+                "{that}",
                 "{that}.options.requestOptions",
                 "{that}.options.termMap",
                 "{cookieJar}",
@@ -209,7 +266,7 @@ fluid.defaults("kettle.test.request.ioCookie", {
     }
 });
 
-kettle.test.request.http.send = function (requestOptions, termMap, cookieJar, callback, model) {
+kettle.test.request.http.send = function (that, requestOptions, termMap, cookieJar, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
     fluid.log("Sending a request to:", options.path || "/");
@@ -241,6 +298,9 @@ kettle.test.request.http.send = function (requestOptions, termMap, cookieJar, ca
             var cookie = res.headers["set-cookie"];
             var pseudoReq = {};
             if (cookie && options.storeCookies) {
+                if (fluid.isDestroyed(cookieJar)) {
+                    fluid.fail("Stored cookie in destroyed jar");
+                }
                 cookieJar.cookie = cookie;
                 // Use connect's cookie parser with set secret to parse the
                 // cookies from the kettle.server.
@@ -329,7 +389,9 @@ fluid.defaults("kettle.test.serverEnvironment", {
  * @param configurationName {String} A configuration name which will become the "name" (in QUnit terms, "module name") of the
  * resulting fixture
  * @param testDef {Object} A partial test fixture specification. This includes most of the elements expected in a Fluid IoC testing
- * framework "module" specification, with required elements <code>sequence</code>, <code>name</code> and optional element <code>expect</code>
+ * framework "module" specification, with required elements <code>sequence</code>, <code>name</code> and optional element <code>expect</code>. It may
+ * also include any configuration directed at the <code>TestCaseHolder</code> component, including some <code>gradeNames</code> to supply some reusable
+ * component material.
  * @return {Object} a fully-fleshed out set of options for a TestCaseHolder, incuding extra sequence elements as described above.
  */
 

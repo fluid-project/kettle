@@ -1,6 +1,6 @@
 {
     "name": "kettle",
-    "description": "Serverside declarative IoC framework.",
+    "description": "Declarative IoC-based framework for HTTP servers on node.js",
     "version": "0.1.0-SNAPSHOT",
     "author": {
         "name": "The Fluid Project"
@@ -12,7 +12,7 @@
     "dependencies": {
         "express": "~3.4.3",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/amb26/infusion.git#3e0e2ac5906e6981df4cc0bf2f943c13ed17f1d7",
+        "infusion": "git://github.com/amb26/infusion.git#13d3be4950718d67d3971bfac2e0f094e46d95a5",
         "node-uuid": "~1.4.0",
         "when": "1.8.1",
         "xmlhttprequest": "~1.6.0",

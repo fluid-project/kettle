@@ -22,10 +22,6 @@ kettle.loadTestingSupport();
 
 fluid.registerNamespace("kettle.tests");
 
-/** Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's **/
-
-fluid.pushSoftFailure(kettle.utils.failureHandler);
-
 fluid.defaults("kettle.requests.request.handler.requestError", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {
@@ -63,25 +59,43 @@ fluid.defaults("kettle.tests.logNotifierHolder", {
 
 fluid.staticEnvironment.logNotifierHolder = kettle.tests.logNotifierHolder();
 
-kettle.tests.instrumentLogging = function () {
-    kettle.tests.originalFluidLog = fluid.log;
-    var notifying = false;
-    fluid.log = function (logLevel) {
-        var togo = kettle.tests.originalFluidLog.apply(null, arguments);
-        if (!notifying && logLevel.priority <= fluid.logLevel.FAIL.priority) {
-            process.nextTick(function () { // make this async to avoid destroying the server whilst the request is still active
-                notifying = true;
-                fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
-                notifying = false;
-            }, 100);
-        }
-        return togo;
-    };
+kettle.tests.notifyGlobalError = function () {
+    fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
 };
 
-kettle.tests.unInstrumentLogging = function () {
-    fluid.log = kettle.tests.originalFluidLog;
+// This is a clone of kettle.utils.failureHandler - since there seems to be some kind of exception handler on the
+// path up to TCP.onread that is present in a typical kettle request. When we have FLUID-5518 implemented, this
+// duplication can be elimiated
+kettle.tests.failureHandlerLater = function (args, activity) {
+    var messages = ["ASSERTION FAILED: "].concat(args).concat(activity);
+    fluid.log.apply(null, [fluid.logLevel.FATAL].concat(messages));
+    var request = kettle.getCurrentRequest();
+    request.events.onError.fire({
+        isError: true,
+        message: args[0]
+    });
+    fluid.invokeLater(function () {
+        fluid.builtinFail(false, args, activity);
+    });
 };
+
+kettle.tests.pushInstrumentedErrors = function () {
+    // Beat jqUnit's exception handler so that we can test kettle's instead
+    fluid.pushSoftFailure(kettle.tests.failureHandlerLater);
+    // Beat the existing global exception handler for the duration of these tests
+    fluid.onUncaughtException.addListener(kettle.tests.notifyGlobalError, "fail", null,
+        fluid.handlerPriorities.uncaughtException.fail);
+};
+
+kettle.tests.popInstrumentedErrors = function () {
+    fluid.pushSoftFailure(-1);
+    // restore whatever was the old listener in this namespace, as per FLUID-5506 implementation
+    fluid.onUncaughtException.removeListener("fail");
+};
+
+// Tests two effects:
+// i) Triggering a global error will definitely cause a logged message via the uncaught exception handler
+// ii) Triggering an error during a request will also cause a logged message
 
 var testDefs = [{
     name: "Error tests",
@@ -103,10 +117,10 @@ var testDefs = [{
             type: "kettle.test.request.http"
         }
     },
-    sequence: [{
-        func: "kettle.tests.instrumentLogging"
+    sequence: [{ //Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
+        funcName: "kettle.tests.pushInstrumentedErrors"
     }, {
-        func: "kettle.tests.triggerGlobalErrorAsync",
+        funcName: "kettle.tests.triggerGlobalErrorAsync",
         args: "{testCaseHolder}"
     }, {
         event: "{eventHolder}.events.logNotifier",
@@ -117,7 +131,7 @@ var testDefs = [{
         event: "{eventHolder}.events.logNotifier",
         listener: "kettle.tests.awaitGlobalError"
     }, {
-        func: "kettle.tests.unInstrumentLogging"
+        funcName: "kettle.tests.popInstrumentedErrors"
     }]
 }];
 

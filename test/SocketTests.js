@@ -24,7 +24,7 @@ fluid.defaults("kettle.requests.request.handler.testSocket", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {
         handle: {
-            funcName: "kettle.tests.testSocket",
+            funcName: "kettle.tests.socket.testSocket",
             args: ["{requestProxy}", "{request}.data"],
             dynamic: true
         }
@@ -35,26 +35,26 @@ fluid.defaults("kettle.requests.request.handler.testGet", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {
         handle: {
-            funcName: "kettle.tests.testGet",
+            funcName: "kettle.tests.socket.testGet",
             args: "{requestProxy}"
         }
     }
 });
 
-fluid.registerNamespace("kettle.tests");
+fluid.registerNamespace("kettle.tests.socket");
 
-kettle.tests.testGet = function (requestProxy) {
+kettle.tests.socket.testGet = function (requestProxy) {
     jqUnit.assertTrue("The request was received.", true);
     requestProxy.events.onSuccess.fire({
         success: true
     });
 };
 
-kettle.tests.testSocketCount = 0;
+kettle.tests.socket.testSocketCount = 0;
 
-kettle.tests.testSocket = function (requestProxy, data) {
+kettle.tests.socket.testSocket = function (requestProxy, data) {
     jqUnit.assertDeepEq("Socket message data is correct", {
-        index: kettle.tests.testSocketCount++,
+        index: kettle.tests.socket.testSocketCount++,
         test: true
     }, data);
     requestProxy.events.onSuccess.fire({
@@ -62,13 +62,13 @@ kettle.tests.testSocket = function (requestProxy, data) {
     });
 };
 
-kettle.tests.testResponse = function (data /*, headers*/ ) {
+kettle.tests.socket.testResponse = function (data /*, headers*/ ) {
     jqUnit.assertDeepEq("The response is correct.", {
         success: true
     }, JSON.parse(data));
 };
 
-kettle.tests.testSocketResponse = function (data) {
+kettle.tests.socket.testSocketResponse = function (data) {
     jqUnit.assertDeepEq("Socket message delivered confirmed", {
         success: true
     }, data);
@@ -103,7 +103,7 @@ var testDefs = [{
         }
     }, {
         event: "{ioRequest}.events.onComplete",
-        listener: "kettle.tests.testSocketResponse"
+        listener: "kettle.tests.socket.testSocketResponse"
     }, {
         func: "{ioRequest}.send",
         args: {
@@ -112,12 +112,12 @@ var testDefs = [{
         }
     }, {
         event: "{ioRequest}.events.onComplete",
-        listener: "kettle.tests.testSocketResponse"
+        listener: "kettle.tests.socket.testSocketResponse"
     }, {
         func: "{httpRequest}.send"
     }, {
         event: "{httpRequest}.events.onComplete",
-        listener: "kettle.tests.testResponse"
+        listener: "kettle.tests.socket.testResponse"
     }]
 }];
 
