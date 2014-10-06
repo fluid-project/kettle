@@ -30,8 +30,6 @@ loader.require("./lib/server.io.js");
 loader.require("./lib/session.js");
 loader.require("./lib/session.io.js");
 
-fluid.require("when", require, "when"); // export when into the global namespace for all to share
-
 kettle.loadTestingSupport = function () {
     require("./test/utils/js/KettleTestUtils.js");
 };

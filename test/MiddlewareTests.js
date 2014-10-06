@@ -39,7 +39,7 @@ fluid.defaults("kettle.tests.CORS_noCred", {
     credentials: "false"
 });
 
-kettle.tests.testCORSOrigin = "localhost:8080";
+kettle.tests.testCORSOrigin = "localhost:8081";
 
 fluid.defaults("kettle.tests.CORS_origin", {
     gradeNames: ["autoInit", "kettle.use.CORS"],
