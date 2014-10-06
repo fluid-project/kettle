@@ -12,7 +12,7 @@
     "dependencies": {
         "express": "~3.4.3",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/amb26/infusion.git#51e96b4a6108a9318a60f5265593eda41b4442ea",
+        "infusion": "git://github.com/amb26/infusion.git#8aa0c6b609cefc9311e9fb2be2ed6bd3aa8817bd",
         "node-uuid": "~1.4.0",
         "xmlhttprequest": "~1.6.0",
         "socket.io-client": "~0.9.16"
