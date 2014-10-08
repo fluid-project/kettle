@@ -21,6 +21,7 @@ kettle.test.allTests = true;
 
 var testIncludes = [
     "./DataSourceTests.js",
+    "./CrossServerRequestTests.js",
     "./MiddlewareTests.js",
     "./SessionTests.js",
     "./ConfigLoaderTests.js",

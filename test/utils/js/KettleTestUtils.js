@@ -22,6 +22,7 @@ var fluid = require("infusion"),
     QUnit = fluid.registerNamespace("QUnit"),
     ioClient = require("socket.io-client");
 
+var kettle = fluid.registerNamespace("kettle");
 fluid.registerNamespace("kettle.test");
 
 // Register an uncaught exception handler that will cause any active test fixture to unconditionally fail
@@ -57,8 +58,6 @@ kettle.test.deleteFolderRecursive = function (path) {
 kettle.test.copyFileSync = function (sourceFile, targetFile) {
     fs.writeFileSync(targetFile, fs.readFileSync(sourceFile));
 };
-
-var kettle = fluid.registerNamespace("kettle");
 
 fluid.defaults("kettle.test.cookieJar", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
@@ -180,6 +179,11 @@ kettle.test.request.io.connect = function (that) {
 var oldRequest = ioClient.util.request;
 
 ioClient.util.request = function (xdomain) {
+    // This stack trace is extremely helpful for any future work on resolving the very serious
+    // problems with this testing strategy. Currently we may not run any more than one such
+    // test concurrently. TODO: We need to either find a strategy avoiding this scope leakage,
+    // or abandon the use of the socket.io-client library for testing (and possibly the
+    // use of socket.io itself too)
     fluid.log("Invoked new XHR request: " + new Error().stack);
     return oldRequest(xdomain);
 };
@@ -269,14 +273,14 @@ fluid.defaults("kettle.test.request.ioCookie", {
 kettle.test.request.http.send = function (that, requestOptions, termMap, cookieJar, callback, model) {
     var options = fluid.copy(requestOptions);
     options.path = fluid.stringTemplate(options.path, termMap);
-    fluid.log("Sending a request to:", options.path || "/");
+    fluid.log("Sending a " + (options.method || "GET") + " request to: ", (options.path || "/"), " on port " + options.port);
     options.headers = options.headers || {};
     if (model) {
         model = typeof model === "string" ? model : JSON.stringify(model);
         options.headers["Content-Type"] = "application/json";
         options.headers["Content-Length"] = model.length;
     }
-    if (cookieJar.cookie && options.storeCookies) {
+    if (cookieJar && cookieJar.cookie && options.storeCookies) {
         options.headers.Cookie = cookieJar.cookie;
     }
     var req = http.request(options, function (res) {

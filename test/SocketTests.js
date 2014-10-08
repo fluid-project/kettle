@@ -74,7 +74,7 @@ kettle.tests.socket.testSocketResponse = function (data) {
     }, data);
 };
 
-var testDefs = [{
+kettle.tests.socket.testDefs = [{
     name: "Socket tests",
     expect: 6,
     config: {
@@ -121,4 +121,4 @@ var testDefs = [{
     }]
 }];
 
-module.exports = kettle.test.bootstrapServer(testDefs);
+module.exports = kettle.test.bootstrapServer(kettle.tests.socket.testDefs);
