@@ -36,7 +36,9 @@ kettle.test.handleUncaughtException = function (err) {
 fluid.onUncaughtException.addListener(kettle.test.handleUncaughtException, "fail", null,
         fluid.handlerPriorities.uncaughtException.fail);
 
-// Some low-quality synchronous file utilities, suitable for use in test fixtures
+/*
+ * Some low-quality synchronous file utilities, suitable for use in test fixtures
+ */
     
 // Utility to recursively delete a directory and its contents from http://www.geedew.com/2012/10/24/remove-a-directory-that-is-not-empty-in-nodejs/
 // Useful for cleaning up before and after test cases
@@ -58,6 +60,45 @@ kettle.test.deleteFolderRecursive = function (path) {
 kettle.test.copyFileSync = function (sourceFile, targetFile) {
     fs.writeFileSync(targetFile, fs.readFileSync(sourceFile));
 };
+
+// Algorithm from http://stackoverflow.com/questions/1247772/is-there-an-equivalent-of-java-util-regex-for-glob-type-patterns
+kettle.test.globToRegex = function (glob) {
+    var togo = "^";
+    for (var i = 0; i < glob.length; ++ i) {
+        var c = glob.charAt(i);
+        if (c === "*") {
+            togo += ".*";
+        } else if (c === "?") {
+            togo += ".";
+        } else if (c === ".") {
+            togo += "\\.";
+        } else if (c === "\\") {
+            togo += "\\\\";
+        } else {
+            togo += c;
+        }
+    }
+    togo += "$";
+    return togo;
+};
+
+// A simple glob search utility that will return all files in a directory matching a pattern
+kettle.test.findFiles = function (dir, pattern) {
+    var regex = pattern ? new RegExp(kettle.test.globToRegex(pattern)) : null;
+    var files = fs.readdirSync(dir);
+    var togo = [];
+    files.forEach(function (file) {
+        if (!regex || regex.test(file)) {
+            var full = dir + "/" + file;
+            togo.push(full);
+        }
+    });
+    return togo;
+};
+
+/*
+ * Definitions for HTTP-based test fixtures - request classes and utilities
+ */
 
 fluid.defaults("kettle.test.cookieJar", {
     gradeNames: ["fluid.eventedComponent", "autoInit"],
