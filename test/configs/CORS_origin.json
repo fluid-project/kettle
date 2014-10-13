@@ -12,7 +12,7 @@
                             "type": "kettle.app",
                             "options": {
                                 "handlers": {
-                                    "testGet": {
+                                    "testGetCORS": {
                                         "route": "/",
                                         "type": "get"
                                     }

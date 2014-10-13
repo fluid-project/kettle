@@ -20,7 +20,7 @@ var fluid = require("infusion"),
 
 kettle.loadTestingSupport();
 
-fluid.defaults("kettle.requests.request.handler.testGet", {
+fluid.defaults("kettle.requests.request.handler.testGetCORS", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {
         handle: {
