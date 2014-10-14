@@ -101,7 +101,7 @@ var testDefs = [{
     name: "Error tests",
     expect: 2,
     config: {
-        nodeEnv: "error",
+        configName: "error",
         configPath: configPath
     },
     components: {

@@ -112,7 +112,7 @@ var expectedSubcomponentOptions = {
 
 kettle.tests.testConfigToGrade = function (headName, configNames) {
     var componentName = kettle.config.createDefaults({
-            nodeEnv: configNames[0],
+            configName: configNames[0],
             configPath: configPath
         });
     var expectedParents = fluid.copy(configNames);

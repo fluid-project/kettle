@@ -213,7 +213,7 @@ var testDefs = [{
     name: "Session tests.",
     expect: 27,
     config: {
-        nodeEnv: "session",
+        configName: "session",
         configPath: configPath
     },
     components: {

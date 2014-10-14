@@ -104,7 +104,7 @@ var testDefs = [{
     name: "CORS middleware tests",
     expect: 10,
     config: {
-        nodeEnv: "CORS",
+        configName: "CORS",
         configPath: configPath
     },
     components: {
@@ -145,7 +145,7 @@ var testDefs = [{
     name: "CORS middleware no credential tests",
     expect: 6,
     config: {
-        nodeEnv: "CORS_noCred",
+        configName: "CORS_noCred",
         configPath: configPath
     },
     components: {
@@ -170,7 +170,7 @@ var testDefs = [{
     name: "CORS middleware custom origin tests",
     expect: 12,
     config: {
-        nodeEnv: "CORS_origin",
+        configName: "CORS_origin",
         configPath: configPath
     },
     components: {
@@ -210,7 +210,7 @@ var testDefs = [{
     name: "No CORS middleware tests",
     expect: 5,
     config: {
-        nodeEnv: "noCORS",
+        configName: "noCORS",
         configPath: configPath
     },
     components: {

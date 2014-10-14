@@ -78,7 +78,7 @@ kettle.tests.socket.testDefs = [{
     name: "Socket tests",
     expect: 6,
     config: {
-        nodeEnv: "socket",
+        configName: "socket",
         configPath: configPath
     },
     components: {

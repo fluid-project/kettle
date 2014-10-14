@@ -61,41 +61,6 @@ kettle.test.copyFileSync = function (sourceFile, targetFile) {
     fs.writeFileSync(targetFile, fs.readFileSync(sourceFile));
 };
 
-// Algorithm from http://stackoverflow.com/questions/1247772/is-there-an-equivalent-of-java-util-regex-for-glob-type-patterns
-kettle.test.globToRegex = function (glob) {
-    var togo = "^";
-    for (var i = 0; i < glob.length; ++ i) {
-        var c = glob.charAt(i);
-        if (c === "*") {
-            togo += ".*";
-        } else if (c === "?") {
-            togo += ".";
-        } else if (c === ".") {
-            togo += "\\.";
-        } else if (c === "\\") {
-            togo += "\\\\";
-        } else {
-            togo += c;
-        }
-    }
-    togo += "$";
-    return togo;
-};
-
-// A simple glob search utility that will return all files in a directory matching a pattern
-kettle.test.findFiles = function (dir, pattern) {
-    var regex = pattern ? new RegExp(kettle.test.globToRegex(pattern)) : null;
-    var files = fs.readdirSync(dir);
-    var togo = [];
-    files.forEach(function (file) {
-        if (!regex || regex.test(file)) {
-            var full = dir + "/" + file;
-            togo.push(full);
-        }
-    });
-    return togo;
-};
-
 /*
  * Definitions for HTTP-based test fixtures - request classes and utilities
  */
@@ -390,6 +355,13 @@ fluid.defaults("kettle.test.configuration", {
     }
 });
 
+// The two core grades (serverEnvironment and testCaseHolder) for kettle server-aware fixtures. 
+// There are currently two reasons for separation and locating most material with the testCaseHolder 
+// based on framework limitations:
+// i) An environment can't be its own TestCaseHolder (IoC testing framework limitation)
+// ii) The subcomponents of "tests" must be siblings of the fixtures themselves otherwise they
+// couldn't be addressed by distributeOptions etc. (FLUID-5495)
+
 fluid.defaults("kettle.test.testCaseHolder", {
     gradeNames: ["autoInit", "fluid.test.testCaseHolder"],
     events: {
@@ -440,7 +412,7 @@ fluid.defaults("kettle.test.serverEnvironment", {
  * @return {Object} a fully-fleshed out set of options for a TestCaseHolder, incuding extra sequence elements as described above.
  */
 
-kettle.test.testDefToServerOptions = function (configurationName, testDef) {
+kettle.test.testDefToCaseHolder = function (configurationName, testDef) {
     var sequence = fluid.copy(testDef.sequence);
     delete testDef.sequence;
     sequence.unshift({ // This sequence point is required because of a QUnit bug - it defers the start of sequence by 13ms "to avoid any current callbacks" in its words
@@ -476,7 +448,7 @@ kettle.test.testDefToServerEnvironment = function (testDef) {
         options: {
             components: {
                 tests: {
-                    options: kettle.test.testDefToServerOptions(configurationName, testDef)
+                    options: kettle.test.testDefToCaseHolder(configurationName, testDef)
                 }
             }
         }
