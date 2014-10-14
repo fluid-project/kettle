@@ -161,5 +161,5 @@ fluid.defaults("kettle.tests.configLoaderTester", {
     }]
 });
 
-module.exports = kettle.test.bootstrap("kettle.tests.configLoader");
+kettle.test.bootstrap("kettle.tests.configLoader");
 

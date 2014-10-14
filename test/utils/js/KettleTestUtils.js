@@ -456,21 +456,9 @@ kettle.test.testDefToServerEnvironment = function (testDef) {
 };
 
 /** These functions assist the use of individual files run as tests, as well as assisting a complete
- * module's test suites run in aggregate. They makes use of the global flag <code>kettle.test.allTests</code>
- * to distinguish these situations.
+ * module's test suites run in aggregate. The test definitions will be transformed and then contributed
+ * to the current queue of asynchronously resolving tests.
  *
- * The expected usage of these functions is as the last line of a node.js-aware file containing some test definitions.
- * This last line will read: <code>module.exports = kettle.test.bootstrap(testDefs, ...)</code>. 
- *
- * When run without the kettle.test.allTests flag, the module exporting the bootstrap return will run its
- * tests immediately. When run with the flag, it instead returns the configuration which should be
- * sent to fluid.test.runTests later.
- *
- * In time this should probably be fixed by improving the IoC testing framework - we can't just accumulate
- * standard async QUnit fixtures since we instead drive fixtures in lockstep with the creation and destruction 
- * of component trees. But we should try to find a means for the system to "autonomously" contribute
- * fixtures into a queue just as we could in plain QUnit/jQUnit. Note that we have serious bugs currently in 
- * mixing plain fixtures with IoC testing fixtures.
  * @param testDefs {Object} or {Array of Object} an array of objects, each representing a test fixture
  * @param transformer {Function} or {Array of Function} an array of transform functions, accepting an object representing a test fixture and returning a "more processed" one. The entire chain
  * of functions will be applied to each member of <code>testDefs</code>, with the result that it becomes a fully fleshed out TestCaseHolder as required by Fluid's 
@@ -480,7 +468,7 @@ kettle.test.testDefToServerEnvironment = function (testDef) {
 kettle.test.bootstrap = function (testDefs, transformer) {
     var transformArgs = [fluid.makeArray(testDefs)].concat(fluid.makeArray(transformer));
     var tests = fluid.transform.apply(null, transformArgs);
-    return kettle.test.allTests ? tests : fluid.test.runTests(tests);
+    return fluid.test.runTests(tests);
 };
 
 /** As for kettle.test.bootstrap, only transform the supplied definitions by converting them into kettle

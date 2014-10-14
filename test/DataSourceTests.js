@@ -748,4 +748,4 @@ var tests = kettle.tests.dataSource.standardTests.concat(kettle.tests.dataSource
 
 kettle.tests.dataSource.ensureWriteableEmpty();
 
-module.exports = kettle.test.bootstrap(tests);
+kettle.test.bootstrap(tests);

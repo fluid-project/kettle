@@ -121,4 +121,4 @@ kettle.tests.socket.testDefs = [{
     }]
 }];
 
-module.exports = kettle.test.bootstrapServer(kettle.tests.socket.testDefs);
+kettle.test.bootstrapServer(kettle.tests.socket.testDefs);

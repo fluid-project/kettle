@@ -235,4 +235,4 @@ fluid.defaults("kettle.tests.serverPairTester", {
     }
 });
 
-module.exports = kettle.test.bootstrap("kettle.tests.serverPairTester");
+kettle.test.bootstrap("kettle.tests.serverPairTester");

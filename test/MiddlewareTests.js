@@ -226,4 +226,4 @@ var testDefs = [{
     }]
 }];
 
-module.exports = kettle.test.bootstrapServer(testDefs);
+kettle.test.bootstrapServer(testDefs);

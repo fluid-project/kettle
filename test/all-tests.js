@@ -17,8 +17,6 @@ var fluid = require("infusion"),
 
 kettle.loadTestingSupport();
 
-kettle.test.allTests = true;
-
 var testIncludes = [
     "./DataSourceTests.js",
     "./CrossServerRequestTests.js",
@@ -29,10 +27,7 @@ var testIncludes = [
     "./SocketTests.js",
     "./ErrorTests.js"
 ];
-var tests = [];
 
 fluid.each(testIncludes, function (path) {
-    tests = tests.concat(require(path));
+    require(path);
 });
-
-fluid.test.runTests(tests);
