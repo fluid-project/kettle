@@ -30,6 +30,8 @@ fluid.registerNamespace("kettle.test");
 kettle.test.handleUncaughtException = function (err) {
     if (QUnit.config.current) {
         QUnit.ok(false, "Unexpected failure in test case (see following log for more details): " + err.message);
+    } else {
+        process.exit(1);
     }
 };
 
