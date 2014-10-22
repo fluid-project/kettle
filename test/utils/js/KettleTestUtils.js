@@ -291,7 +291,8 @@ kettle.test.request.http.send = function (that, requestOptions, termMap, cookieJ
     if (cookieJar && cookieJar.cookie && options.storeCookies) {
         options.headers.Cookie = cookieJar.cookie;
     }
-    var req = http.request(options, function (res) {
+    var req = that.nativeRequest = http.request(options, function (res) {
+        that.nativeResponse = res;
         var data = "";
         res.setEncoding("utf8");
 

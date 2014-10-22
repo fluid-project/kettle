@@ -65,7 +65,7 @@ kettle.tests.notifyGlobalError = function () {
 
 // This is a clone of kettle.utils.failureHandler - since there seems to be some kind of exception handler on the
 // path up to TCP.onread that is present in a typical kettle request. When we have FLUID-5518 implemented, this
-// duplication can be elimiated
+// duplication can be eliminated
 kettle.tests.failureHandlerLater = function (args, activity) {
     var messages = ["ASSERTION FAILED: "].concat(args).concat(activity);
     fluid.log.apply(null, [fluid.logLevel.FATAL].concat(messages));
@@ -77,6 +77,14 @@ kettle.tests.failureHandlerLater = function (args, activity) {
     fluid.invokeLater(function () {
         fluid.builtinFail(false, args, activity);
     });
+};
+
+kettle.tests.assertHttpStatusError = function (statusCode) {
+    jqUnit.assertTrue("HTTP status code must be 5xx error", statusCode >= 500 && statusCode < 600);
+};
+
+kettle.tests.testRequestErrorStatus = function (request) {
+    kettle.tests.assertHttpStatusError(request.nativeResponse.statusCode);
 };
 
 kettle.tests.pushInstrumentedErrors = function () {
@@ -99,7 +107,7 @@ kettle.tests.popInstrumentedErrors = function () {
 
 var testDefs = [{
     name: "Error tests",
-    expect: 2,
+    expect: 3,
     config: {
         configName: "error",
         configPath: configPath
@@ -117,7 +125,7 @@ var testDefs = [{
             type: "kettle.test.request.http"
         }
     },
-    sequence: [{ //Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
+    sequence: [{ // Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
         funcName: "kettle.tests.pushInstrumentedErrors"
     }, {
         funcName: "kettle.tests.triggerGlobalErrorAsync",
@@ -130,6 +138,12 @@ var testDefs = [{
     }, {
         event: "{eventHolder}.events.logNotifier",
         listener: "kettle.tests.awaitGlobalError"
+    }, { // TODO: Currently this relies on a timing subtlety to evade bug FLUID-5502 in the IoC testing framework - 
+         // we "happen to know" that an event scheduled with process.nextTick (the node impl of fluid.invokeLater) 
+         // will definitely be invoked before one corresponding to actual I/O
+        event: "{httpRequest}.events.onComplete",
+        listener: "kettle.tests.testRequestErrorStatus",
+        args: ["{httpRequest}"]
     }, {
         funcName: "kettle.tests.popInstrumentedErrors"
     }]
