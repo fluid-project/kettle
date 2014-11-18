@@ -21,7 +21,7 @@ Dependencies:
 -
 
     express: ~3.4.3
-    infusion: git://github.com/fluid-project/infusion.git#xxxxxx
+    infusion: git://github.com/fluid-project/infusion.git#d5b2409f435f1c2a79914748b956891dcb065f94
     node-uuid: ~1.4.0
     socket.io: ~0.9.16
     xmlhttprequest: ~1.6.0 **NOTE**

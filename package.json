@@ -12,13 +12,13 @@
     "dependencies": {
         "express": "~3.4.3",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/amb26/infusion.git#b350bc0bbf527e9b0ec13f307ba0095f6b6f7599",
+        "infusion": "git://github.com/fluid-project/infusion.git#d5b2409f435f1c2a79914748b956891dcb065f94",
         "node-uuid": "~1.4.0",
         "xmlhttprequest": "~1.6.0",
         "socket.io-client": "~0.9.16"
     },
     "devDependencies": {
-        "jqUnit": "git://github.com/amb26/node-jqUnit.git#116bdc0ddb2d6e4d144e7d137edb71e421ab768b",
+        "jqUnit": "git://github.com/amb26/node-jqUnit.git#b67f2f5969c28135bf8be457b0815810c339a9f9",
         "grunt-shell": "0.6.4",
         "grunt-contrib-jshint": "~0.9.0",
         "grunt-jsonlint": "1.0.4",
