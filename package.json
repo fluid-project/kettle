@@ -12,7 +12,7 @@
     "dependencies": {
         "express": "~3.4.3",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/fluid-project/infusion.git#d5b2409f435f1c2a79914748b956891dcb065f94",
+        "infusion": "git://github.com/fluid-project/infusion.git#df5f8cfabf815a4086b778e73125c3c952dda4ec",
         "node-uuid": "~1.4.0",
         "xmlhttprequest": "~1.6.0",
         "socket.io-client": "~0.9.16"
