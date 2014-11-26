@@ -18,7 +18,7 @@
         "socket.io-client": "~0.9.16"
     },
     "devDependencies": {
-        "jqUnit": "git://github.com/amb26/node-jqUnit.git#b67f2f5969c28135bf8be457b0815810c339a9f9",
+        "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#b7ef53aac1ca365bf23d35d255fae874faa88b70",
         "grunt-shell": "0.6.4",
         "grunt-contrib-jshint": "~0.9.0",
         "grunt-jsonlint": "1.0.4",
