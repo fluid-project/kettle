@@ -17,6 +17,8 @@ var loader = fluid.getLoader(__dirname);
 
 loader.require("./lib/utils.js");
 
+fluid.module.register("kettle", __dirname, require);
+
 loader.require("./lib/app.js");
 loader.require("./lib/configLoader.js");
 loader.require("./lib/dataSource.js");
@@ -27,5 +29,9 @@ loader.require("./lib/server.js");
 loader.require("./lib/server.io.js");
 loader.require("./lib/session.js");
 loader.require("./lib/session.io.js");
+
+kettle.loadTestingSupport = function () {
+    require("./test/utils/js/KettleTestUtils.js");
+};
 
 module.exports = kettle;

@@ -10,29 +10,24 @@
  * https://github.com/gpii/universal/LICENSE.txt
  */
 
-/*global require*/
+"use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js"));
+    kettle = require("../kettle.js");
 
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
-
-kettle.tests.allTests = true;
+kettle.loadTestingSupport();
 
 var testIncludes = [
-    // Run all tests included in the list.
+    "./DataSourceTests.js",
+    "./CrossServerRequestTests.js",
+    "./HTTPMethodsTests.js",
+    "./MiddlewareTests.js",
     "./SessionTests.js",
     "./ConfigLoaderTests.js",
-    "./DataSourceTests.js",
-    "./MiddlewareTests.js",
     "./SocketTests.js",
     "./ErrorTests.js"
 ];
-var tests = [];
 
 fluid.each(testIncludes, function (path) {
-    tests = tests.concat(fluid.require(path, require));
+    require(path);
 });
-
-fluid.test.runTests(tests);

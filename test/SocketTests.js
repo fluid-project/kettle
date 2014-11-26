@@ -10,21 +10,21 @@
  * https://github.com/GPII/kettle/LICENSE.txt
  */
 
-/*global require, __dirname*/
+"use strict";
 
 var fluid = require("infusion"),
     path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
+    kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
-
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
+    
+kettle.loadTestingSupport();
 
 fluid.defaults("kettle.requests.request.handler.testSocket", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {
         handle: {
-            funcName: "kettle.tests.testSocket",
+            funcName: "kettle.tests.socket.testSocket",
             args: ["{requestProxy}", "{request}.data"],
             dynamic: true
         }
@@ -35,24 +35,26 @@ fluid.defaults("kettle.requests.request.handler.testGet", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {
         handle: {
-            funcName: "kettle.tests.testGet",
+            funcName: "kettle.tests.socket.testGet",
             args: "{requestProxy}"
         }
     }
 });
 
-kettle.tests.testGet = function (requestProxy) {
+fluid.registerNamespace("kettle.tests.socket");
+
+kettle.tests.socket.testGet = function (requestProxy) {
     jqUnit.assertTrue("The request was received.", true);
     requestProxy.events.onSuccess.fire({
         success: true
     });
 };
 
-kettle.tests.testSocketCount = 0;
+kettle.tests.socket.testSocketCount = 0;
 
-kettle.tests.testSocket = function (requestProxy, data) {
+kettle.tests.socket.testSocket = function (requestProxy, data) {
     jqUnit.assertDeepEq("Socket message data is correct", {
-        index: kettle.tests.testSocketCount++,
+        index: kettle.tests.socket.testSocketCount++,
         test: true
     }, data);
     requestProxy.events.onSuccess.fire({
@@ -60,28 +62,28 @@ kettle.tests.testSocket = function (requestProxy, data) {
     });
 };
 
-kettle.tests.testResponse = function (data, headers) {
+kettle.tests.socket.testResponse = function (data /*, headers*/ ) {
     jqUnit.assertDeepEq("The response is correct.", {
         success: true
     }, JSON.parse(data));
 };
 
-kettle.tests.testSocketResponse = function (data) {
+kettle.tests.socket.testSocketResponse = function (data) {
     jqUnit.assertDeepEq("Socket message delivered confirmed", {
         success: true
     }, data);
 };
 
-var testDefs = [{
-    name: "Socket tests.",
+kettle.tests.socket.testDefs = [{
+    name: "Socket tests",
     expect: 6,
     config: {
-        nodeEnv: "socket",
+        configName: "socket",
         configPath: configPath
     },
     components: {
         ioRequest: {
-            type: "kettle.tests.request.io",
+            type: "kettle.test.request.io",
             options: {
                 requestOptions: {
                     path: "/socket_path"
@@ -90,7 +92,7 @@ var testDefs = [{
             }
         },
         httpRequest: {
-            type: "kettle.tests.request.http"
+            type: "kettle.test.request.http"
         }
     },
     sequence: [{
@@ -101,7 +103,7 @@ var testDefs = [{
         }
     }, {
         event: "{ioRequest}.events.onComplete",
-        listener: "kettle.tests.testSocketResponse"
+        listener: "kettle.tests.socket.testSocketResponse"
     }, {
         func: "{ioRequest}.send",
         args: {
@@ -110,13 +112,13 @@ var testDefs = [{
         }
     }, {
         event: "{ioRequest}.events.onComplete",
-        listener: "kettle.tests.testSocketResponse"
+        listener: "kettle.tests.socket.testSocketResponse"
     }, {
         func: "{httpRequest}.send"
     }, {
         event: "{httpRequest}.events.onComplete",
-        listener: "kettle.tests.testResponse"
+        listener: "kettle.tests.socket.testResponse"
     }]
 }];
 
-module.exports = kettle.tests.bootstrap(testDefs);
+kettle.test.bootstrapServer(kettle.tests.socket.testDefs);

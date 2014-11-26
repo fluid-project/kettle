@@ -4,5 +4,5 @@
         "gradeNames": ["autoInit", "fluid.littleComponent"],
         "option1": "OPTION1"
     },
-    "includes": ["./config2.json", "./config3.json"]
+    "includes": ["./config2.json", "${kettle}/test/configs/config3.json"]
 }

@@ -1,4 +1,4 @@
-Kettle.
+Kettle
 ===
 
 Kettle is the Fluid Project's experimental server-side platform, based on node.js and [express](http://expressjs.com/)
@@ -20,10 +20,17 @@ will install all dependencies that are required by Kettle.
 Dependencies:
 -
 
-    express: ~3.1.0
-    infusion: git://github.com/fluid-project/infusion.git#04a85a490a05d6ddb5de6e2dbf9a9b1e83e476dd
+    express: ~3.4.3
+    infusion: git://github.com/fluid-project/infusion.git#d5b2409f435f1c2a79914748b956891dcb065f94
     node-uuid: ~1.4.0
-    when: ~1.8.1
+    socket.io: ~0.9.16
+    xmlhttprequest: ~1.6.0 **NOTE**
+    socket.io-client: ~0.9.16 **NOTE**
+
+**NOTE**: the final two listed dependencies are strictly speaking dev dependencies. However, when Kettle is loaded
+as a submodule for the purpose of running test cases, this fact cannot be propagated through the npm system. We must
+advertise them as 1st-class dependencies so that they can be available for 3rd party tests.
+    
 
 Kettle apps
 -

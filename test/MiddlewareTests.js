@@ -10,17 +10,17 @@
  * https://github.com/GPII/kettle/LICENSE.txt
  */
 
-/*global require, __dirname*/
+"use strict";
 
 var fluid = require("infusion"),
     path = require("path"),
-    kettle = fluid.require(path.resolve(__dirname, "../kettle.js")),
+    kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
 
-fluid.require(path.resolve(__dirname, "./utils/js/KettleTestUtils.js"));
+kettle.loadTestingSupport();
 
-fluid.defaults("kettle.requests.request.handler.testGet", {
+fluid.defaults("kettle.requests.request.handler.testGetCORS", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
     invokers: {
         handle: {
@@ -39,7 +39,7 @@ fluid.defaults("kettle.tests.CORS_noCred", {
     credentials: "false"
 });
 
-kettle.tests.testCORSOrigin = "localhost:8080";
+kettle.tests.testCORSOrigin = "localhost:8081";
 
 fluid.defaults("kettle.tests.CORS_origin", {
     gradeNames: ["autoInit", "kettle.use.CORS"],
@@ -101,15 +101,15 @@ kettle.tests.testNoCORSResponse = function (data, headers) {
 };
 
 var testDefs = [{
-    name: "CORS middleware tests.",
+    name: "CORS middleware tests",
     expect: 10,
     config: {
-        nodeEnv: "CORS",
+        configName: "CORS",
         configPath: configPath
     },
     components: {
         corsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -119,7 +119,7 @@ var testDefs = [{
             }
         },
         optionsCorsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     method: "OPTIONS",
@@ -142,15 +142,15 @@ var testDefs = [{
         listener: "kettle.tests.testCORSResponseHeaders"
     }]
 }, {
-    name: "CORS middleware no credential tests.",
+    name: "CORS middleware no credential tests",
     expect: 6,
     config: {
-        nodeEnv: "CORS_noCred",
+        configName: "CORS_noCred",
         configPath: configPath
     },
     components: {
         corsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -167,15 +167,15 @@ var testDefs = [{
         listener: "kettle.tests.testCORSResponse_NoCred"
     }]
 }, {
-    name: "CORS middleware custon origin tests.",
+    name: "CORS middleware custom origin tests",
     expect: 12,
     config: {
-        nodeEnv: "CORS_origin",
+        configName: "CORS_origin",
         configPath: configPath
     },
     components: {
         corsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -185,7 +185,7 @@ var testDefs = [{
             }
         },
         invalidCorsRequest: {
-            type: "kettle.tests.request.http",
+            type: "kettle.test.request.http",
             options: {
                 requestOptions: {
                     headers: {
@@ -207,15 +207,15 @@ var testDefs = [{
         listener: "kettle.tests.testCORSResponse_Origin"
     }]
 }, {
-    name: "No CORS middleware tests.",
+    name: "No CORS middleware tests",
     expect: 5,
     config: {
-        nodeEnv: "noCORS",
+        configName: "noCORS",
         configPath: configPath
     },
     components: {
         request: {
-            type: "kettle.tests.request.http"
+            type: "kettle.test.request.http"
         }
     },
     sequence: [{
@@ -226,4 +226,4 @@ var testDefs = [{
     }]
 }];
 
-module.exports = kettle.tests.bootstrap(testDefs);
+kettle.test.bootstrapServer(testDefs);
