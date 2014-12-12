@@ -86,7 +86,7 @@ kettle.tests.testCORSResponseHeaders = function (data, headers, credentials, ori
         headers["access-control-allow-credentials"]);
     jqUnit.assertEquals("CORS headers are correct", "X-Requested-With,Content-Type",
         headers["access-control-allow-headers"]);
-    jqUnit.assertEquals("CORS methods are correct", "GET,OPTIONS",
+    jqUnit.assertEquals("CORS methods are correct", "GET,OPTIONS,PUT,POST",
         headers["access-control-allow-methods"]);
 };
 
