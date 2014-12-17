@@ -20,7 +20,7 @@ var fluid = require("infusion"),
 
 kettle.loadTestingSupport();
 
-fluid.registerNamespace("kettle.tests");
+fluid.registerNamespace("kettle.tests.error");
 
 fluid.defaults("kettle.requests.request.handler.requestError", {
     gradeNames: ["fluid.littleComponent", "autoInit"],
@@ -31,6 +31,24 @@ fluid.defaults("kettle.requests.request.handler.requestError", {
         }
     }
 });
+
+fluid.defaults("kettle.requests.request.handler.requestErrorCode", {
+    gradeNames: ["fluid.littleComponent", "autoInit"],
+    invokers: {
+        handle: {
+            funcName: "kettle.tests.triggerOnErrorCode",
+            args: "{requestProxy}.events.onError"
+        }
+    }
+});
+
+kettle.tests.triggerOnErrorCode = function (onErrorEvent) {
+    onErrorEvent.fire({
+        isError: true,
+        message: "Unauthorised",
+        statusCode: 401
+    });
+};
 
 kettle.tests.triggerGlobalErrorSync = function () {
     "Global Error Triggered".triggerError();
@@ -87,6 +105,10 @@ kettle.tests.testRequestErrorStatus = function (request) {
     kettle.tests.assertHttpStatusError(request.nativeResponse.statusCode);
 };
 
+kettle.tests.testRequestStatusCode = function (request, expectedCode) {
+    jqUnit.assertEquals("Expected HTTP status code", expectedCode, request.nativeResponse.statusCode);
+};
+
 kettle.tests.pushInstrumentedErrors = function () {
     // Beat jqUnit's exception handler so that we can test kettle's instead
     fluid.pushSoftFailure(kettle.tests.failureHandlerLater);
@@ -101,13 +123,15 @@ kettle.tests.popInstrumentedErrors = function () {
     fluid.onUncaughtException.removeListener("fail");
 };
 
-// Tests two effects:
+// Tests four effects:
 // i) Triggering a global error will definitely cause a logged message via the uncaught exception handler
 // ii) Triggering an error during a request will also cause a logged message
+// iii) Error within request will generate HTTP error status code
+// iv) Ability to trigger custom HTTP response code with error 
 
-var testDefs = [{
+kettle.tests.error.testDefs = [{
     name: "Error tests",
-    expect: 3,
+    expect: 4,
     config: {
         configName: "error",
         configPath: configPath
@@ -123,6 +147,14 @@ var testDefs = [{
         },
         httpRequest: {
             type: "kettle.test.request.http"
+        },
+        httpRequest2: {
+            type: "kettle.test.request.http",
+            options: {
+                requestOptions: {
+                    path: "/errorCode"
+                }
+            }
         }
     },
     sequence: [{ // Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
@@ -146,7 +178,13 @@ var testDefs = [{
         args: ["{httpRequest}"]
     }, {
         funcName: "kettle.tests.popInstrumentedErrors"
+    }, {
+        func: "{httpRequest2}.send"
+    }, {
+        event: "{httpRequest2}.events.onComplete",
+        listener: "kettle.tests.testRequestStatusCode",
+        args: ["{httpRequest2}", 401]
     }]
 }];
 
-kettle.test.bootstrapServer(testDefs);
+kettle.test.bootstrapServer(kettle.tests.error.testDefs);
