@@ -35,10 +35,8 @@ kettle.tests.dataSource.ensureWriteableEmpty = function () {
 kettle.tests.testInit = function (dataSource) {
     jqUnit.assertValue("Data source is initialized", dataSource);
     jqUnit.assertValue("Data source should have a get method", dataSource.get);
-    jqUnit.assertUndefined("Data source should not have a set method by default",
-        dataSource.set);
-    jqUnit.assertDeepEq("Data source should have a termMap", {},
-        dataSource.options.termMap);
+    jqUnit.assertUndefined("Data source should not have a set method by default", dataSource.set);
+    jqUnit.assertDeepEq("Data source should have a termMap", {}, dataSource.options.termMap);
     jqUnit.assertValue("urlResolver is initialized", dataSource.urlResolver);
 };
 
@@ -80,8 +78,8 @@ fluid.defaults("kettle.tests.dataSourceInitCases", {
 // Attached URL resolver tests
 
 kettle.tests.testUrlResolver = function (urlResolver, directModel) {
-    jqUnit.assertEquals("Data source should should expand urls based on termMap",
-        "file://test/test.json", urlResolver.resolve(directModel));
+    jqUnit.assertEquals("Data source should should expand urls based on termMap with URIEncoding",
+        "file://test%20with%20space/test.json", urlResolver.resolve(directModel));
 };
 
 fluid.defaults("kettle.tests.dataSourceInitTester", {
@@ -107,7 +105,7 @@ fluid.defaults("kettle.tests.dataSourceResolverTester", {
             options: {
                 url: "file://%expand/test.json",
                 termMap: {
-                    expand: "test"
+                    expand: "test with space"
                 }
             }
         },
@@ -141,7 +139,7 @@ fluid.defaults("kettle.tests.urlResolverTester", {
             name: "CouchDB Data source initialization",
             func: "kettle.tests.testUrlResolver",
             args: ["{urlDataSourceDynamic}.urlResolver", {
-                expand: "test"
+                expand: "test with space"
             }]
         }]
     }]
