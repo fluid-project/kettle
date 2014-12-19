@@ -85,9 +85,7 @@ kettle.tests.socket.testDefs = [{
         ioRequest: {
             type: "kettle.test.request.io",
             options: {
-                requestOptions: {
-                    path: "/socket_path"
-                },
+                path: "/socket_path",
                 listenOnInit: true
             }
         },

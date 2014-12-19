@@ -220,25 +220,19 @@ var testDefs = [{
         invalidIoRequest: {
             type: "kettle.test.request.ioCookie",
             options: {
-                requestOptions: {
-                    path: "/testSessionSocket"
-                }
+                path: "/testSessionSocket"
             }
         },
         ioRequest: {
             type: "kettle.test.request.ioCookie",
             options: {
-                requestOptions: {
-                    path: "/testSessionSocket"
-                }
+                path: "/testSessionSocket"
             }
         },
         httpTestSessionStart: {
             type: "kettle.test.request.httpCookie",
             options: {
-                requestOptions: {
-                    path: "/testSessionStart/%token"
-                },
+                path: "/testSessionStart/%token",
                 termMap: {
                     token: kettle.tests.token
                 }
@@ -247,9 +241,7 @@ var testDefs = [{
         httpTestSessionEnd: {
             type: "kettle.test.request.httpCookie",
             options: {
-                requestOptions: {
-                    path: "/testSessionEnd/%token"
-                },
+                path: "/testSessionEnd/%token",
                 termMap: {
                     token: kettle.tests.token
                 }
@@ -258,25 +250,19 @@ var testDefs = [{
         httpTestSessionRequest: {
             type: "kettle.test.request.httpCookie",
             options: {
-                requestOptions: {
-                    path: "/testSessionRequest"
-                }
+                path: "/testSessionRequest"
             }
         },
         httpTestNoneSessionRequest: {
             type: "kettle.test.request.httpCookie",
             options: {
-                requestOptions: {
-                    path: "/testNoneSessionRequest"
-                }
+                path: "/testNoneSessionRequest"
             }
         },
         httpTestNoSessionRequest: {
             type: "kettle.test.request.httpCookie",
             options: {
-                requestOptions: {
-                    path: "/testNoSessionRequest"
-                }
+                path: "/testNoSessionRequest"
             }
         }
     },

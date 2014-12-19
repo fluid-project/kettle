@@ -210,7 +210,10 @@ kettle.tests.testServerPairResponse = function (expected, data) {
 
 kettle.tests.getServerPairSequence = [
     {
-        func: "{getRequest}.send"
+        func: "{getRequest}.send",
+        args: [null, {
+            path: "/relay"
+        }]
     }, {
         event: "{getRequest}.events.onComplete",
         listener: "kettle.tests.testServerPairResponse",
@@ -246,31 +249,25 @@ fluid.defaults("kettle.tests.serverPairTester", {
         getRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    port: 8086,
-                    path: "/relay",
-                    method: "GET"
-                }
+                port: 8086,
+                // path: "/relay", // omit this to test KETTLE-28 by supplying dynamically
+                method: "GET"
             }
         },
         postRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    port: 8086,
-                    path: "/relay",
-                    method: "POST"
-                }
+                port: 8086,
+                path: "/relay",
+                method: "POST"
             }
         },
         putRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    port: 8086,
-                    path: "/relay",
-                    method: "PUT"
-                }
+                port: 8086,
+                path: "/relay",
+                method: "PUT"
             }
         },
         fixtures: {

@@ -151,9 +151,7 @@ kettle.tests.error.testDefs = [{
         httpRequest2: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    path: "/errorCode"
-                }
+                path: "/errorCode"
             }
         }
     },
