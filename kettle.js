@@ -31,7 +31,7 @@ loader.require("./lib/session.js");
 loader.require("./lib/session.io.js");
 
 kettle.loadTestingSupport = function () {
-    require("./test/utils/js/KettleTestUtils.js");
+    require("./lib/test/KettleTestUtils.js");
 };
 
 module.exports = kettle;

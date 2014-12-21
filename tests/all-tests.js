@@ -18,6 +18,7 @@ var fluid = require("infusion"),
 kettle.loadTestingSupport();
 
 var testIncludes = [
+    "./InitTests.js",
     "./DataSourceTests.js",
     "./CrossServerRequestTests.js",
     "./HTTPMethodsTests.js",

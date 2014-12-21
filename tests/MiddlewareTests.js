@@ -111,21 +111,17 @@ var testDefs = [{
         corsRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    headers: {
-                        "Origin": kettle.tests.testCORSOrigin
-                    }
+                headers: {
+                    "Origin": kettle.tests.testCORSOrigin
                 }
             }
         },
         optionsCorsRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    method: "OPTIONS",
-                    headers: {
-                        "Origin": kettle.tests.testCORSOrigin
-                    }
+                method: "OPTIONS",
+                headers: {
+                    "Origin": kettle.tests.testCORSOrigin
                 }
             }
         }
@@ -152,10 +148,8 @@ var testDefs = [{
         corsRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    headers: {
-                        "Origin": kettle.tests.testCORSOrigin
-                    }
+                headers: {
+                    "Origin": kettle.tests.testCORSOrigin
                 }
             }
         }
@@ -177,20 +171,16 @@ var testDefs = [{
         corsRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    headers: {
-                        "Origin": kettle.tests.testCORSOrigin
-                    }
+                headers: {
+                    "Origin": kettle.tests.testCORSOrigin
                 }
             }
         },
         invalidCorsRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    headers: {
-                        "Origin": "invaliddomain.com"
-                    }
+                headers: {
+                    "Origin": "invaliddomain.com"
                 }
             }
         }

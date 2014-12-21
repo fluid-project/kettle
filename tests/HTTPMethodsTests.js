@@ -98,11 +98,8 @@ var testDefs = [{
         getRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    path: "/",
-                    method: "GET",
-                    port: 8081
-                }
+                path: "/",
+                method: "GET",
             }
         }
     },
@@ -123,11 +120,8 @@ var testDefs = [{
         postRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    path: "/",
-                    method: "POST",
-                    port: 8081
-                }
+                path: "/",
+                method: "POST",
             }
         }
     },
@@ -149,11 +143,8 @@ var testDefs = [{
         putRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    path: "/",
-                    method: "PUT",
-                    port: 8081
-                }
+                path: "/",
+                method: "PUT",
             }
         }
     },
@@ -175,21 +166,15 @@ var testDefs = [{
         postRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    path: "/",
-                    method: "POST",
-                    port: 8081
-                }
+                path: "/",
+                method: "POST",
             }
         },
         putRequest: {
             type: "kettle.test.request.http",
             options: {
-                requestOptions: {
-                    path: "/",
-                    method: "PUT",
-                    port: 8081
-                }
+                path: "/",
+                method: "PUT",
             }
         }
     },
