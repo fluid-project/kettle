@@ -12,7 +12,8 @@
     "dependencies": {
         "express": "~3.4.3",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/fluid-project/infusion.git#df5f8cfabf815a4086b778e73125c3c952dda4ec",
+        "infusion": "git://github.com/amb26/infusion.git#ff70b875be2264e7d211279f42f7e15d55ad3d9c",
+        "jsonlint": "1.6.0",
         "node-uuid": "~1.4.0",
         "xmlhttprequest": "~1.6.0",
         "socket.io-client": "~0.9.16"
@@ -47,6 +48,6 @@
     },
     "main": "./kettle.js",
     "engines": {
-        "node": ">=0.8"
+        "node": ">=0.10"
     }
 }
