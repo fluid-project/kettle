@@ -55,7 +55,7 @@ kettle.tests.endpoint = function (type, requestProxy, request) {
 };
 
 fluid.defaults("kettle.requests.request.handler.getEndpoint", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.endpoint",
@@ -66,7 +66,7 @@ fluid.defaults("kettle.requests.request.handler.getEndpoint", {
 });
 
 fluid.defaults("kettle.requests.request.handler.postEndpoint", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.endpoint",
@@ -77,7 +77,7 @@ fluid.defaults("kettle.requests.request.handler.postEndpoint", {
 });
 
 fluid.defaults("kettle.requests.request.handler.putEndpoint", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.endpoint",
@@ -103,7 +103,7 @@ kettle.tests.relay = function (type, dataSource, requestPromise, writeMethod) {
 };
 
 fluid.defaults("kettle.requests.request.handler.getRelay", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.relay",
@@ -114,7 +114,7 @@ fluid.defaults("kettle.requests.request.handler.getRelay", {
 });
 
 fluid.defaults("kettle.requests.request.handler.postRelay", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.relay",
@@ -125,7 +125,7 @@ fluid.defaults("kettle.requests.request.handler.postRelay", {
 });
 
 fluid.defaults("kettle.requests.request.handler.putRelay", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.relay",
@@ -136,7 +136,7 @@ fluid.defaults("kettle.requests.request.handler.putRelay", {
 });
 
 fluid.defaults("kettle.tests.serverPair", {
-    gradeNames: ["fluid.eventedComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     components: {
         sourceServer: {
             type: "kettle.server",
@@ -244,7 +244,7 @@ kettle.tests.putServerPairSequence = [
 ];
 
 fluid.defaults("kettle.tests.serverPairTester", {
-    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.serverPair", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.serverPair"],
     components: {
         getRequest: {
             type: "kettle.test.request.http",

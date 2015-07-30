@@ -23,7 +23,7 @@ kettle.loadTestingSupport();
 fluid.registerNamespace("kettle.tests.error");
 
 fluid.defaults("kettle.requests.request.handler.requestError", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "fluid.fail",
@@ -33,7 +33,7 @@ fluid.defaults("kettle.requests.request.handler.requestError", {
 });
 
 fluid.defaults("kettle.requests.request.handler.requestErrorCode", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.triggerOnErrorCode",
@@ -69,7 +69,7 @@ kettle.tests.awaitGlobalError = function (priority, message) {
 };
 
 fluid.defaults("kettle.tests.logNotifierHolder", {
-    gradeNames: ["fluid.eventedComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     events: {
         logNotifier: null
     }
@@ -138,7 +138,7 @@ kettle.tests.error.testDefs = [{
     },
     components: {
         eventHolder: {
-            type: "fluid.eventedComponent",
+            type: "fluid.component",
             options: {
                 events: {
                     logNotifier: "{logNotifierHolder}.events.logNotifier"

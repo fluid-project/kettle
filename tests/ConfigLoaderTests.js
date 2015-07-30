@@ -22,7 +22,7 @@ var fluid = require("infusion"),
 kettle.loadTestingSupport();
 
 fluid.defaults("kettle.tests.configLoader", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment"],
     components: {
         configLoaderTester: {
             type: "kettle.tests.configLoaderTester"
@@ -31,24 +31,23 @@ fluid.defaults("kettle.tests.configLoader", {
 });
 
 fluid.defaults("kettle.tests.subcomponent1", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     option: "ORIGINAL"
 });
 
 fluid.defaults("kettle.tests.subcomponent2", {
-    gradeNames: ["autoInit", "fluid.modelComponent"]
+    gradeNames: ["fluid.modelComponent"]
 });
 
 fluid.defaults("kettle.tests.subcomponent3", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     option: "OVERRIDE"
 });
 
 var expectedDefaults = {
     config1: {
-        gradeNames: ["config1", "fluid.littleComponent", "kettle.config", "config2",
-            "fluid.eventedComponent", "config4", "config3",
-            "fluid.modelComponent", "fluid.commonModelComponent", "autoInit"],
+        gradeNames: ["config1", "fluid.component", "kettle.config", "config2",
+            "config4", "config3", "fluid.modelComponent"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -62,7 +61,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config2: {
-        gradeNames: ["config2", "fluid.eventedComponent", "fluid.littleComponent", "kettle.config", "config4"],
+        gradeNames: ["config2", "fluid.component", "kettle.config", "config4"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -74,7 +73,7 @@ var expectedDefaults = {
         option2: "OPTION2"
     },
     config3: {
-        gradeNames: ["config3", "fluid.modelComponent", "fluid.commonModelComponent", "fluid.littleComponent", "kettle.config"],
+        gradeNames: ["config3", "fluid.modelComponent", "fluid.component", "kettle.config"],
         components: {
             subcomponent1: {
                 options: {
@@ -85,7 +84,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config4: {
-        gradeNames: ["config4", "kettle.config", "fluid.littleComponent"],
+        gradeNames: ["config4", "kettle.config", "fluid.component"],
         components: {
             subcomponent1: {
                 options: {
@@ -95,18 +94,18 @@ var expectedDefaults = {
         }
     },
     config5: { // never becomes a top-level config and so does not acquire the kettle.config grade
-        gradeNames: ["config5", "config6", "fluid.littleComponent"],
+        gradeNames: ["config5", "config6", "fluid.component"],
         option6: "OPTION6"
     },
     config6: {
-        gradeNames: ["config6", "fluid.littleComponent", "kettle.config", "autoInit"],
+        gradeNames: ["config6", "fluid.component", "kettle.config"],
         option6: "OPTION6"
     }
 };
 
 var expectedSubcomponentOptions = {
-    gradeNames: ["kettle.tests.subcomponent3", "fluid.littleComponent",
-        "kettle.tests.subcomponent1", "autoInit"],
+    gradeNames: ["kettle.tests.subcomponent3", "fluid.component",
+        "kettle.tests.subcomponent1"],
     option: "OVERRIDE"
 };
 
@@ -146,7 +145,7 @@ kettle.tests.testCreateNoTypeNameDefaults = function () {
 };
 
 fluid.defaults("kettle.tests.configLoaderTester", {
-    gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
+    gradeNames: ["fluid.test.testCaseHolder"],
     modules: [{
         name: "Config Loader",
         tests: [{

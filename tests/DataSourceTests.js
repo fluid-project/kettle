@@ -42,7 +42,7 @@ kettle.tests.testInit = function (dataSource) {
 
 
 fluid.defaults("kettle.tests.dataSourceInitTester", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment"],
     components: {
         urlDataSource: {
             type: "kettle.dataSource.URL"
@@ -58,7 +58,7 @@ fluid.defaults("kettle.tests.dataSourceInitTester", {
     
 
 fluid.defaults("kettle.tests.dataSourceInitCases", {
-    gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
+    gradeNames: ["fluid.test.testCaseHolder"],
     modules: [{
         name: "Data Source Init Tester",
         tests: [{
@@ -83,7 +83,7 @@ kettle.tests.testUrlResolver = function (urlResolver, directModel) {
 };
 
 fluid.defaults("kettle.tests.dataSourceInitTester", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment"],
     components: {
         urlDataSource: {
             type: "kettle.dataSource.URL"
@@ -98,7 +98,7 @@ fluid.defaults("kettle.tests.dataSourceInitTester", {
 });
 
 fluid.defaults("kettle.tests.dataSourceResolverTester", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment"],
     components: {
         urlDataSourceStatic: {
             type: "kettle.dataSource.URL",
@@ -126,7 +126,7 @@ fluid.defaults("kettle.tests.dataSourceResolverTester", {
 
 
 fluid.defaults("kettle.tests.urlResolverTester", {
-    gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
+    gradeNames: ["fluid.test.testCaseHolder"],
     modules: [{
         name: "UrlResolver",
         tests: [{
@@ -152,7 +152,7 @@ fluid.defaults("kettle.tests.urlResolverTester", {
 
 
 fluid.defaults("kettle.tests.dataSourceTestCaseHolder", {
-    gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
+    gradeNames: ["fluid.test.testCaseHolder"],
     moduleSource: {
         funcName: "kettle.tests.simpleDSModuleSource",
         args: "{testEnvironment}.options"
@@ -171,7 +171,7 @@ kettle.tests.dataSource.defaultErrorFunc = function (shouldError, data) {
 
 // Base grade for each individual DataSource test fixture: Top-level component holding dataSource, test environment and standard events
 fluid.defaults("kettle.tests.simpleDataSourceTest", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment"],
     vars: {
         root: __dirname
     },
@@ -225,7 +225,7 @@ kettle.tests.dataSource.invokePromiseProducer = function (producerFunc, args, te
 };
 
 fluid.defaults("kettle.tests.promiseDataSourceTest", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     testPromiseAPI: true,
     invokers: {
         invokePromiseProducer: {
@@ -303,7 +303,7 @@ kettle.tests.testSetResponse = function (dataSource, directModel, expected) {
 
 
 fluid.defaults("kettle.tests.dataSource.1.URL.empty", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "1. Testing url datasource with empty response",
     components: {
         dataSource: {
@@ -319,7 +319,7 @@ fluid.defaults("kettle.tests.dataSource.1.URL.empty", {
 });
 
 fluid.defaults("kettle.tests.dataSource.2.URL.standard", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "2. Testing url datasource with standard response",
     components: {
         dataSource: {
@@ -340,7 +340,7 @@ fluid.defaults("kettle.tests.dataSource.2.URL.standard", {
 });
 
 fluid.defaults("kettle.tests.dataSource.3.CouchDB.standard", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "3. Testing CouchDB datasource with standard response",
     components: {
         dataSource: {
@@ -361,7 +361,7 @@ fluid.defaults("kettle.tests.dataSource.3.CouchDB.standard", {
 });
 
 fluid.defaults("kettle.tests.dataSource.4.CouchDB.empty", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "4. Testing CouchDB datasource with empty response",
     components: {
         dataSource: {
@@ -377,7 +377,7 @@ fluid.defaults("kettle.tests.dataSource.4.CouchDB.empty", {
 });
 
 fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "5. Testing CouchDB datasource with error response",
     shouldError: true,
     components: {
@@ -400,7 +400,7 @@ fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
 });
 
 fluid.defaults("kettle.tests.dataSource.6.URL.expand.present", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "6. Testing url datasource with filesystem with expansion",
     directModel: {
         expand: "dataSourceTestFile"
@@ -427,7 +427,7 @@ fluid.defaults("kettle.tests.dataSource.6.URL.expand.present", {
 });
 
 fluid.defaults("kettle.tests.dataSource.7.URL.expand.missing", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "7. Testing url datasource with filesystem with expansion",
     directModel: {
         expand: "nonexistent_file"
@@ -449,7 +449,7 @@ fluid.defaults("kettle.tests.dataSource.7.URL.expand.missing", {
 });
 
 fluid.defaults("kettle.tests.dataSource.8.CouchDB.expand.missing", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "8. Testing url datasource with filesystem with expansion",
     directModel: {
         expand: "nonexistent_file"
@@ -471,7 +471,7 @@ fluid.defaults("kettle.tests.dataSource.8.CouchDB.expand.missing", {
 });
 
 fluid.defaults("kettle.tests.dataSource.9.URL.expand.static", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "9. Testing url datasource with filesystem with expansion and static termMap",
     components: {
         dataSource: {
@@ -495,7 +495,7 @@ fluid.defaults("kettle.tests.dataSource.9.URL.expand.static", {
 });
 
 fluid.defaults("kettle.tests.dataSource.10.CouchDB.expand.static", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "10. Testing couchdb datasource with filesystem with expansion and static termMap",
     components: {
         dataSource: {
@@ -519,7 +519,7 @@ fluid.defaults("kettle.tests.dataSource.10.CouchDB.expand.static", {
 });
 
 fluid.defaults("kettle.tests.dataSource.11.CouchDB.expand.dynamic", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "11. Testing couchdb datasource with filesystem and dynamic expansion",
     directModel: {
         expand: "couchDataSourceTestFile"
@@ -546,7 +546,7 @@ fluid.defaults("kettle.tests.dataSource.11.CouchDB.expand.dynamic", {
 });
 
 fluid.defaults("kettle.tests.dataSource.12.URL.set", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "12. Testing url datasource with filesystem - set",
     dataSourceMethod: "set",
     dataSourceModel: {
@@ -572,7 +572,7 @@ fluid.defaults("kettle.tests.dataSource.12.URL.set", {
 });
 
 fluid.defaults("kettle.tests.dataSource.13.CouchDB.set", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "13. Testing CouchDB datasource with filesystem - set",
     dataSourceMethod: "set",
     dataSourceModel: {
@@ -606,7 +606,7 @@ kettle.tests.dataSource.supplyWriteableCouchDBFile = function () {
 };
 
 fluid.defaults("kettle.tests.dataSource.14.CouchDB.set.existing", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "14. Testing CouchDB datasource with filesystem existing document - set",
     dataSourceMethod: "set",
     dataSourceModel: {
@@ -639,7 +639,7 @@ fluid.defaults("kettle.tests.dataSource.14.CouchDB.set.existing", {
 });
 
 fluid.defaults("kettle.tests.dataSource.15.URL.set.expand", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "15. Testing url datasource with filesystem and expansion - set",
     dataSourceMethod: "set",
     directModel: {
@@ -671,7 +671,7 @@ fluid.defaults("kettle.tests.dataSource.15.URL.set.expand", {
 });
 
 fluid.defaults("kettle.tests.dataSource.16.CouchDB.set.existing.expand", {
-    gradeNames: ["kettle.tests.simpleDataSourceTest", "autoInit"],
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "16. Testing couchdb datasource with filesystem, existing document and expansion - set",
     dataSourceMethod: "set",
     directModel: {

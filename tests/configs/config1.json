@@ -1,7 +1,7 @@
 {
     "typeName": "config1",
     "options": {
-        "gradeNames": ["autoInit", "fluid.littleComponent"],
+        "gradeNames": ["fluid.component"],
         "option1": "OPTION1"
     },
     "includes": ["./config2.json", "${kettle}/tests/configs/config3.json"]

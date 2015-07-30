@@ -21,7 +21,7 @@ var fluid = require("infusion"),
 kettle.loadTestingSupport();
 
 fluid.defaults("kettle.tests.sessionServer", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     distributeOptions: {
         source: "{that}.options.validateToken",
         target: "{that > sessionManager}.options.invokers.validate"
@@ -32,7 +32,7 @@ fluid.defaults("kettle.tests.sessionServer", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testSessionSocket", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testSessionSocket",
@@ -43,7 +43,7 @@ fluid.defaults("kettle.requests.request.handler.testSessionSocket", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testSessionRequest", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testSessionRequest",
@@ -54,7 +54,7 @@ fluid.defaults("kettle.requests.request.handler.testSessionRequest", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testSessionStart", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testSessionStart",
@@ -69,7 +69,7 @@ fluid.defaults("kettle.requests.request.handler.testSessionStart", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testSessionEnd", {
-    gradeNames: ["fluid.eventedComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     listeners: {
         "{request}.session.events.afterDestroySession": [
             "{that}.clearCookie",
@@ -100,7 +100,7 @@ fluid.defaults("kettle.requests.request.handler.testSessionEnd", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testNoneSessionRequest", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testNoneNoSessionRequest",
@@ -110,7 +110,7 @@ fluid.defaults("kettle.requests.request.handler.testNoneSessionRequest", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testNoSessionRequest", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testNoneNoSessionRequest",

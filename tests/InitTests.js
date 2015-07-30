@@ -14,13 +14,12 @@
 "use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
     kettle = require("../kettle.js"),
     jqUnit = fluid.require("jqUnit");
     
     
 fluid.defaults("kettle.tests.init.server", {
-    gradeNames: ["kettle.server", "autoInit"],
+    gradeNames: ["kettle.server"],
     members: {
         fireRecord: []
     },
@@ -36,30 +35,28 @@ fluid.defaults("kettle.tests.init.server", {
         },
         onContributeRouteHandlers: {
             funcName: "kettle.tests.init.record",
-            args: ["{that}", "onContributeRouteHandlers"]          
+            args: ["{that}", "onContributeRouteHandlers"]
         },
         onCreate: {
             priority: "first",
             funcName: "kettle.tests.init.record",
-            args: ["{that}", "onCreate"]          
+            args: ["{that}", "onCreate"]
         }
     }
 });
 
 kettle.tests.init.record = function (that, name) {
     that.fireRecord.push(name);
-}
+};
 
 kettle.tests.init.assertAndCleanup = function (that) {
     jqUnit.assertDeepEq("Expected init event sequence", ["onCreate", "onContributeMiddleware", "onContributeRouteHandlers"], that.fireRecord);
     that.stop();
     jqUnit.start();
-}
+};
 
 jqUnit.asyncTest("Kettle server initialisation test", function () {
     jqUnit.expect(1);
   
-    var server = kettle.tests.init.server({
-    
-    });
+    kettle.tests.init.server({});
 });

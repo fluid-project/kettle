@@ -21,7 +21,7 @@ var fluid = require("infusion"),
 kettle.loadTestingSupport();
 
 fluid.defaults("kettle.requests.request.handler.testGetCORS", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testGetCORS",
@@ -31,7 +31,7 @@ fluid.defaults("kettle.requests.request.handler.testGetCORS", {
 });
 
 fluid.defaults("kettle.tests.CORS_noCred", {
-    gradeNames: ["autoInit", "kettle.use.CORS"],
+    gradeNames: ["kettle.use.CORS"],
     distributeOptions: {
         source: "{that}.options.credentials",
         target: "{that > CORS}.options.credentials"
@@ -42,7 +42,7 @@ fluid.defaults("kettle.tests.CORS_noCred", {
 kettle.tests.testCORSOrigin = "localhost:8081";
 
 fluid.defaults("kettle.tests.CORS_origin", {
-    gradeNames: ["autoInit", "kettle.use.CORS"],
+    gradeNames: ["kettle.use.CORS"],
     distributeOptions: {
         source: "{that}.options.origin",
         target: "{that > CORS}.options.origin"

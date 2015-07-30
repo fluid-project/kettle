@@ -24,7 +24,7 @@ fluid.registerNamespace("kettle.tests.testHTTPMethods");
 
 // ----------------- GET HANDLING ------------------------
 fluid.defaults("kettle.requests.request.handler.testMethodsGet", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testHTTPMethods.get",
@@ -44,7 +44,7 @@ kettle.tests.testHTTPMethods.testGetResponse = function (data) {
 
 // ----------------- POST HANDLING ------------------------
 fluid.defaults("kettle.requests.request.handler.testMethodsPost", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testHTTPMethods.post",
@@ -66,7 +66,7 @@ kettle.tests.testHTTPMethods.testPostResponse = function (data) {
 
 // ----------------- PUT HANDLING ------------------------
 fluid.defaults("kettle.requests.request.handler.testMethodsPut", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.testHTTPMethods.put",
@@ -99,7 +99,7 @@ var testDefs = [{
             type: "kettle.test.request.http",
             options: {
                 path: "/",
-                method: "GET",
+                method: "GET"
             }
         }
     },
@@ -121,7 +121,7 @@ var testDefs = [{
             type: "kettle.test.request.http",
             options: {
                 path: "/",
-                method: "POST",
+                method: "POST"
             }
         }
     },
@@ -144,7 +144,7 @@ var testDefs = [{
             type: "kettle.test.request.http",
             options: {
                 path: "/",
-                method: "PUT",
+                method: "PUT"
             }
         }
     },
@@ -167,14 +167,14 @@ var testDefs = [{
             type: "kettle.test.request.http",
             options: {
                 path: "/",
-                method: "POST",
+                method: "POST"
             }
         },
         putRequest: {
             type: "kettle.test.request.http",
             options: {
                 path: "/",
-                method: "PUT",
+                method: "PUT"
             }
         }
     },

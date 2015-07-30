@@ -21,7 +21,7 @@ var fluid = require("infusion"),
 kettle.loadTestingSupport();
 
 fluid.defaults("kettle.requests.request.handler.testSocket", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.socket.testSocket",
@@ -32,7 +32,7 @@ fluid.defaults("kettle.requests.request.handler.testSocket", {
 });
 
 fluid.defaults("kettle.requests.request.handler.testGet", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     invokers: {
         handle: {
             funcName: "kettle.tests.socket.testGet",
