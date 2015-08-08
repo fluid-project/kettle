@@ -13,22 +13,21 @@ https://github.com/gpii/kettle/LICENSE.txt
 var fluid = require("infusion"),
     kettle = fluid.registerNamespace("kettle");
 
-var loader = fluid.getLoader(__dirname);
-
-loader.require("./lib/utils.js");
+require("./lib/KettleUtils.js");
 
 fluid.module.register("kettle", __dirname, require);
 
-loader.require("./lib/app.js");
-loader.require("./lib/configLoader.js");
-loader.require("./lib/dataSource.js");
-loader.require("./lib/middleware.js");
-loader.require("./lib/request.js");
-loader.require("./lib/request.io.js");
-loader.require("./lib/server.js");
-loader.require("./lib/server.io.js");
-loader.require("./lib/session.js");
-loader.require("./lib/session.io.js");
+require("./lib/KettleApp.js");
+require("./lib/KettleConfigLoader.js");
+require("./lib/KettleDataSource.js");
+require("./lib/KettleMiddleware.js");
+require("./lib/KettleRouter.js");
+require("./lib/KettleRequest.js");
+require("./lib/KettleRequest.io.js");
+require("./lib/KettleServer.js");
+require("./lib/KettleServer.io.js");
+require("./lib/KettleSession.js");
+require("./lib/KettleSession.io.js");
 
 kettle.loadTestingSupport = function () {
     require("./lib/test/KettleTestUtils.js");

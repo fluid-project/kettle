@@ -20,68 +20,62 @@ var fluid = require("infusion"),
     
 kettle.loadTestingSupport();
 
-fluid.registerNamespace("kettle.tests.testHTTPMethods");
+fluid.registerNamespace("kettle.tests.HTTPMethods");
 
 // ----------------- GET HANDLING ------------------------
-fluid.defaults("kettle.requests.request.handler.testMethodsGet", {
-    gradeNames: ["fluid.component"],
+fluid.defaults("kettle.tests.HTTPMethods.get.handler", {
     invokers: {
-        handle: {
-            funcName: "kettle.tests.testHTTPMethods.get",
-            args: "{requestProxy}"
+        handleRequest: {
+            funcName: "kettle.tests.HTTPMethods.get.handleRequest"
         }
     }
 });
 
-kettle.tests.testHTTPMethods.get = function (requestProxy) {
+kettle.tests.HTTPMethods.get.handleRequest = function (request) {
     jqUnit.assertTrue("GET request successfully received", true);
-    requestProxy.events.onSuccess.fire("GET Call retrieved");
+    request.events.onSuccess.fire("GET Call retrieved");
 };
 
-kettle.tests.testHTTPMethods.testGetResponse = function (data) {
+kettle.tests.HTTPMethods.get.testResponse = function (data) {
     jqUnit.assertEquals("GET response successfully received", "GET Call retrieved", data);
 };
 
 // ----------------- POST HANDLING ------------------------
-fluid.defaults("kettle.requests.request.handler.testMethodsPost", {
-    gradeNames: ["fluid.component"],
+fluid.defaults("kettle.tests.HTTPMethods.post.handler", {
     invokers: {
-        handle: {
-            funcName: "kettle.tests.testHTTPMethods.post",
-            args: ["{requestProxy}", "{request}"]
+        handleRequest: {
+            funcName: "kettle.tests.HTTPMethods.post.handleRequest"
         }
     }
 });
 
-kettle.tests.testHTTPMethods.post = function (requestProxy, request) {
+kettle.tests.HTTPMethods.post.handleRequest = function (request) {
     jqUnit.assertTrue("POST request successfully received", true);
-    requestProxy.events.onSuccess.fire(request.req.body);
+    request.events.onSuccess.fire(request.req.body);
 };
 
-kettle.tests.testHTTPMethods.testPostResponse = function (data) {
-    jqUnit.assertDeepEq("GET response successfully received", {
+kettle.tests.HTTPMethods.post.testResponse = function (data) {
+    jqUnit.assertDeepEq("POST response successfully received", {
         "msg": "I am a POST request"
     }, JSON.parse(data));
 };
 
 // ----------------- PUT HANDLING ------------------------
-fluid.defaults("kettle.requests.request.handler.testMethodsPut", {
-    gradeNames: ["fluid.component"],
+fluid.defaults("kettle.tests.HTTPMethods.put.handler", {
     invokers: {
-        handle: {
-            funcName: "kettle.tests.testHTTPMethods.put",
-            args: ["{requestProxy}", "{request}"]
+        handleRequest: {
+            funcName: "kettle.tests.HTTPMethods.put.handleRequest"
         }
     }
 });
 
-kettle.tests.testHTTPMethods.put = function (requestProxy, request) {
+kettle.tests.HTTPMethods.put.handleRequest = function (request) {
     jqUnit.assertTrue("PUT request successfully received", true);
-    requestProxy.events.onSuccess.fire(request.req.body);
+    request.events.onSuccess.fire(request.req.body);
 };
 
-kettle.tests.testHTTPMethods.testPutResponse = function (data) {
-    jqUnit.assertDeepEq("GET response successfully received", {
+kettle.tests.HTTPMethods.put.testResponse = function (data) {
+    jqUnit.assertDeepEq("PUT response successfully received", {
         "msg": "I am a PUT request"
     }, JSON.parse(data));
 };
@@ -107,7 +101,7 @@ var testDefs = [{
         func: "{getRequest}.send"
     }, {
         event: "{getRequest}.events.onComplete",
-        listener: "kettle.tests.testHTTPMethods.testGetResponse"
+        listener: "kettle.tests.HTTPMethods.get.testResponse"
     }]
 }, { // POST test
     name: "HTTPMethods POST test",
@@ -130,7 +124,7 @@ var testDefs = [{
         args: { "msg": "I am a POST request" }
     }, {
         event: "{postRequest}.events.onComplete",
-        listener: "kettle.tests.testHTTPMethods.testPostResponse"
+        listener: "kettle.tests.HTTPMethods.post.testResponse"
     }]
 }, { // PUT test
     name: "HTTPMethods PUT test",
@@ -153,7 +147,7 @@ var testDefs = [{
         args: { "msg": "I am a PUT request" }
     }, {
         event: "{putRequest}.events.onComplete",
-        listener: "kettle.tests.testHTTPMethods.testPutResponse"
+        listener: "kettle.tests.HTTPMethods.put.testResponse"
     }]
 }, { // PUT & POST combo test
     name: "HTTPMethods PUT & POST in sequence test",
@@ -183,19 +177,19 @@ var testDefs = [{
         args: { "msg": "I am a POST request" }
     }, {
         event: "{postRequest}.events.onComplete",
-        listener: "kettle.tests.testHTTPMethods.testPostResponse"
+        listener: "kettle.tests.HTTPMethods.post.testResponse"
     }, {
         func: "{putRequest}.send",
         args: { "msg": "I am a PUT request" }
     }, {
         event: "{putRequest}.events.onComplete",
-        listener: "kettle.tests.testHTTPMethods.testPutResponse"
+        listener: "kettle.tests.HTTPMethods.put.testResponse"
     }, {
         func: "{postRequest}.send",
         args: { "msg": "I am a POST request" }
     }, {
         event: "{postRequest}.events.onComplete",
-        listener: "kettle.tests.testHTTPMethods.testPostResponse"
+        listener: "kettle.tests.HTTPMethods.post.testResponse"
     }]
 }];
 

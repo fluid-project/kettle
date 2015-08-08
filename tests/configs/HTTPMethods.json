@@ -11,16 +11,16 @@
                         "app": {
                             "type": "kettle.app",
                             "options": {
-                                "handlers": {
-                                    "testMethodsGet": {
+                                "requestHandlers": {
+                                    "kettle.tests.HTTPMethods.get.handler": {
                                         "route": "/",
                                         "type": "get"
                                     },
-                                    "testMethodsPost": {
+                                    "kettle.tests.HTTPMethods.post.handler": {
                                         "route": "/",
                                         "type": "post"
                                     },
-                                    "testMethodsPut": {
+                                    "kettle.tests.HTTPMethods.put.handler": {
                                         "route": "/",
                                         "type": "put"
                                     }
