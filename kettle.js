@@ -17,9 +17,9 @@ require("./lib/KettleUtils.js");
 
 fluid.module.register("kettle", __dirname, require);
 
+require("./lib/dataSource.js");
 require("./lib/KettleApp.js");
 require("./lib/KettleConfigLoader.js");
-require("./lib/KettleDataSource.js");
 require("./lib/KettleMiddleware.js");
 require("./lib/KettleRouter.js");
 require("./lib/KettleRequest.js");
