@@ -22,28 +22,25 @@ kettle.loadTestingSupport();
 
 fluid.registerNamespace("kettle.tests.error");
 
-fluid.defaults("kettle.requests.request.handler.requestError", {
-    gradeNames: ["fluid.component"],
+fluid.defaults("kettle.tests.error.requestError", {
     invokers: {
-        handle: {
+        handleRequest: {
             funcName: "fluid.fail",
             args: "Assertion failed in request - this failure is expected: "
         }
     }
 });
 
-fluid.defaults("kettle.requests.request.handler.requestErrorCode", {
-    gradeNames: ["fluid.component"],
+fluid.defaults("kettle.tests.error.requestErrorCode", {
     invokers: {
-        handle: {
-            funcName: "kettle.tests.triggerOnErrorCode",
-            args: "{requestProxy}.events.onError"
+        handleRequest: {
+            funcName: "kettle.tests.triggerOnErrorCode"
         }
     }
 });
 
-kettle.tests.triggerOnErrorCode = function (onErrorEvent) {
-    onErrorEvent.fire({
+kettle.tests.triggerOnErrorCode = function (request) {
+    request.events.onError.fire({
         isError: true,
         message: "Unauthorised",
         statusCode: 401
@@ -51,6 +48,8 @@ kettle.tests.triggerOnErrorCode = function (onErrorEvent) {
 };
 
 kettle.tests.triggerGlobalErrorSync = function () {
+    //fluid.onUncaughtException.fire("Global Error Triggered");
+    // we'd like to do the following but it busts express permanently
     "Global Error Triggered".triggerError();
 };
 
@@ -69,32 +68,17 @@ kettle.tests.awaitGlobalError = function (priority, message) {
 };
 
 fluid.defaults("kettle.tests.logNotifierHolder", {
-    gradeNames: ["fluid.component"],
+    gradeNames: ["fluid.component", "fluid.resolveRootSingle"],
+    singleRootType: "kettle.tests.logNotifierHolder",
     events: {
         logNotifier: null
     }
 });
 
-fluid.staticEnvironment.logNotifierHolder = kettle.tests.logNotifierHolder();
+var logNotifierHolder = kettle.tests.logNotifierHolder();
 
 kettle.tests.notifyGlobalError = function () {
-    fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
-};
-
-// This is a clone of kettle.utils.failureHandler - since there seems to be some kind of exception handler on the
-// path up to TCP.onread that is present in a typical kettle request. When we have FLUID-5518 implemented, this
-// duplication can be eliminated
-kettle.tests.failureHandlerLater = function (args, activity) {
-    var messages = ["ASSERTION FAILED: "].concat(args).concat(activity);
-    fluid.log.apply(null, [fluid.logLevel.FATAL].concat(messages));
-    var request = kettle.getCurrentRequest();
-    request.events.onError.fire({
-        isError: true,
-        message: args[0]
-    });
-    fluid.invokeLater(function () {
-        fluid.builtinFail(false, args, activity);
-    });
+    logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
 };
 
 kettle.tests.assertHttpStatusError = function (statusCode) {
@@ -111,14 +95,14 @@ kettle.tests.testRequestStatusCode = function (request, expectedCode) {
 
 kettle.tests.pushInstrumentedErrors = function () {
     // Beat jqUnit's exception handler so that we can test kettle's instead
-    fluid.pushSoftFailure(kettle.tests.failureHandlerLater);
+    fluid.failureEvent.addListener(fluid.identity, "jqUnit", "before:fail");
     // Beat the existing global exception handler for the duration of these tests
-    fluid.onUncaughtException.addListener(kettle.tests.notifyGlobalError, "fail", null,
+    fluid.onUncaughtException.addListener(kettle.tests.notifyGlobalError, "fail",
         fluid.handlerPriorities.uncaughtException.fail);
 };
 
 kettle.tests.popInstrumentedErrors = function () {
-    fluid.pushSoftFailure(-1);
+    fluid.failureEvent.removeListener("jqUnit");
     // restore whatever was the old listener in this namespace, as per FLUID-5506 implementation
     fluid.onUncaughtException.removeListener("fail");
 };

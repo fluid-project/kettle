@@ -10,12 +10,12 @@
                         "app": {
                             "type": "kettle.app",
                             "options": {
-                                "handlers": {
-                                    "requestError": {
+                                "requestHandlers": {
+                                    "kettle.tests.error.requestError": {
                                         "route": "/",
                                         "type": "get"
                                     },
-                                    "requestErrorCode": {
+                                    "kettle.tests.error.requestErrorCode": {
                                         "route": "/errorCode",
                                         "type": "get"
                                     }
