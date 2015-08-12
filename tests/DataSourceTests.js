@@ -30,6 +30,27 @@ kettle.tests.dataSource.ensureWriteableEmpty = function () {
 };
 
 
+// allow "%root" to be expanded to current directory name in all nested dataSources,
+// as well as distributing down a standard error handler for any nested dataSource
+
+fluid.defaults("kettle.tests.fileRootedDataSource", {
+    gradeNames: ["fluid.component"],
+    vars: {
+        root: __dirname
+    },
+    distributeOptions: [{
+        source: "{that}.options.vars",
+        target: "{that urlExpander}.options.vars"
+    },  {
+        record: {
+            namespace: "testEnvironment",
+            func: "{testEnvironment}.events.onError.fire",
+            args: "{arguments}.0"
+        },
+        target: "{that dataSource}.options.listeners.onError"
+    }]
+});
+
 // Basic initialisation tests
 
 kettle.tests.testInit = function (dataSource) {
@@ -55,12 +76,12 @@ fluid.defaults("kettle.tests.dataSourceInitTester", {
         }
     }
 });
-    
+
 
 fluid.defaults("kettle.tests.dataSourceInitCases", {
     gradeNames: ["fluid.test.testCaseHolder"],
     modules: [{
-        name: "Data Source Init Tester",
+        name: "Kettle Data Source Init Tester",
         tests: [{
             expect: 5,
             name: "URL Data source initialization",
@@ -128,7 +149,7 @@ fluid.defaults("kettle.tests.dataSourceResolverTester", {
 fluid.defaults("kettle.tests.urlResolverTester", {
     gradeNames: ["fluid.test.testCaseHolder"],
     modules: [{
-        name: "UrlResolver",
+        name: "Kettle UrlResolver Tests",
         tests: [{
             expect: 1,
             name: "URL Data source initialization",
@@ -145,8 +166,55 @@ fluid.defaults("kettle.tests.urlResolverTester", {
     }]
 });
 
-// Cross-server tests - URL dataSource and callback wrapping
+kettle.tests.fallibleDataSourceRead = function (dataSource) {
+    dataSource.get(); // we expect failure - forwarded to root handler
+};
 
+kettle.tests.expectJSONDiagnostic = function (error) {
+    console.log("Received JSON diagnostic error " + JSON.stringify(error, null, 2));
+    jqUnit.assertTrue("Got message mentioning filename ", error.message.indexOf("invalidJSONFile") !== -1);
+    jqUnit.assertTrue("Got message mentioning line number of error ", error.message.indexOf("59") !== -1);
+};
+
+// JSON parsing and diagnostics tests
+
+fluid.defaults("kettle.tests.dataSourceJSONTester", {
+    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.fileRootedDataSource", "autoInit"],
+    vars: {
+        root: __dirname
+    },
+    events: {
+        onError: null
+    },
+    components: {
+        faultyJSONDataSource: {
+            type: "kettle.dataSource.URL",
+            options: {
+                url: "file://%root/data/invalidJSONFile.jsonx"
+            }
+        },
+        testCaseHolder: {
+            type: "fluid.test.testCaseHolder",
+            options: {
+                modules: [{
+                    name: "Kettle JSON parsing Tests",
+                    tests: [{
+                        expect: 2,
+                        name: "JSON line number diagnostic test",
+                        sequence: [{
+                            funcName: "kettle.tests.fallibleDataSourceRead",
+                            args: ["{faultyJSONDataSource}"]
+                        }, {
+                            event: "{testEnvironment}.events.onError",
+                            listener: "kettle.tests.expectJSONDiagnostic"
+                        }
+                        ]
+                    }]
+                }]
+            }
+        }
+    }
+});
 
 // General DataSource test grades
 
@@ -169,25 +237,11 @@ kettle.tests.dataSource.defaultErrorFunc = function (shouldError, data) {
         "Got error rather than response from dataSource: ", data);
 };
 
+
 // Base grade for each individual DataSource test fixture: Top-level component holding dataSource, test environment and standard events
 fluid.defaults("kettle.tests.simpleDataSourceTest", {
-    gradeNames: ["fluid.test.testEnvironment"],
-    vars: {
-        root: __dirname
-    },
+    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.fileRootedDataSource"],
     shouldError: false,
-    distributeOptions: [{
-        source: "{that}.options.vars",
-        target: "{that urlExpander}.options.vars"
-    }, { // replace the dataSource error handler with a record firing our own error event
-         // TODO: "errback" infrastructure is broken and must be replaced
-        record: {
-            func: "{testEnvironment}.events.onError.fire",
-            funcName: null,
-            args: "{arguments}.0"
-        },
-        target: "{that dataSource errback}.options.invokers.handleError"
-    }],
     events: {
         onResponse: null,
         onError: null
@@ -393,7 +447,7 @@ fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
             funcName: "kettle.tests.testErrorResponse",
             args: [{
                 isError: true,
-                message: "not_found: missing"
+                message: "not_found: missing while reading file E:\\source\\gits\\kettle\\tests/data/couchDataSourceError.json"
             }, "{arguments}.0"]
         }
     }
@@ -437,6 +491,7 @@ fluid.defaults("kettle.tests.dataSource.7.URL.expand.missing", {
             type: "kettle.dataSource.URL",
             options: {
                 url: "file://%root/data/%expand.json",
+                notFoundIsEmpty: true,
                 termMap: {
                     expand: "%expand"
                 }
@@ -459,6 +514,7 @@ fluid.defaults("kettle.tests.dataSource.8.CouchDB.expand.missing", {
             type: "kettle.dataSource.CouchDB",
             options: {
                 url: "file://%root/data/%expand.json",
+                notFoundIsEmpty: true,
                 termMap: {
                     expand: "%expand"
                 }
@@ -582,6 +638,7 @@ fluid.defaults("kettle.tests.dataSource.13.CouchDB.set", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
+                notFoundIsEmpty: true,
                 url: "file://%root/data/writeable/test.json",
                 writable: true
             }
@@ -747,3 +804,5 @@ var tests = kettle.tests.dataSource.standardTests.concat(kettle.tests.dataSource
 kettle.tests.dataSource.ensureWriteableEmpty();
 
 kettle.test.bootstrap(tests);
+
+fluid.test.runTests(["kettle.tests.dataSourceJSONTester"]);
