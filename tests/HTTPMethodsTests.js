@@ -24,6 +24,7 @@ fluid.registerNamespace("kettle.tests.HTTPMethods");
 
 // ----------------- GET HANDLING ------------------------
 fluid.defaults("kettle.tests.HTTPMethods.get.handler", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.HTTPMethods.get.handleRequest"
@@ -42,6 +43,7 @@ kettle.tests.HTTPMethods.get.testResponse = function (data) {
 
 // ----------------- POST HANDLING ------------------------
 fluid.defaults("kettle.tests.HTTPMethods.post.handler", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.HTTPMethods.post.handleRequest"
@@ -62,6 +64,7 @@ kettle.tests.HTTPMethods.post.testResponse = function (data) {
 
 // ----------------- PUT HANDLING ------------------------
 fluid.defaults("kettle.tests.HTTPMethods.put.handler", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.HTTPMethods.put.handleRequest"

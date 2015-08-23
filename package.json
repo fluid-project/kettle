@@ -14,7 +14,7 @@
         "body-parser": "~1.13.3",
         "cookie-parser": "~1.3.5",
         "socket.io": "~0.9.16",
-        "infusion": "git://github.com/amb26/infusion.git#f42fce0415d1c80b1556107fbd1ea59ddd39f6d1",
+        "infusion": "git://github.com/amb26/infusion.git#5263b0e75e3f36384f7e5e73089ed90f2d9217fd",
         "jsonlint": "1.6.0",
         "node-uuid": "~1.4.0",
         "path-to-regexp": "0.1.7",

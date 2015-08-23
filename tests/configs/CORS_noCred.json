@@ -2,26 +2,10 @@
     "typeName": "CORS_noCred",
     "options": {
         "gradeNames": ["fluid.component"],
-        "components": {
-            "server": {
-                "type": "kettle.server",
-                "options": {
-                    "gradeNames": ["kettle.tests.CORS_noCred"],
-                    "components": {
-                        "app": {
-                            "type": "kettle.app",
-                            "options": {
-                                "handlers": {
-                                    "testGetCORS": {
-                                        "route": "/",
-                                        "type": "get"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        "distributeOptions": {
+            "record": false,
+            "target": "{that middleware CORS}.options.credentials"
         }
-    }
+    },
+    "includes": ["./CORS.json"]
 }

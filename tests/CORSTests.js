@@ -20,39 +20,25 @@ var fluid = require("infusion"),
 
 kettle.loadTestingSupport();
 
-fluid.defaults("kettle.requests.request.handler.testGetCORS", {
-    gradeNames: ["fluid.component"],
-    invokers: {
-        handle: {
-            funcName: "kettle.tests.testGetCORS",
-            args: "{requestProxy}"
+fluid.defaults("kettle.tests.CORS.handler", {
+    gradeNames: "kettle.request.http",
+    requestMiddleware: {
+        "CORS": {
+            middleware: "{middleware}.CORS",
+            priority: "before:handle"
         }
+    },
+    invokers: {
+        handleRequest: "kettle.tests.testGetCORS"
     }
 });
 
-fluid.defaults("kettle.tests.CORS_noCred", {
-    gradeNames: ["kettle.use.CORS"],
-    distributeOptions: {
-        source: "{that}.options.credentials",
-        target: "{that > CORS}.options.credentials"
-    },
-    credentials: "false"
-});
 
 kettle.tests.testCORSOrigin = "localhost:8081";
 
-fluid.defaults("kettle.tests.CORS_origin", {
-    gradeNames: ["kettle.use.CORS"],
-    distributeOptions: {
-        source: "{that}.options.origin",
-        target: "{that > CORS}.options.origin"
-    },
-    origin: [kettle.tests.testCORSOrigin]
-});
-
-kettle.tests.testGetCORS = function (requestProxy) {
-    jqUnit.assertTrue("The request was received.", true);
-    requestProxy.events.onSuccess.fire({
+kettle.tests.testGetCORS = function (request) {
+    jqUnit.assertTrue("The request was received", true);
+    request.events.onSuccess.fire({
         success: true
     });
 };

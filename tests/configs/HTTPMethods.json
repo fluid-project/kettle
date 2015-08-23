@@ -1,5 +1,5 @@
 {
-    "typeName": "HTTPMethods",
+    "typeName": "kettle.tests.HTTPMethodsConfig",
     "options": {
         "gradeNames": ["fluid.component"],
         "components": {
@@ -12,17 +12,20 @@
                             "type": "kettle.app",
                             "options": {
                                 "requestHandlers": {
-                                    "kettle.tests.HTTPMethods.get.handler": {
+                                    "getHandler": {
+                                        "type": "kettle.tests.HTTPMethods.get.handler",
                                         "route": "/",
-                                        "type": "get"
+                                        "method": "get"
                                     },
-                                    "kettle.tests.HTTPMethods.post.handler": {
+                                    "postHandler": {
+                                        "type": "kettle.tests.HTTPMethods.post.handler",
                                         "route": "/",
-                                        "type": "post"
+                                        "method": "post"
                                     },
-                                    "kettle.tests.HTTPMethods.put.handler": {
+                                    "putHandler": {
+                                        "type": "kettle.tests.HTTPMethods.put.handler",
                                         "route": "/",
-                                        "type": "put"
+                                        "method": "put"
                                     }
                                 }
                             }

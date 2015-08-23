@@ -1,27 +1,11 @@
 {
-    "typeName": "CORS_origin",
+    "typeName": "kettle.tests.CORS_originConfig",
     "options": {
         "gradeNames": ["fluid.component"],
-        "components": {
-            "server": {
-                "type": "kettle.server",
-                "options": {
-                    "gradeNames": ["kettle.tests.CORS_origin"],
-                    "components": {
-                        "app": {
-                            "type": "kettle.app",
-                            "options": {
-                                "handlers": {
-                                    "testGetCORS": {
-                                        "route": "/",
-                                        "type": "get"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        "distributeOptions": {
+            "record": "@expand:fluid.getGlobalValue(kettle.tests.testCORSOrigin)",
+            "target": "{that middleware CORS}.options.origin"
         }
-    }
+    },
+    "includes": ["./CORS.json"]
 }
