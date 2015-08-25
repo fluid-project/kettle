@@ -23,6 +23,7 @@ kettle.loadTestingSupport();
 fluid.registerNamespace("kettle.tests.error");
 
 fluid.defaults("kettle.tests.error.requestError", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "fluid.fail",
@@ -32,6 +33,7 @@ fluid.defaults("kettle.tests.error.requestError", {
 });
 
 fluid.defaults("kettle.tests.error.requestErrorCode", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.triggerOnErrorCode"
@@ -117,7 +119,7 @@ kettle.tests.error.testDefs = [{
     name: "Error tests",
     expect: 4,
     config: {
-        configName: "error",
+        configName: "kettle.tests.error.config",
         configPath: configPath
     },
     components: {

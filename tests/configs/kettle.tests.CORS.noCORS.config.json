@@ -1,0 +1,11 @@
+{
+    "typeName": "kettle.tests.CORS.noCORS.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "distributeOptions": {
+            "record": "kettle.tests.noCORS.handler",
+            "target": "{that app}.options.requestHandlers.CORS.type"
+        }
+    },
+    "includes": ["./kettle.tests.CORS.config.json"]
+}

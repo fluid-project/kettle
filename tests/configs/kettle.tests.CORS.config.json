@@ -1,5 +1,5 @@
 {
-    "typeName": "kettle.tests.noCORSConfig",
+    "typeName": "kettle.tests.CORS.config",
     "options": {
         "gradeNames": ["fluid.component"],
         "components": {
@@ -10,10 +10,11 @@
                         "app": {
                             "type": "kettle.app",
                             "options": {
-                                "handlers": {
-                                    "testGetCORS": {
+                                "requestHandlers": {
+                                    "CORS": {
+                                        "type": "kettle.tests.CORS.handler",
                                         "route": "/",
-                                        "type": "get"
+                                        "method": "get, options"
                                     }
                                 }
                             }

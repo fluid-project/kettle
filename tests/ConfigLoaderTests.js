@@ -46,8 +46,7 @@ fluid.defaults("kettle.tests.subcomponent3", {
 
 var expectedDefaults = {
     config1: {
-        gradeNames: ["config1", "fluid.component", "kettle.config", "config2",
-            "config4", "config3", "fluid.modelComponent"],
+        gradeNames: ["fluid.modelComponent", "config3", "kettle.config", "config4", "config2", "fluid.component", "config1"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -61,7 +60,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config2: {
-        gradeNames: ["config2", "fluid.component", "kettle.config", "config4"],
+        gradeNames: ["kettle.config", "config4", "fluid.component", "config2"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -73,7 +72,7 @@ var expectedDefaults = {
         option2: "OPTION2"
     },
     config3: {
-        gradeNames: ["config3", "fluid.modelComponent", "fluid.component", "kettle.config"],
+        gradeNames: ["kettle.config", "fluid.component", "fluid.modelComponent","config3"],
         components: {
             subcomponent1: {
                 options: {
@@ -84,7 +83,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config4: {
-        gradeNames: ["config4", "kettle.config", "fluid.component"],
+        gradeNames: ["fluid.component", "kettle.config", "config4"],
         components: {
             subcomponent1: {
                 options: {
@@ -98,14 +97,13 @@ var expectedDefaults = {
         option6: "OPTION6"
     },
     config6: {
-        gradeNames: ["config6", "fluid.component", "kettle.config"],
+        gradeNames: ["kettle.config", "fluid.component", "config6"],
         option6: "OPTION6"
     }
 };
 
 var expectedSubcomponentOptions = {
-    gradeNames: ["kettle.tests.subcomponent3", "fluid.component",
-        "kettle.tests.subcomponent1"],
+    gradeNames: ["kettle.tests.subcomponent1", "fluid.component", "kettle.tests.subcomponent3"],
     option: "OVERRIDE"
 };
 

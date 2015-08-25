@@ -1,5 +1,5 @@
 {
-    "typeName": "CORS_noCred",
+    "typeName": "kettle.tests.CORS.noCred.config",
     "options": {
         "gradeNames": ["fluid.component"],
         "distributeOptions": {
@@ -7,5 +7,5 @@
             "target": "{that middleware CORS}.options.credentials"
         }
     },
-    "includes": ["./CORS.json"]
+    "includes": ["./kettle.tests.CORS.config.json"]
 }

@@ -1,5 +1,5 @@
 {
-    "typeName": "kettle.tests.errorConfig",
+    "typeName": "kettle.tests.error.config",
     "options": {
         "gradeNames": ["fluid.component"],
         "components": {
