@@ -173,6 +173,13 @@ var testDefs = [{
                 path: "/",
                 method: "PUT"
             }
+        },
+        postRequest2: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/",
+                method: "POST"
+            }
         }
     },
     sequence: [{
@@ -188,10 +195,10 @@ var testDefs = [{
         event: "{putRequest}.events.onComplete",
         listener: "kettle.tests.HTTPMethods.put.testResponse"
     }, {
-        func: "{postRequest}.send",
+        func: "{postRequest2}.send",
         args: { "msg": "I am a POST request" }
     }, {
-        event: "{postRequest}.events.onComplete",
+        event: "{postRequest2}.events.onComplete",
         listener: "kettle.tests.HTTPMethods.post.testResponse"
     }]
 }];

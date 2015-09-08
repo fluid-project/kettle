@@ -15,218 +15,203 @@
 var fluid = require("infusion"),
     path = require("path"),
     kettle = require("../kettle.js"),
-    jqUnit = fluid.require("jqUnit"),
+    $ = fluid.registerNamespace("jQuery"),
+    jqUnit = fluid.registerNamespace("jqUnit"),
     configPath = path.resolve(__dirname, "./configs");
 
 kettle.loadTestingSupport();
 
-fluid.defaults("kettle.tests.sessionServer", {
-    gradeNames: ["fluid.component"],
-    distributeOptions: {
-        source: "{that}.options.validateToken",
-        target: "{that > sessionManager}.options.invokers.validate"
-    },
-    validateToken: {
-        funcName: "kettle.tests.validateToken"
-    }
-});
+fluid.registerNamespace("kettle.tests.session");
 
-fluid.defaults("kettle.requests.request.handler.testSessionSocket", {
-    gradeNames: ["fluid.component"],
+fluid.defaults("kettle.tests.session.none.handler", {
+    gradeNames: ["kettle.request.http"],
     invokers: {
-        handle: {
-            funcName: "kettle.tests.testSessionSocket",
-            args: ["{requestProxy}", "{request}"],
-            dynamic: true
+        handleRequest: {
+            funcName: "kettle.tests.session.none.handleRequest"
         }
     }
 });
 
-fluid.defaults("kettle.requests.request.handler.testSessionRequest", {
-    gradeNames: ["fluid.component"],
-    invokers: {
-        handle: {
-            funcName: "kettle.tests.testSessionRequest",
-            args: ["{requestProxy}", "{request}.session.session"],
-            dynamic: true
-        }
-    }
-});
-
-fluid.defaults("kettle.requests.request.handler.testSessionStart", {
-    gradeNames: ["fluid.component"],
-    invokers: {
-        handle: {
-            funcName: "kettle.tests.testSessionStart",
-            args: [
-                "{requestProxy}",
-                "{request}.req.params.token",
-                "{request}.session.session"
-            ],
-            dynamic: true
-        }
-    }
-});
-
-fluid.defaults("kettle.requests.request.handler.testSessionEnd", {
-    gradeNames: ["fluid.component"],
-    listeners: {
-        "{request}.session.events.afterDestroySession": [
-            "{that}.clearCookie",
-            "{that}.testSessionClear"
-        ]
-    },
-    invokers: {
-        clearCookie: {
-            funcName: "kettle.tests.clearCookie",
-            args: "{request}.res",
-            dynamic: true
-        },
-        testSessionClear: {
-            funcName: "kettle.tests.testSessionClear",
-            args: ["{request}.req", "{request}.res"],
-            dynamic: true
-        },
-        handle: {
-            funcName: "kettle.tests.testSessionEnd",
-            args: [
-                "{requestProxy}",
-                "{request}.req.params.token",
-                "{request}"
-            ],
-            dynamic: true
-        }
-    }
-});
-
-fluid.defaults("kettle.requests.request.handler.testNoneSessionRequest", {
-    gradeNames: ["fluid.component"],
-    invokers: {
-        handle: {
-            funcName: "kettle.tests.testNoneNoSessionRequest",
-            args: "{requestProxy}"
-        }
-    }
-});
-
-fluid.defaults("kettle.requests.request.handler.testNoSessionRequest", {
-    gradeNames: ["fluid.component"],
-    invokers: {
-        handle: {
-            funcName: "kettle.tests.testNoneNoSessionRequest",
-            args: "{requestProxy}"
-        }
-    }
-});
-
-kettle.tests.token = 123;
-
-kettle.tests.testSessionSocketModel = {
-    test: true
+kettle.tests.session.none.handleRequest = function (request) {
+    jqUnit.assertTrue("The request was received", true);
+    request.events.onSuccess.fire(kettle.tests.session.response.success);
 };
 
-kettle.tests.testSessionSuccessResponse = {
+
+fluid.defaults("kettle.tests.middleware.validateSession", {
+    gradeNames: "kettle.middleware",
+    invokers: {
+        handle: "kettle.tests.session.validate"
+    }
+});
+
+kettle.tests.session.validate = function (request) {
+    console.log("VALIDATOR EXECUTING");
+    var token = fluid.get(request, ["req", "session", "token"]);
+    var togo = fluid.promise();
+    if (token === undefined) {
+        console.log("REJECTING FOR MISSING TOKEN from session ", request.req.session);
+        request.events.onDestroySession.fire();
+        console.log("rejecting");
+        togo.reject({
+            statusCode: 403,
+            message: "Session is invalid"
+        });
+    } else {
+        togo.resolve();
+    }
+    return togo;
+};
+
+fluid.defaults("kettle.tests.session.existing.handler", {
+    gradeNames: ["kettle.request.http", "kettle.request.sessionAware"],
+    components: {
+        validator: {
+            type: "kettle.tests.middleware.validateSession"
+        }
+    },
+    requestMiddleware: {
+        validate: {
+            middleware: "{handler}.validator",
+            priority: "after:session"
+        }
+    },
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.session.existing.handleRequest",
+            args: ["{request}", "{request}.req.session"]
+        }
+    }
+});
+
+kettle.tests.session.existing.handleRequest = function (request, session) {
+    console.log("GOT EXISTING HANDLER");
+    jqUnit.assertTrue("The request was received", true);
+    jqUnit.assertValue("Session exists", session);
+    jqUnit.assertEquals("Session is correct and has a current token", kettle.tests.session.token, session.token);
+    var response = $.extend(true, {
+        token: session.token
+    }, kettle.tests.session.response.success);
+    request.events.onSuccess.fire(response);
+};
+
+fluid.defaults("kettle.tests.session.start.handler", {
+    gradeNames: ["kettle.request.http", "kettle.request.sessionAware"],
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.session.start.handleRequest"
+        }
+    }
+});
+
+kettle.tests.session.start.handleRequest = function (request) {
+    var token = request.req.params.token;
+    jqUnit.assertEquals("The session start request was received with token", kettle.tests.session.token, token);
+    request.req.session.token = token;
+    request.events.onSuccess.fire(kettle.tests.session.response.success);
+};
+
+
+fluid.defaults("kettle.tests.session.end.handler", {
+    gradeNames: ["kettle.request.http", "kettle.request.sessionAware"],
+    listeners: {
+        "onDestroySession.clearCookie": {
+            priority: "after:destroy",
+            listener: "kettle.tests.session.clearCookie",
+            args: "{request}.res"
+        },
+        "onDestroySession.testClear": {
+            priority: "after:clearCookie",
+            funcName: "kettle.tests.session.testSessionClear",
+            args: "{request}"
+        }
+    },
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.session.end.handleRequest"
+        }
+    }
+});
+
+kettle.tests.session.clearCookie = function (res) {
+    res.clearCookie("kettle.sid");
+};
+
+
+kettle.tests.session.testSessionClear = function (request) {
+    jqUnit.assertUndefined("Session is destroyed", request.req.session);
+    request.events.onSuccess.fire(kettle.tests.session.response.success);
+};
+
+
+kettle.tests.session.end.handleRequest = function (request) {
+    var token = request.req.params.token;
+    jqUnit.assertEquals("The session end request was received with token", kettle.tests.session.token, token);
+    jqUnit.assertEquals("Token matches the session token", request.req.session.token, token);
+    request.events.onDestroySession.fire();
+};
+
+
+kettle.tests.session.token = "123";
+
+fluid.registerNamespace("kettle.tests.session.response");
+
+kettle.tests.session.response.success = {
     success: true
 };
 
-kettle.tests.testSessionFailureResponse = {
+kettle.tests.session.response.midSuccess = {
+    success: true,
+    token: kettle.tests.session.token
+};
+
+kettle.tests.session.response.failure = {
     isError: true,
     message: "Session is invalid"
 };
 
-kettle.tests.validateToken = function (request) {
-    return !!request.session && !!request.session.session.token;
+
+
+kettle.tests.testSessionStartSuccessResponse = function (data, request, parsed) {
+    kettle.test.assertJSONResponse({
+        message: "Successful session start response",
+        expected: kettle.tests.session.response.success,
+        string: data,
+        request: request
+    });
+    jqUnit.assertValue("Cookie is set", request.nativeResponse.headers["set-cookie"]);
+    jqUnit.assertValue("kettle session cookie is set", parsed.signedCookies["kettle.sid"]);
 };
 
-kettle.tests.testSessionEnd = function (requestProxy, token, request) {
-    jqUnit.assertTrue("The session end request was received.", true);
-    jqUnit.assertEquals("Token matches the session token.", request.session.session.token, token);
-    request.session.events.onDestroySession.fire();
+kettle.tests.testSessionEndSuccessResponse = function (data, request, parsed) {
+    kettle.test.assertJSONResponse({
+        message: "Successful session end response",
+        expected: kettle.tests.session.response.success,
+        string: data,
+        request: request
+    });
+    jqUnit.assertEquals("kettle session cookie is unset", "", parsed.cookies["kettle.sid"]);
 };
 
-kettle.tests.testSessionClear = function (req, res) {
-    jqUnit.assertUndefined("Session is destroyed", req.session);
-    res.send(200, kettle.tests.testSessionSuccessResponse);
-};
-
-kettle.tests.clearCookie = function (res) {
-    res.clearCookie("kettle.sid");
-};
-
-kettle.tests.testSessionStart = function (requestProxy, token, session) {
-    jqUnit.assertTrue("The session start request was received.", true);
-    session.token = token;
-    requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
-};
-
-kettle.tests.testSessionRequest = function (requestProxy, session) {
-    jqUnit.assertTrue("The request was received.", true);
-    jqUnit.assertValue("Session exists.", session);
-    jqUnit.assertEquals("Session is correct and has a current token.",
-        kettle.tests.token, session.token);
-    requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
-};
-
-kettle.tests.testNoneNoSessionRequest = function (requestProxy) {
-    jqUnit.assertTrue("The request was received.", true);
-    requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
-};
-
-kettle.tests.testSessionSocket = function (requestProxy, request) {
-    jqUnit.assertValue("Session exists.", request.session);
-    jqUnit.assertEquals("Session is correct and has a current token.",
-        kettle.tests.token, request.session.session.token);
-    jqUnit.assertDeepEq("Socket message data is correct",
-        kettle.tests.testSessionSocketModel, request.data);
-    requestProxy.events.onSuccess.fire(kettle.tests.testSessionSuccessResponse);
-};
-
-kettle.tests.testSessionStartSuccessResponse = function (data, headers, cookies, signedCookies) {
-    kettle.tests.testSuccessResponse(data);
-    jqUnit.assertValue("Cookie is set", headers["set-cookie"]);
-    jqUnit.assertTrue("kettle session cookie is set", !!signedCookies["kettle.sid"]);
-};
-
-kettle.tests.testSessionEndSuccessResponse = function (data, headers, cookies) {
-    kettle.tests.testSuccessResponse(data);
-    jqUnit.assertEquals("kettle session cookie is unset", "", cookies["kettle.sid"]);
-};
-
-function testResponse (expected, data) {
-    data = typeof data === "string" ? JSON.parse(data) : data;
-    jqUnit.assertDeepEq("Request response is correct", expected, data);
-}
-
-kettle.tests.testFailureResponse = function (data) {
-    testResponse(kettle.tests.testSessionFailureResponse, data);
-};
-
-kettle.tests.testInvalidIoRequest = function (/*reason*/) {
-    jqUnit.assertTrue("Authorization failed as expected", true);
-};
-
-kettle.tests.testSuccessResponse = function (data) {
-    testResponse(kettle.tests.testSessionSuccessResponse, data);
-};
 
 var testDefs = [{
-    name: "Session tests.",
-    expect: 27,
+    name: "Session tests",
+    expect: 24,
     config: {
-        configName: "session",
+        configName: "kettle.tests.session.config",
         configPath: configPath
     },
     components: {
-        invalidIoRequest: {
-            type: "kettle.test.request.ioCookie",
+        httpTestNoSessionRequest: {
+            type: "kettle.test.request.httpCookie",
             options: {
-                path: "/testSessionSocket"
+                path: "/testNoSessionRequest"
             }
         },
-        ioRequest: {
-            type: "kettle.test.request.ioCookie",
+        httpTestExistingSessionRequest: {
+            type: "kettle.test.request.httpCookie",
             options: {
-                path: "/testSessionSocket"
+                path: "/testExistingSessionRequest"
             }
         },
         httpTestSessionStart: {
@@ -234,8 +219,20 @@ var testDefs = [{
             options: {
                 path: "/testSessionStart/%token",
                 termMap: {
-                    token: kettle.tests.token
+                    token: kettle.tests.session.token
                 }
+            }
+        },
+        httpTestExistingSessionRequest2: {
+            type: "kettle.test.request.httpCookie",
+            options: {
+                path: "/testExistingSessionRequest"
+            }
+        },
+        httpTestNoSessionRequest2: {
+            type: "kettle.test.request.httpCookie",
+            options: {
+                path: "/testNoSessionRequest"
             }
         },
         httpTestSessionEnd: {
@@ -243,76 +240,61 @@ var testDefs = [{
             options: {
                 path: "/testSessionEnd/%token",
                 termMap: {
-                    token: kettle.tests.token
+                    token: kettle.tests.session.token
                 }
-            }
-        },
-        httpTestSessionRequest: {
-            type: "kettle.test.request.httpCookie",
-            options: {
-                path: "/testSessionRequest"
-            }
-        },
-        httpTestNoneSessionRequest: {
-            type: "kettle.test.request.httpCookie",
-            options: {
-                path: "/testNoneSessionRequest"
-            }
-        },
-        httpTestNoSessionRequest: {
-            type: "kettle.test.request.httpCookie",
-            options: {
-                path: "/testNoSessionRequest"
             }
         }
     },
     sequence: [{
-        func: "{httpTestNoneSessionRequest}.send"
-    }, {
-        event: "{httpTestNoneSessionRequest}.events.onComplete",
-        listener: "kettle.tests.testSuccessResponse"
-    }, {
         func: "{httpTestNoSessionRequest}.send"
     }, {
         event: "{httpTestNoSessionRequest}.events.onComplete",
-        listener: "kettle.tests.testSuccessResponse"
+        listener: "kettle.test.assertJSONResponse",
+        args: {
+            message: "Standard response from request requiring no session",
+            expected: kettle.tests.session.response.success,
+            string: "{arguments}.0",
+            request: "{httpTestNoSessionRequest}"
+        }
     }, {
-        func: "{invalidIoRequest}.send",
-        args: "You shall not pass!!"
+        func: "{httpTestExistingSessionRequest}.send"
     }, {
-        event: "{invalidIoRequest}.events.onError",
-        listener: "kettle.tests.testInvalidIoRequest"
-    }, {
-        func: "{httpTestSessionRequest}.send"
-    }, {
-        event: "{httpTestSessionRequest}.events.onComplete",
-        listener: "kettle.tests.testFailureResponse"
+        event: "{httpTestExistingSessionRequest}.events.onComplete",
+        listener: "kettle.test.assertJSONResponse",
+        args: {
+            message: "Error response from request requiring session without one",
+            expected: kettle.tests.session.response.failure,
+            statusCode: 403,
+            string: "{arguments}.0",
+            request: "{httpTestExistingSessionRequest}"
+        }
     }, {
         func: "{httpTestSessionStart}.send"
     }, {
         event: "{httpTestSessionStart}.events.onComplete",
         listener: "kettle.tests.testSessionStartSuccessResponse"
     }, {
-        func: "{httpTestSessionRequest}.send"
+        func: "{httpTestExistingSessionRequest2}.send"
     }, {
-        event: "{httpTestSessionRequest}.events.onComplete",
-        listener: "kettle.tests.testSuccessResponse"
+        event: "{httpTestExistingSessionRequest2}.events.onComplete",
+        listener: "kettle.test.assertJSONResponse",
+        args: {
+            message: "Successful mid-session response with state captured from former URL",
+            expected: kettle.tests.session.response.midSuccess,
+            string: "{arguments}.0",
+            request: "{httpTestExistingSessionRequest2}"
+        }
     }, {
-        func: "{ioRequest}.send",
-        args: kettle.tests.testSessionSocketModel
+        func: "{httpTestNoSessionRequest2}.send"
     }, {
-        event: "{ioRequest}.events.onComplete",
-        listener: "kettle.tests.testSuccessResponse"
-    }, {
-        func: "{httpTestNoneSessionRequest}.send"
-    }, {
-        event: "{httpTestNoneSessionRequest}.events.onComplete",
-        listener: "kettle.tests.testSuccessResponse"
-    }, {
-        func: "{httpTestNoSessionRequest}.send"
-    }, {
-        event: "{httpTestNoSessionRequest}.events.onComplete",
-        listener: "kettle.tests.testSuccessResponse"
+        event: "{httpTestNoSessionRequest2}.events.onComplete",
+        listener: "kettle.test.assertJSONResponse",
+        args: {
+            message: "Standard response from request requiring no session when one is allocated",
+            expected: kettle.tests.session.response.success,
+            string: "{arguments}.0",
+            request: "{httpTestNoSessionRequest2}"
+        }
     }, {
         func: "{httpTestSessionEnd}.send"
     }, {

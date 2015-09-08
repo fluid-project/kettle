@@ -54,6 +54,7 @@ kettle.tests.endpoint = function (type, request) {
 };
 
 fluid.defaults("kettle.tests.serverPair.getEndpoint", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.endpoint",
@@ -63,6 +64,7 @@ fluid.defaults("kettle.tests.serverPair.getEndpoint", {
 });
 
 fluid.defaults("kettle.tests.serverPair.postEndpoint", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.endpoint",
@@ -72,6 +74,7 @@ fluid.defaults("kettle.tests.serverPair.postEndpoint", {
 });
 
 fluid.defaults("kettle.tests.serverPair.putEndpoint", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.endpoint",
@@ -96,6 +99,7 @@ kettle.tests.relay = function (type, dataSource, requestPromise, writeMethod) {
 };
 
 fluid.defaults("kettle.tests.serverPair.getRelay", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.relay",
@@ -105,6 +109,7 @@ fluid.defaults("kettle.tests.serverPair.getRelay", {
 });
 
 fluid.defaults("kettle.tests.serverPair.postRelay", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.relay",
@@ -114,6 +119,7 @@ fluid.defaults("kettle.tests.serverPair.postRelay", {
 });
 
 fluid.defaults("kettle.tests.serverPair.putRelay", {
+    gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.relay",
@@ -134,17 +140,20 @@ fluid.defaults("kettle.tests.serverPair", {
                         type: "kettle.app",
                         options: {
                             requestHandlers: {
-                                "kettle.tests.serverPair.getEndpoint": {
+                                getEndpoint: {
+                                    type: "kettle.tests.serverPair.getEndpoint",
                                     route: "/endpoint",
-                                    type: "get"
+                                    method: "get"
                                 },
-                                "kettle.tests.serverPair.postEndpoint": {
+                                postEndpoint: {
+                                    type: "kettle.tests.serverPair.postEndpoint",
                                     route: "/endpoint",
-                                    type: "post"
+                                    method: "post"
                                 },
-                                "kettle.tests.serverPair.putEndpoint": {
+                                putEndpoint: {
+                                    type: "kettle.tests.serverPair.putEndpoint",
                                     route: "/endpoint",
-                                    type: "put"
+                                    method: "put"
                                 }
                             }
                         }
@@ -169,17 +178,20 @@ fluid.defaults("kettle.tests.serverPair", {
                         type: "kettle.app",
                         options: {
                             requestHandlers: {
-                                "kettle.tests.serverPair.getRelay": {
+                                getRelay: {
+                                    type: "kettle.tests.serverPair.getRelay",
                                     route: "/relay",
-                                    type: "get"
+                                    method: "get"
                                 },
-                                "kettle.tests.serverPair.postRelay": {
+                                postRelay: {
+                                    type: "kettle.tests.serverPair.postRelay",
                                     route: "/relay",
-                                    type: "post"
+                                    method: "post"
                                 },
-                                "kettle.tests.serverPair.putRelay": {
+                                putRelay: {
+                                    type: "kettle.tests.serverPair.putRelay",
                                     route: "/relay",
-                                    type: "put"
+                                    method: "put"
                                 }
                             }
                         }

@@ -1,0 +1,43 @@
+{
+    "typeName": "kettle.tests.session.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "gradeNames": ["kettle.server.sessionAware"],
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "testNoSessionRequest": {
+                                        "type": "kettle.tests.session.none.handler",
+                                        "route": "/testNoSessionRequest",
+                                        "method": "get"
+                                    },
+                                    "testExistingSessionRequest": {
+                                        "type": "kettle.tests.session.existing.handler",
+                                        "route": "/testExistingSessionRequest",
+                                        "method": "get"
+                                    },
+                                    "testSessionStart": {
+                                        "type": "kettle.tests.session.start.handler",
+                                        "route": "/testSessionStart/:token",
+                                        "method": "get"
+                                    },
+                                    "testSessionEnd": {
+                                        "type": "kettle.tests.session.end.handler",
+                                        "route": "/testSessionEnd/:token",
+                                        "method": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

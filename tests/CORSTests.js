@@ -24,8 +24,7 @@ fluid.defaults("kettle.tests.CORS.handler", {
     gradeNames: "kettle.request.http",
     requestMiddleware: {
         CORS: {
-            middleware: "{middleware}.CORS",
-            priority: "before:handle"
+            middleware: "{middleware}.CORS"
         }
     },
     invokers: {
