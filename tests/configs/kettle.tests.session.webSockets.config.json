@@ -1,0 +1,29 @@
+{
+    "typeName": "kettle.tests.session.webSockets.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "gradeNames": ["kettle.server.sessionAware", "kettle.server.ws"],
+                     "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "testSocket": {
+                                        "type": "kettle.tests.session.ws.testSocket.handler",
+                                        "route": "/socket_path",
+                                        "method": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "includes": ["./kettle.tests.session.config.json"]
+}

@@ -88,7 +88,7 @@ var testDefs = [{
     name: "HTTPMethods GET test",
     expect: 2,
     config: {
-        configName: "kettle.tests.HTTPMethodsConfig",
+        configName: "kettle.tests.HTTPMethods.config",
         configPath: configPath
     },
     components: {
@@ -110,7 +110,7 @@ var testDefs = [{
     name: "HTTPMethods POST test",
     expect: 2,
     config: {
-        configName: "kettle.tests.HTTPMethodsConfig",
+        configName: "kettle.tests.HTTPMethods.config",
         configPath: configPath
     },
     components: {
@@ -133,7 +133,7 @@ var testDefs = [{
     name: "HTTPMethods PUT test",
     expect: 2,
     config: {
-        configName: "kettle.tests.HTTPMethodsConfig",
+        configName: "kettle.tests.HTTPMethods.config",
         configPath: configPath
     },
     components: {
@@ -156,7 +156,7 @@ var testDefs = [{
     name: "HTTPMethods PUT & POST in sequence test",
     expect: 6,
     config: {
-        configName: "kettle.tests.HTTPMethodsConfig",
+        configName: "kettle.tests.HTTPMethods.config",
         configPath: configPath
     },
     components: {

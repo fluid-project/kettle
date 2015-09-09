@@ -23,11 +23,11 @@ require("./lib/KettleConfigLoader.js");
 require("./lib/KettleMiddleware.js");
 require("./lib/KettleRouter.js");
 require("./lib/KettleRequest.js");
-require("./lib/KettleRequest.io.js");
+require("./lib/KettleRequest.ws.js");
 require("./lib/KettleServer.js");
-require("./lib/KettleServer.io.js");
+require("./lib/KettleServer.ws.js");
 require("./lib/KettleSession.js");
-require("./lib/KettleSession.io.js");
+require("./lib/KettleSession.ws.js");
 
 kettle.loadTestingSupport = function () {
     require("./lib/test/KettleTestUtils.js");

@@ -25,7 +25,7 @@ var testIncludes = [
     "./MiddlewareTests.js",
     "./SessionTests.js",
     "./ConfigLoaderTests.js",
-    "./SocketTests.js",
+    "./WebSocketsTests.js",
     "./ErrorTests.js"
 ];
 

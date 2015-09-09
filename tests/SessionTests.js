@@ -21,8 +21,6 @@ var fluid = require("infusion"),
 
 kettle.loadTestingSupport();
 
-fluid.registerNamespace("kettle.tests.session");
-
 fluid.defaults("kettle.tests.session.none.handler", {
     gradeNames: ["kettle.request.http"],
     invokers: {
@@ -172,7 +170,7 @@ kettle.tests.session.response.failure = {
 
 
 
-kettle.tests.testSessionStartSuccessResponse = function (data, request, parsed) {
+kettle.tests.session.testStartSuccessResponse = function (data, request, parsed) {
     kettle.test.assertJSONResponse({
         message: "Successful session start response",
         expected: kettle.tests.session.response.success,
@@ -183,7 +181,7 @@ kettle.tests.testSessionStartSuccessResponse = function (data, request, parsed) 
     jqUnit.assertValue("kettle session cookie is set", parsed.signedCookies["kettle.sid"]);
 };
 
-kettle.tests.testSessionEndSuccessResponse = function (data, request, parsed) {
+kettle.tests.session.testEndSuccessResponse = function (data, request, parsed) {
     kettle.test.assertJSONResponse({
         message: "Successful session end response",
         expected: kettle.tests.session.response.success,
@@ -194,7 +192,7 @@ kettle.tests.testSessionEndSuccessResponse = function (data, request, parsed) {
 };
 
 
-var testDefs = [{
+kettle.tests.session.testDefs = {
     name: "Session tests",
     expect: 24,
     config: {
@@ -272,7 +270,7 @@ var testDefs = [{
         func: "{httpTestSessionStart}.send"
     }, {
         event: "{httpTestSessionStart}.events.onComplete",
-        listener: "kettle.tests.testSessionStartSuccessResponse"
+        listener: "kettle.tests.session.testStartSuccessResponse"
     }, {
         func: "{httpTestExistingSessionRequest2}.send"
     }, {
@@ -299,8 +297,8 @@ var testDefs = [{
         func: "{httpTestSessionEnd}.send"
     }, {
         event: "{httpTestSessionEnd}.events.onComplete",
-        listener: "kettle.tests.testSessionEndSuccessResponse"
+        listener: "kettle.tests.session.testEndSuccessResponse"
     }]
-}];
+};
 
-kettle.test.bootstrapServer(testDefs);
+// kettle.test.bootstrapServer(kettle.tests.session.testDefs);
