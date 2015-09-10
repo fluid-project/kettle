@@ -4,7 +4,7 @@
         "gradeNames": ["fluid.component"],
         "distributeOptions": {
             "record": "@expand:fluid.getGlobalValue(kettle.tests.testCORSOrigin)",
-            "target": "{that middleware CORS}.options.origin"
+            "target": "{that middlewareHolder CORS}.options.origin"
         }
     },
     "includes": ["./kettle.tests.CORS.config.json"]

@@ -31,25 +31,25 @@ fluid.defaults("kettle.tests.session.ws.testSocket.handler", {
 kettle.tests.session.ws.testSocket.receiveMessage = function (request) {
     var session = request.req.session;
     jqUnit.assertValue("Received socket message from qualified session", session);
-    jqUnit.assertEquals("Session data retrieved from HTTP request", kettle.tests.session.token);
+    console.log("Got session ", session);
+    jqUnit.assertEquals("Session data retrieved from HTTP request", kettle.tests.session.token, session.token);
     var response = $.extend(true, {
         token: session.token
     }, kettle.tests.session.response.success);
-    request.ws.send(response);
+    request.events.onSuccess.fire(response);
 };
 
 kettle.tests.session.ws.proto = {
     name: "WebSockets Session tests",
-    expect: 26,
+    expect: 28,
     config: {
         configName: "kettle.tests.session.webSockets.config",
         configPath: configPath
     },
     components: {
         wsRequest: {
-            type: "kettle.test.request.ws",
+            type: "kettle.test.request.wsCookie",
             options: {
-                connectOnInit: true,
                 path: "/socket_path"
             }
         }
@@ -60,16 +60,24 @@ kettle.tests.session.ws.testSocketResponse = function (that, data) {
     jqUnit.assertDeepEq("Received session-qualified socket response", kettle.tests.session.response.midSuccess, data);
 };
 
-kettle.tests.session.ws.midSequence = [ {
-    func: "{wsRequest}.send",
-    args: {
-        index: 0,
-        test: true
+kettle.tests.session.ws.midSequence = [
+    {
+        func: "{wsRequest}.connect"
+    }, {
+        event: "{wsRequest}.events.onConnect",
+        listener: "jqUnit.assert",
+        args: "Received WebSockets connection event"
+    }, {
+        func: "{wsRequest}.send",
+        args: {
+            index: 0,
+            test: true
+        }
+    }, {
+        event: "{wsRequest}.events.onMessage",
+        listener: "kettle.tests.session.ws.testSocketResponse"
     }
-}, {
-    event: "{wsRequest}.events.onMessage",
-    listener: "kettle.tests.session.ws.testSocketResponse"
-}];
+];
 
 kettle.tests.session.ws.testDefs = $.extend(true, {}, kettle.tests.session.testDefs, kettle.tests.session.ws.proto);
 
@@ -77,7 +85,7 @@ kettle.tests.session.ws.spliceSequence = function () {
     var sequence = kettle.tests.session.ws.testDefs.sequence;
     var m = kettle.tests.session.ws.midSequence; // TODO: backport DISRUPTOR
 
-    sequence.splice(6, 0, m[0], m[1]);
+    sequence.splice(8, 0, m[0], m[1], m[2], m[3]);
 };
 
 kettle.tests.session.ws.spliceSequence();

@@ -19,13 +19,15 @@ kettle.loadTestingSupport();
 
 var testIncludes = [
     "./InitTests.js",
+    "./DataSourceJSONTests.js",
     "./DataSourceTests.js",
     "./CrossServerRequestTests.js",
     "./HTTPMethodsTests.js",
-    "./MiddlewareTests.js",
+    "./CORSTests.js",
     "./SessionTests.js",
     "./ConfigLoaderTests.js",
     "./WebSocketsTests.js",
+    "./SessionWebSocketsTests.js",
     "./ErrorTests.js"
 ];
 

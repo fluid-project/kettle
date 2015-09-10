@@ -1,7 +1,7 @@
 /*!
 Kettle Data Source Tests
 
-Copyright 2012 Raising the Floor - International
+Copyright 2012-2015 Raising the Floor - International
 
 Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
@@ -16,44 +16,12 @@ var fluid = require("infusion"),
      kettle = require("../kettle.js"),
      fs = require("fs"),
      jqUnit = fluid.require("jqUnit");
- 
-kettle.loadTestingSupport();
-
-fluid.registerNamespace("kettle.tests.dataSource");
-
-// reinitialise the "writeable" directory area used by tests which issue dataSource writes,
-// the start of every test run
-kettle.tests.dataSource.ensureWriteableEmpty = function () {
-    var writeableDir = __dirname + "/data/writeable";
-    kettle.test.deleteFolderRecursive(writeableDir);
-    fs.mkdirSync(writeableDir);
-};
-
-
-// allow "%root" to be expanded to current directory name in all nested dataSources,
-// as well as distributing down a standard error handler for any nested dataSource
-
-fluid.defaults("kettle.tests.fileRootedDataSource", {
-    gradeNames: ["fluid.component"],
-    vars: {
-        root: __dirname
-    },
-    distributeOptions: [{
-        source: "{that}.options.vars",
-        target: "{that urlExpander}.options.vars"
-    },  {
-        record: {
-            namespace: "testEnvironment",
-            func: "{testEnvironment}.events.onError.fire",
-            args: "{arguments}.0"
-        },
-        target: "{that dataSource}.options.listeners.onError"
-    }]
-});
+     
+require ("./DataSourceTestUtils.js");
 
 // Basic initialisation tests
 
-kettle.tests.testInit = function (dataSource) {
+kettle.tests.dataSource.testInit = function (dataSource) {
     jqUnit.assertValue("Data source is initialized", dataSource);
     jqUnit.assertValue("Data source should have a get method", dataSource.get);
     jqUnit.assertUndefined("Data source should not have a set method by default", dataSource.set);
@@ -62,7 +30,7 @@ kettle.tests.testInit = function (dataSource) {
 };
 
 
-fluid.defaults("kettle.tests.dataSourceInitTester", {
+fluid.defaults("kettle.tests.dataSource.initTester", {
     gradeNames: ["fluid.test.testEnvironment"],
     components: {
         urlDataSource: {
@@ -72,25 +40,25 @@ fluid.defaults("kettle.tests.dataSourceInitTester", {
             type: "kettle.dataSource.CouchDB"
         },
         testCases: {
-            type: "kettle.tests.dataSourceInitCases"
+            type: "kettle.tests.dataSource.initCases"
         }
     }
 });
 
 
-fluid.defaults("kettle.tests.dataSourceInitCases", {
+fluid.defaults("kettle.tests.dataSource.initCases", {
     gradeNames: ["fluid.test.testCaseHolder"],
     modules: [{
         name: "Kettle Data Source Init Tester",
         tests: [{
             expect: 5,
             name: "URL Data source initialization",
-            func: "kettle.tests.testInit",
+            func: "kettle.tests.dataSource.testInit",
             args: ["{urlDataSource}"]
         }, {
             expect: 5,
             name: "CouchDB Data source initialization",
-            func: "kettle.tests.testInit",
+            func: "kettle.tests.dataSource.testInit",
             args: ["{couchDBDataSource}"]
         }]
     }]
@@ -103,22 +71,7 @@ kettle.tests.testUrlResolver = function (urlResolver, directModel) {
         "file://test%20with%20space/test.json", urlResolver.resolve(directModel));
 };
 
-fluid.defaults("kettle.tests.dataSourceInitTester", {
-    gradeNames: ["fluid.test.testEnvironment"],
-    components: {
-        urlDataSource: {
-            type: "kettle.dataSource.URL"
-        },
-        couchDBDataSource: {
-            type: "kettle.dataSource.CouchDB"
-        },
-        testCases: {
-            type: "kettle.tests.dataSourceInitCases"
-        }
-    }
-});
-
-fluid.defaults("kettle.tests.dataSourceResolverTester", {
+fluid.defaults("kettle.tests.dataSource.resolverTester", {
     gradeNames: ["fluid.test.testEnvironment"],
     components: {
         urlDataSourceStatic: {
@@ -164,56 +117,6 @@ fluid.defaults("kettle.tests.urlResolverTester", {
             }]
         }]
     }]
-});
-
-kettle.tests.fallibleDataSourceRead = function (dataSource) {
-    dataSource.get(); // we expect failure - forwarded to root handler
-};
-
-kettle.tests.expectJSONDiagnostic = function (error) {
-    console.log("Received JSON diagnostic error " + JSON.stringify(error, null, 2));
-    jqUnit.assertTrue("Got message mentioning filename ", error.message.indexOf("invalidJSONFile") !== -1);
-    jqUnit.assertTrue("Got message mentioning line number of error ", error.message.indexOf("59") !== -1);
-};
-
-// JSON parsing and diagnostics tests
-
-fluid.defaults("kettle.tests.dataSourceJSONTester", {
-    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.fileRootedDataSource", "autoInit"],
-    vars: {
-        root: __dirname
-    },
-    events: {
-        onError: null
-    },
-    components: {
-        faultyJSONDataSource: {
-            type: "kettle.dataSource.URL",
-            options: {
-                url: "file://%root/data/invalidJSONFile.jsonx"
-            }
-        },
-        testCaseHolder: {
-            type: "fluid.test.testCaseHolder",
-            options: {
-                modules: [{
-                    name: "Kettle JSON parsing Tests",
-                    tests: [{
-                        expect: 2,
-                        name: "JSON line number diagnostic test",
-                        sequence: [{
-                            funcName: "kettle.tests.fallibleDataSourceRead",
-                            args: ["{faultyJSONDataSource}"]
-                        }, {
-                            event: "{testEnvironment}.events.onError",
-                            listener: "kettle.tests.expectJSONDiagnostic"
-                        }
-                        ]
-                    }]
-                }]
-            }
-        }
-    }
 });
 
 // General DataSource test grades
@@ -797,12 +700,10 @@ kettle.tests.dataSource.promisifiedTests = fluid.transform(kettle.tests.dataSour
 });
 
 var tests = kettle.tests.dataSource.standardTests.concat(kettle.tests.dataSource.promisifiedTests).concat([
-    "kettle.tests.dataSourceInitTester",
-    "kettle.tests.dataSourceResolverTester"
+    "kettle.tests.dataSource.initTester",
+    "kettle.tests.dataSource.resolverTester"
 ]);
 
 kettle.tests.dataSource.ensureWriteableEmpty();
 
 kettle.test.bootstrap(tests);
-
-fluid.test.runTests(["kettle.tests.dataSourceJSONTester"]);

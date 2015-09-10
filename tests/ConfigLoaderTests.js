@@ -21,15 +21,6 @@ var fluid = require("infusion"),
 
 kettle.loadTestingSupport();
 
-fluid.defaults("kettle.tests.configLoader", {
-    gradeNames: ["fluid.test.testEnvironment"],
-    components: {
-        configLoaderTester: {
-            type: "kettle.tests.configLoaderTester"
-        }
-    }
-});
-
 fluid.defaults("kettle.tests.subcomponent1", {
     gradeNames: ["fluid.component"],
     option: "ORIGINAL"
@@ -156,6 +147,15 @@ fluid.defaults("kettle.tests.configLoaderTester", {
             func: "kettle.tests.testCreateNoTypeNameDefaults"
         }]
     }]
+});
+
+fluid.defaults("kettle.tests.configLoader", {
+    gradeNames: ["fluid.test.testEnvironment"],
+    components: {
+        configLoaderTester: {
+            type: "kettle.tests.configLoaderTester"
+        }
+    }
 });
 
 kettle.test.bootstrap("kettle.tests.configLoader");

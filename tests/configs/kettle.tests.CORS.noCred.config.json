@@ -4,7 +4,7 @@
         "gradeNames": ["fluid.component"],
         "distributeOptions": {
             "record": false,
-            "target": "{that middleware CORS}.options.credentials"
+            "target": "{that middlewareHolder CORS}.options.credentials"
         }
     },
     "includes": ["./kettle.tests.CORS.config.json"]
