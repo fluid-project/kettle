@@ -83,7 +83,26 @@ fluid.defaults("kettle.tests.serverPair.putEndpoint", {
     }
 });
 
-kettle.tests.relay = function (type, dataSource, handlerPromise, writeMethod) {
+kettle.tests.dataSource.errorPayload = {
+    isError: true,
+    value: 123,
+    message: "Error payload message"
+};
+
+kettle.tests.dataSource.errorEndpoint = function (request) {
+    request.handlerPromise.reject(kettle.tests.dataSource.errorPayload);
+};
+
+fluid.defaults("kettle.tests.serverPair.errorEndpoint", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.errorEndpoint"
+        }
+    }
+});
+
+kettle.tests.dataSource.relay = function (type, dataSource, handlerPromise, writeMethod) {
     var args = writeMethod ? [undefined, undefined, {writeMethod: writeMethod}] : [];
     var response = dataSource[type].apply(null, args);
     response.then(function (value) { // white-box testing for dataSource resolution
@@ -98,11 +117,20 @@ kettle.tests.relay = function (type, dataSource, handlerPromise, writeMethod) {
     });
 };
 
+kettle.tests.dataSource.errorRelay = function (dataSource, request) {
+    var response = dataSource.get(null);
+    response.then(function () {
+        jqUnit.fail("Should not receive resolve from error endpoint");
+    }, function (error) {
+        request.handlerPromise.reject(kettle.JSON.parse(error));
+    });
+};
+
 fluid.defaults("kettle.tests.serverPair.getRelay", {
     gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
-            funcName: "kettle.tests.relay",
+            funcName: "kettle.tests.dataSource.relay",
             args: ["get", "{relayDataSource}", "{request}.handlerPromise"]
         }
     }
@@ -112,7 +140,7 @@ fluid.defaults("kettle.tests.serverPair.postRelay", {
     gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
-            funcName: "kettle.tests.relay",
+            funcName: "kettle.tests.dataSource.relay",
             args: ["set", "{relayDataSource}", "{request}.handlerPromise"]
         }
     }
@@ -122,8 +150,18 @@ fluid.defaults("kettle.tests.serverPair.putRelay", {
     gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
-            funcName: "kettle.tests.relay",
+            funcName: "kettle.tests.dataSource.relay",
             args: ["set", "{relayDataSource}", "{request}.handlerPromise", "PUT"]
+        }
+    }
+});
+
+fluid.defaults("kettle.tests.serverPair.errorRelay", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.errorRelay",
+            args: ["{errorDataSource}", "{request}"]
         }
     }
 });
@@ -154,6 +192,11 @@ fluid.defaults("kettle.tests.serverPair", {
                                     type: "kettle.tests.serverPair.putEndpoint",
                                     route: "/endpoint",
                                     method: "put"
+                                },
+                                errorEndpoint: {
+                                    type: "kettle.tests.serverPair.errorEndpoint",
+                                    route: "/errorEndpoint",
+                                    method: "get"
                                 }
                             }
                         }
@@ -174,6 +217,12 @@ fluid.defaults("kettle.tests.serverPair", {
                             writeMethod: "POST"
                         }
                     },
+                    errorDataSource: {
+                        type: "kettle.dataSource.URL",
+                        options: {
+                            url: "http://localhost:8085/errorEndpoint"
+                        }
+                    },
                     relayApp: {
                         type: "kettle.app",
                         options: {
@@ -192,6 +241,11 @@ fluid.defaults("kettle.tests.serverPair", {
                                     type: "kettle.tests.serverPair.putRelay",
                                     route: "/relay",
                                     method: "put"
+                                },
+                                errorRelay: {
+                                    type: "kettle.tests.serverPair.errorRelay",
+                                    route: "/errorRelay",
+                                    method: "get"
                                 }
                             }
                         }
@@ -243,6 +297,25 @@ kettle.tests.putServerPairSequence = [
     }
 ];
 
+kettle.tests.errorServerPairSequence = [
+    {
+        func: "{errorRequest}.send",
+        args: [null, {
+            path: "/errorRelay"
+        }]
+    }, {
+        event: "{errorRequest}.events.onComplete",
+        listener: "kettle.test.assertJSONResponse",
+        args: {
+            message: "Received relayed failure from original failed dataSource",
+            statusCode: 500,
+            string: "{arguments}.0",
+            request: "{errorRequest}",
+            expected: kettle.tests.dataSource.errorPayload
+        }
+    }
+];
+
 fluid.defaults("kettle.tests.serverPairTester", {
     gradeNames: ["fluid.test.testEnvironment", "kettle.tests.serverPair"],
     components: {
@@ -270,6 +343,13 @@ fluid.defaults("kettle.tests.serverPairTester", {
                 method: "PUT"
             }
         },
+        errorRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                port: 8086,
+                path: "/errorRelay"
+            }
+        },
         fixtures: {
             type: "fluid.test.testCaseHolder",
             options: {
@@ -287,6 +367,10 @@ fluid.defaults("kettle.tests.serverPairTester", {
                         name: "Access SET request via PUT",
                         expect: 4, // one extra assertion tests the type of a set response payload
                         sequence: kettle.tests.putServerPairSequence
+                    }, {
+                        name: "Relay error state via GET",
+                        expect: 2,
+                        sequence: kettle.tests.errorServerPairSequence
                     }]
                 }]
             }

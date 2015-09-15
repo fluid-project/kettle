@@ -216,11 +216,8 @@ kettle.tests.session.testDefs = {
         },
         httpTestSessionStart: {
             type: "kettle.test.request.httpCookie",
-            options: {
-                path: "/testSessionStart/%token",
-                termMap: {
-                    token: kettle.tests.session.token
-                }
+            options: { // Test supplying URL templating via dynamic arguments
+                path: "/testSessionStart/%token"
             }
         },
         httpTestExistingSessionRequest2: {
@@ -269,7 +266,12 @@ kettle.tests.session.testDefs = {
             request: "{httpTestExistingSessionRequest}"
         }
     }, {
-        func: "{httpTestSessionStart}.send"
+        func: "{httpTestSessionStart}.send",
+        args: [null, {
+            termMap: {
+                token: kettle.tests.session.token
+            }
+        }]
     }, {
         event: "{httpTestSessionStart}.events.onComplete",
         listener: "kettle.tests.session.testStartSuccessResponse"
