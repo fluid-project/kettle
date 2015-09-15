@@ -15,16 +15,14 @@
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     $ = fluid.registerNamespace("jQuery"),
-    jqUnit = fluid.require("jqUnit"),
-    path = require("path"),
-    configPath = path.resolve(__dirname, "./configs");
+    jqUnit = fluid.require("jqUnit");
     
-require("./SessionTests.js");
+require("./shared/SessionTestDefs.js");
 
 fluid.defaults("kettle.tests.session.ws.testSocket.handler", {
-    gradeNames: ["kettle.request.ws", "kettle.request.sessionAware"],
+    gradeNames: ["kettle.request.ws", "kettle.request.sessionAware", "kettle.tests.session.handler.validating"],
     listeners: {
-        onMessage: "kettle.tests.session.ws.testSocket.receiveMessage"
+        onReceiveMessage: "kettle.tests.session.ws.testSocket.receiveMessage"
     }
 });
 
@@ -36,19 +34,25 @@ kettle.tests.session.ws.testSocket.receiveMessage = function (request) {
     var response = $.extend(true, {
         token: session.token
     }, kettle.tests.session.response.success);
-    request.events.onSuccess.fire(response);
+    request.events.onSendMessage.fire(response);
 };
 
 kettle.tests.session.ws.proto = {
     name: "WebSockets Session tests",
-    expect: 28,
+    expect: 31,
     config: {
         configName: "kettle.tests.session.webSockets.config",
-        configPath: configPath
+        configPath: "${kettle}/tests/configs"
     },
     components: {
         wsRequest: {
             type: "kettle.test.request.wsCookie",
+            options: {
+                path: "/socket_path"
+            }
+        },
+        badRequest: {
+            type: "kettle.test.request.ws",
             options: {
                 path: "/socket_path"
             }
@@ -76,6 +80,18 @@ kettle.tests.session.ws.midSequence = [
     }, {
         event: "{wsRequest}.events.onMessage",
         listener: "kettle.tests.session.ws.testSocketResponse"
+    }, {
+        func: "{badRequest}.connect"
+    }, {
+        event: "{badRequest}.events.onError",
+        listener: "kettle.test.assertErrorResponse",
+        args: {
+            message: "Received 403 error for non-session qualified request to WebSockets endpoint",
+            errorTexts: "HTTP",
+            statusCode: 403,
+            string: "{arguments}.1",
+            request: "{badRequest}"
+        }
     }
 ];
 

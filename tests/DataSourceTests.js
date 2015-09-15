@@ -17,7 +17,7 @@ var fluid = require("infusion"),
      fs = require("fs"),
      jqUnit = fluid.require("jqUnit");
      
-require ("./DataSourceTestUtils.js");
+require ("./shared/DataSourceTestUtils.js");
 
 // Basic initialisation tests
 

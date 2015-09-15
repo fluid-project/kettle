@@ -49,7 +49,7 @@ kettle.tests.endpoint = function (type, request) {
     // test operation of "request promise" as well as requirement for callback wrapper
     fluid.invokeLater(kettle.wrapCallback(function () {
         fluid.log("ENDPOINT Resolving with value ", value);
-        request.requestPromise.resolve(JSON.stringify(value) + "\n");
+        request.handlerPromise.resolve(JSON.stringify(value) + "\n");
     }));
 };
 
@@ -83,7 +83,7 @@ fluid.defaults("kettle.tests.serverPair.putEndpoint", {
     }
 });
 
-kettle.tests.relay = function (type, dataSource, requestPromise, writeMethod) {
+kettle.tests.relay = function (type, dataSource, handlerPromise, writeMethod) {
     var args = writeMethod ? [undefined, undefined, {writeMethod: writeMethod}] : [];
     var response = dataSource[type].apply(null, args);
     response.then(function (value) { // white-box testing for dataSource resolution
@@ -92,9 +92,9 @@ kettle.tests.relay = function (type, dataSource, requestPromise, writeMethod) {
         if (type === "set") {
             jqUnit.assertEquals("dataSource set payload must have been parsed", "object", typeof(value));
         }
-        requestPromise.resolve(value);
+        handlerPromise.resolve(value);
     }, function (error) {
-        requestPromise.reject(error);
+        handlerPromise.reject(error);
     });
 };
 
@@ -103,7 +103,7 @@ fluid.defaults("kettle.tests.serverPair.getRelay", {
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.relay",
-            args: ["get", "{relayDataSource}", "{request}.requestPromise"]
+            args: ["get", "{relayDataSource}", "{request}.handlerPromise"]
         }
     }
 });
@@ -113,7 +113,7 @@ fluid.defaults("kettle.tests.serverPair.postRelay", {
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.relay",
-            args: ["set", "{relayDataSource}", "{request}.requestPromise"]
+            args: ["set", "{relayDataSource}", "{request}.handlerPromise"]
         }
     }
 });
@@ -123,7 +123,7 @@ fluid.defaults("kettle.tests.serverPair.putRelay", {
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.relay",
-            args: ["set", "{relayDataSource}", "{request}.requestPromise", "PUT"]
+            args: ["set", "{relayDataSource}", "{request}.handlerPromise", "PUT"]
         }
     }
 });

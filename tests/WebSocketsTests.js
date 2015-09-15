@@ -23,7 +23,7 @@ kettle.loadTestingSupport();
 fluid.defaults("kettle.tests.ws.testSocket.handler", {
     gradeNames: "kettle.request.ws",
     listeners: {
-        onMessage: "kettle.tests.ws.testSocket.receiveMessage"
+        onReceiveMessage: "kettle.tests.ws.testSocket.receiveMessage"
     }
 });
 
@@ -39,7 +39,7 @@ kettle.tests.ws.testSocket.receiveMessage = function (request, data) {
         index: kettle.tests.ws.messageCount++,
         test: true
     }, data);
-    request.events.onSuccess.fire(kettle.tests.ws.successResponse);
+    request.events.onSendMessage.fire(kettle.tests.ws.successResponse);
     console.log("Finished receiveMessage");
 };
 

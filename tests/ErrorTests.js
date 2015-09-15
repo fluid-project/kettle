@@ -27,10 +27,22 @@ fluid.defaults("kettle.tests.error.requestError", {
     invokers: {
         handleRequest: {
             funcName: "fluid.fail",
-            args: "Assertion failed in request - this failure is expected: "
-        }
+            args: "Simulated assertion failed in request - this failure is expected: "
+        },
+        handleFullRequest: "kettle.tests.error.handleFullRequest"
     }
 });
+
+// Test overriding of "full request handler" in order to demonstrate forwarding failures to express
+kettle.tests.error.handleFullRequest = function (request, fullRequestPromise, next) {
+    fullRequestPromise.then(function () {
+        next();
+    }, function (err) {
+        request.events.onRequestError.fire(err);
+        console.log("FORWARDING ERROR TO EXPRESS");
+        next(err);
+    });
+};
 
 fluid.defaults("kettle.tests.error.requestErrorCode", {
     gradeNames: "kettle.request.http",
@@ -80,6 +92,7 @@ fluid.defaults("kettle.tests.logNotifierHolder", {
 var logNotifierHolder = kettle.tests.logNotifierHolder();
 
 kettle.tests.notifyGlobalError = function () {
+    console.log("TTTT notifyGlobalError called");
     logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
 };
 
@@ -155,8 +168,7 @@ kettle.tests.error.testDefs = [{
         event: "{eventHolder}.events.logNotifier",
         listener: "kettle.tests.awaitGlobalError"
     }, { // TODO: Currently this relies on a timing subtlety to evade bug FLUID-5502 in the IoC testing framework - 
-         // we "happen to know" that an event scheduled with process.nextTick (the node impl of fluid.invokeLater) 
-         // will definitely be invoked before one corresponding to actual I/O
+         // we know that our error handler will definitely be invoked before one corresponding to actual I/O
         event: "{httpRequest}.events.onComplete",
         listener: "kettle.tests.testRequestErrorStatus",
         args: ["{httpRequest}"]

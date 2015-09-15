@@ -16,7 +16,7 @@ var fluid = require("infusion"),
      kettle = require("../kettle.js"),
      jqUnit = fluid.require("jqUnit");
 
-require("./DataSourceTestUtils.js");
+require("./shared/DataSourceTestUtils.js");
 
 // JSON parsing and diagnostics tests
 

@@ -1,5 +1,5 @@
 /*
-Kettle Data Source Tests
+Kettle Data Source Test Utilities
 
 Copyright 2012-2015 Raising the Floor - International
 
@@ -13,7 +13,7 @@ https://github.com/GPII/kettle/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../kettle.js"),
+     kettle = require("../../kettle.js"),
      fs = require("fs");
  
 kettle.loadTestingSupport();
@@ -23,7 +23,7 @@ fluid.registerNamespace("kettle.tests.dataSource");
 // reinitialise the "writeable" directory area used by tests which issue dataSource writes,
 // the start of every test run
 kettle.tests.dataSource.ensureWriteableEmpty = function () {
-    var writeableDir = __dirname + "/data/writeable";
+    var writeableDir = fluid.module.resolvePath("${kettle}/tests/data/writeable");
     kettle.test.deleteFolderRecursive(writeableDir);
     fs.mkdirSync(writeableDir);
 };
@@ -35,7 +35,7 @@ kettle.tests.dataSource.ensureWriteableEmpty = function () {
 fluid.defaults("kettle.tests.fileRootedDataSource", {
     gradeNames: ["fluid.component"],
     vars: {
-        root: __dirname
+        root: fluid.module.resolvePath("${kettle}/tests")
     },
     distributeOptions: [{
         source: "{that}.options.vars",
