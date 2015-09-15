@@ -30,6 +30,7 @@ require("./lib/KettleSession.js");
 
 kettle.loadTestingSupport = function () {
     require("./lib/test/KettleTestUtils.js");
+    require("./lib/test/KettleTestUtils.ws.js");
 };
 
 module.exports = kettle;

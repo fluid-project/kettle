@@ -239,20 +239,20 @@ kettle.tests.simpleDSModuleSource = function (options) {
     return modules;
 };
 
-kettle.tests.testEmptyResponse = function (data) {
+kettle.tests.dataSource.testEmptyResponse = function (data) {
     jqUnit.assertEquals("Data response should be undefined", undefined, data);
 };
 
-kettle.tests.testResponse = function (expected, data) {
+kettle.tests.dataSource.testResponse = function (expected, data) {
     jqUnit.assertDeepEq("Data response should hold correct value", expected, data);
 };
 
-kettle.tests.testErrorResponse = function (expected, data) {
+kettle.tests.dataSource.testErrorResponse = function (expected, data) {
     jqUnit.assertDeepEq("Error response should hold correct value", expected, data);
 };
 
-kettle.tests.testSetResponse = function (dataSource, directModel, expected) {
-    var fileName = dataSource.urlResolver.resolve(directModel).substring(7),
+kettle.tests.dataSource.testSetResponse = function (dataSource, directModel, expected) {
+    var fileName = dataSource.urlResolver.resolve(directModel).substring("file://".length),
         data = JSON.parse(fs.readFileSync(fileName, "utf8"));
     jqUnit.assertDeepEq("Response is correct", expected, data);
     fs.unlink(fileName);
@@ -271,7 +271,7 @@ fluid.defaults("kettle.tests.dataSource.1.URL.empty", {
         }
     },
     invokers: {
-        responseFunc: "kettle.tests.testEmptyResponse"
+        responseFunc: "kettle.tests.dataSource.testEmptyResponse"
     }
 });
 
@@ -288,7 +288,7 @@ fluid.defaults("kettle.tests.dataSource.2.URL.standard", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testResponse",
+            funcName: "kettle.tests.dataSource.testResponse",
             args: [{
                 dataSource: "works"
             }, "{arguments}.0"]
@@ -309,7 +309,7 @@ fluid.defaults("kettle.tests.dataSource.3.CouchDB.standard", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testResponse",
+            funcName: "kettle.tests.dataSource.testResponse",
             args: [{
                 dataSource: "works"
             }, "{arguments}.0"]
@@ -329,9 +329,14 @@ fluid.defaults("kettle.tests.dataSource.4.CouchDB.empty", {
         }
     },
     invokers: {
-        responseFunc: "kettle.tests.testEmptyResponse"
+        responseFunc: "kettle.tests.dataSource.testEmptyResponse"
     }
 });
+
+kettle.tests.dataSource.expandRoot = function (template) {
+    var terms = fluid.defaults("kettle.tests.fileRootedDataSource").vars;
+    return fluid.stringTemplate(template, terms);
+};
 
 fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
     gradeNames: ["kettle.tests.simpleDataSourceTest"],
@@ -347,10 +352,10 @@ fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
     },
     invokers: {
         errorFunc: {
-            funcName: "kettle.tests.testErrorResponse",
+            funcName: "kettle.tests.dataSource.testErrorResponse",
             args: [{
                 isError: true,
-                message: "not_found: missing while reading file E:\\source\\gits\\kettle\\tests/data/couchDataSourceError.json"
+                message: kettle.tests.dataSource.expandRoot("not_found: missing while reading file %root/data/couchDataSourceError.json")
             }, "{arguments}.0"]
         }
     }
@@ -375,7 +380,7 @@ fluid.defaults("kettle.tests.dataSource.6.URL.expand.present", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testResponse",
+            funcName: "kettle.tests.dataSource.testResponse",
             args: [{
                 dataSource: "works"
             }, "{arguments}.0"]
@@ -402,7 +407,7 @@ fluid.defaults("kettle.tests.dataSource.7.URL.expand.missing", {
         }
     },
     invokers: {
-        responseFunc: "kettle.tests.testEmptyResponse"
+        responseFunc: "kettle.tests.dataSource.testEmptyResponse"
     }
 });
 
@@ -425,7 +430,7 @@ fluid.defaults("kettle.tests.dataSource.8.CouchDB.expand.missing", {
         }
     },
     invokers: {
-        responseFunc: "kettle.tests.testEmptyResponse"
+        responseFunc: "kettle.tests.dataSource.testEmptyResponse"
     }
 });
 
@@ -445,7 +450,7 @@ fluid.defaults("kettle.tests.dataSource.9.URL.expand.static", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testResponse",
+            funcName: "kettle.tests.dataSource.testResponse",
             args: [{
                 dataSource: "works"
             }, "{arguments}.0"]
@@ -469,7 +474,7 @@ fluid.defaults("kettle.tests.dataSource.10.CouchDB.expand.static", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testResponse",
+            funcName: "kettle.tests.dataSource.testResponse",
             args: [{
                 dataSource: "works"
             }, "{arguments}.0"]
@@ -496,7 +501,7 @@ fluid.defaults("kettle.tests.dataSource.11.CouchDB.expand.dynamic", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testResponse",
+            funcName: "kettle.tests.dataSource.testResponse",
             args: [{
                 dataSource: "works"
             }, "{arguments}.0"]
@@ -522,7 +527,7 @@ fluid.defaults("kettle.tests.dataSource.12.URL.set", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testSetResponse",
+            funcName: "kettle.tests.dataSource.testSetResponse",
             args: ["{dataSource}", null, {
                 test: "test"
             }]
@@ -549,7 +554,7 @@ fluid.defaults("kettle.tests.dataSource.13.CouchDB.set", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testSetResponse",
+            funcName: "kettle.tests.dataSource.testSetResponse",
             args: ["{dataSource}", "{testEnvironment}.options.directModel", {
                 value: {
                     test: "test"
@@ -586,7 +591,7 @@ fluid.defaults("kettle.tests.dataSource.14.CouchDB.set.existing", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testSetResponse",
+            funcName: "kettle.tests.dataSource.testSetResponse",
             args: ["{dataSource}", "{testEnvironment}.options.directModel", {
                 value: {
                     test: "test"
@@ -622,7 +627,7 @@ fluid.defaults("kettle.tests.dataSource.15.URL.set.expand", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testSetResponse",
+            funcName: "kettle.tests.dataSource.testSetResponse",
             args: ["{dataSource}", "{testEnvironment}.options.directModel", {
                 test: "test"
             }]
@@ -657,7 +662,7 @@ fluid.defaults("kettle.tests.dataSource.16.CouchDB.set.existing.expand", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.testSetResponse",
+            funcName: "kettle.tests.dataSource.testSetResponse",
             args: ["{dataSource}", "{testEnvironment}.options.directModel", {
                 value: {
                     test: "test"

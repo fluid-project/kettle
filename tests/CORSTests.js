@@ -119,7 +119,7 @@ kettle.tests.CORS.testNoCORSResponse = function (data, request) {
 
 var testDefs = [ {
     name: "CORS middleware tests",
-    expect: 12,
+    expect: 11,
     config: {
         configName: "kettle.tests.CORS.config",
         configPath: configPath

@@ -82,10 +82,8 @@ kettle.tests.session.ws.midSequence = [
 kettle.tests.session.ws.testDefs = $.extend(true, {}, kettle.tests.session.testDefs, kettle.tests.session.ws.proto);
 
 kettle.tests.session.ws.spliceSequence = function () {
-    var sequence = kettle.tests.session.ws.testDefs.sequence;
-    var m = kettle.tests.session.ws.midSequence; // TODO: backport DISRUPTOR
-
-    sequence.splice(8, 0, m[0], m[1], m[2], m[3]);
+    // TODO: backport DISRUPTOR from GPII's CloudBasedOAuth2.js
+    kettle.test.insertIntoArray(kettle.tests.session.ws.testDefs.sequence, 8, kettle.tests.session.ws.midSequence);
 };
 
 kettle.tests.session.ws.spliceSequence();

@@ -27,6 +27,10 @@ fluid.defaults("kettle.tests.ws.testSocket.handler", {
     }
 });
 
+kettle.tests.ws.successResponse = {
+    success: true
+};
+
 
 kettle.tests.ws.messageCount = 0;
 
@@ -35,9 +39,7 @@ kettle.tests.ws.testSocket.receiveMessage = function (request, data) {
         index: kettle.tests.ws.messageCount++,
         test: true
     }, data);
-    request.events.onSuccess.fire({
-        success: true
-    });
+    request.events.onSuccess.fire(kettle.tests.ws.successResponse);
     console.log("Finished receiveMessage");
 };
 
@@ -52,16 +54,7 @@ fluid.defaults("kettle.tests.ws.testGet.handler", {
 
 kettle.tests.ws.testGet.handleRequest = function (request) {
     jqUnit.assertTrue("The request was received.", true);
-    request.events.onSuccess.fire({
-        success: true
-    });
-};
-
-
-kettle.tests.ws.testResponse = function (data /*, headers*/ ) {
-    jqUnit.assertDeepEq("The response is correct.", {
-        success: true
-    }, kettle.JSON.parse(data));
+    request.events.onSuccess.fire(kettle.tests.ws.successResponse);
 };
 
 kettle.tests.ws.testSocketResponse = function (that, data) {
@@ -71,22 +64,44 @@ kettle.tests.ws.testSocketResponse = function (that, data) {
     console.log("FINISHED ASSERT");
 };
 
+kettle.tests.ws.testSocketError = function (that, err) {
+    kettle.test.assertErrorResponse({
+        request: that,
+        message: "Received WebSockets error event applying to plain HTTP endpoint",
+        string: err,
+        errorTexts: ["WebSockets", "HTTP"],
+        statusCode: 400
+    });
+};
+
 kettle.tests.ws.testDefs = {
     name: "WebSockets tests",
-    expect: 7,
+    expect: 15,
     config: {
         configName: "kettle.tests.webSockets.config",
         configPath: configPath
     },
     components: {
+        httpRequest: {
+            type: "kettle.test.request.http"
+        },
+        badHttpRequest: { // A "bad" request that attempts to connect to a WS endpoint via plain HTTP
+            type: "kettle.test.request.http",
+            options: {
+                path: "/socket_path"
+            }
+        },
         wsRequest: {
             type: "kettle.test.request.ws",
             options: {
                 path: "/socket_path"
             }
         },
-        httpRequest: {
-            type: "kettle.test.request.http"
+        badWsRequest: {
+            type: "kettle.test.request.ws",
+            options: {
+                path: "/"
+            }
         }
     },
     sequence: [{
@@ -117,7 +132,30 @@ kettle.tests.ws.testDefs = {
         func: "{httpRequest}.send"
     }, {
         event: "{httpRequest}.events.onComplete",
-        listener: "kettle.tests.ws.testResponse"
+        listener: "kettle.test.assertJSONResponse",
+        args: {
+            message: "Received standard response to HTTP handler attached to ws-aware server",
+            expected: kettle.tests.ws.successResponse,
+            string: "{arguments}.0",
+            request: "{httpRequest}"
+        }
+    }, {
+        func: "{badHttpRequest}.send"
+    }, {
+        event: "{badHttpRequest}.events.onComplete",
+        listener: "kettle.test.assertErrorResponse",
+        args: {
+            message: "Received 426 error for plain HTTP request to WebSockets endpoint",
+            errorTexts: "WebSockets",
+            statusCode: 426,
+            string: "{arguments}.0",
+            request: "{badHttpRequest}"
+        }
+    }, {
+        func: "{badWsRequest}.connect"
+    }, {
+        event: "{badWsRequest}.events.onError",
+        listener: "kettle.tests.ws.testSocketError"
     }]
 };
 
