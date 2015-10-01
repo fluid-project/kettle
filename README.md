@@ -1,36 +1,33 @@
 Kettle
 ===
 
-Kettle is the Fluid Project's experimental server-side platform, based on node.js and [express](http://expressjs.com/)
+Kettle is an integration technology which promotes the expression of servers handling HTTP and WebSockets endpoints. 
+With a few exceptions, Kettle implements no primary functionality of its own, but aggregates the facilities of
+[express](http://expressjs.com/) and [ws](http://einaros.github.io/ws/), as well as middleware held in the wider [pillarjs](https://github.com/pillarjs)
+ecosystem. Kettle applications can easily incorporate any express-standard middleware, as well as coexisting with standard express apps targeted at the same
+node.js HTTP server. Since Kettle applications are expressed 
+declaratively, in the JSON format encoding [Infusion](https://github.com/fluid-project/infusion)'s component trees, it is possible to adapt existing
+applications easily, as well as inserting middleware and new handlers anywhere in the pipeline without modifying the original application's code. This makes
+Kettle suitable for uses where application functionality needs to be deployed flexibly in a variety of different configurations.
 
-The homepage for Kettle is at http://wiki.fluidproject.org/display/fluid/Kettle, with issue tracking at http://issues.fluidproject.org/browse/KETTLE .
+In fact, Kettle's dependency on express itself is minimal, since the entirety of the Kettle request handling pipeline is packaged
+as a single piece of express-compatible middleware - Kettle could be deployed against any other consumer of middleware or even a raw node.js HTTP server.
 
-Kettle operates by executing [Fluid Infusion](http://www.fluidproject.org/products/infusion/) and a very minimal profile of jQuery on the server-side.
+Testing
+===
+As well as the integration technology implementing Kettle itself, this repository also contains functionality helpful for testing HTTP and WebSockets
+servers written in arbitrary node.js technologies. This is accessed by, after calling `require("kettle")`, then running `kettle.loadTestingSupport`. Kettle testing 
+support allows HTTP and WebSockets client requests to be packaged as [Infusion](https://github.com/fluid-project/infusion) components, suitable for use with 
+
+
+Kettle runs on [node.js](https://nodejs.org) version 4.x (see package.json for current dependency profile)
+
+Issue tracking at http://issues.fluidproject.org/browse/KETTLE .
 
 Installation instructions:
 -
 
-Firstly, install node and npm.
-
-Run the following command in your newly checked out Kettle repository. This
-will install all dependencies that are required by Kettle.
-
-    npm install
-
-Dependencies:
--
-
-    express: ~3.4.3
-    infusion: git://github.com/fluid-project/infusion.git#d5b2409f435f1c2a79914748b956891dcb065f94
-    node-uuid: ~1.4.0
-    socket.io: ~0.9.16
-    xmlhttprequest: ~1.6.0 **NOTE**
-    socket.io-client: ~0.9.16 **NOTE**
-
-**NOTE**: the final two listed dependencies are strictly speaking dev dependencies. However, when Kettle is loaded
-as a submodule for the purpose of running test cases, this fact cannot be propagated through the npm system. We must
-advertise them as 1st-class dependencies so that they can be available for 3rd party tests.
-    
+Firstly, install node and npm by running a standard installer from [node.js](https://nodejs.org). Clone this repository and then run `npm install`.
 
 Kettle apps
 -
