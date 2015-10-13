@@ -1,5 +1,5 @@
 {
-    "typeName": "kettle.tests.CORS.noCORS.config",
+    "type": "kettle.tests.CORS.noCORS.config",
     "options": {
         "gradeNames": ["fluid.component"],
         "distributeOptions": {

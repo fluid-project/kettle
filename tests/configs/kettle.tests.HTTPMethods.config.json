@@ -1,5 +1,5 @@
 {
-    "typeName": "kettle.tests.HTTPMethods.config",
+    "type": "kettle.tests.HTTPMethods.config",
     "options": {
         "gradeNames": ["fluid.component"],
         "components": {

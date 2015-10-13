@@ -1,5 +1,5 @@
 {
-    "typeName": "config1",
+    "type": "config1",
     "options": {
         "gradeNames": ["fluid.component"],
         "option1": "OPTION1"

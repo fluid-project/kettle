@@ -1,5 +1,5 @@
 {
-    "typeName": "kettle.tests.session.webSockets.config",
+    "type": "kettle.tests.session.webSockets.config",
     "options": {
         "gradeNames": ["fluid.component"],
         "components": {

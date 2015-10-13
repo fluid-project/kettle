@@ -143,7 +143,7 @@ fluid.defaults("kettle.tests.configLoaderTester", {
             func: "kettle.tests.testCreateDefaults"
         }, {
             expect: 4,
-            name: "kettle.config.createDefaults no typeName",
+            name: "kettle.config.createDefaults no type",
             func: "kettle.tests.testCreateNoTypeNameDefaults"
         }]
     }]

@@ -1,5 +1,5 @@
 {
-    "typeName": "config3",
+    "type": "config3",
     "options": {
         "gradeNames": ["fluid.modelComponent"],
         "option3": "OPTION3",

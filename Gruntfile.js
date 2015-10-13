@@ -16,14 +16,14 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            all: ["lib/**/*.js", "tests/**/*.js"],
+            all: ["lib/**/*.js", "tests/**/*.js", "examples/**/*.js"],
             buildScripts: ["Gruntfile.js"],
             options: {
                 jshintrc: true
             }
         },
         jsonlint: {
-            src: ["lib/**/*.json", "tests/**/*.json"]
+            src: ["lib/**/*.json", "tests/**/*.json", "examples/**/*.json"]
         }
     });
 

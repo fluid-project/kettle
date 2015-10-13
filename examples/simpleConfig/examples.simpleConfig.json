@@ -1,24 +1,20 @@
 {
-    "type": "kettle.tests.error.config",
+    "type": "examples.simpleConfig",
     "options": {
-        "gradeNames": ["fluid.component"],
+        "gradeNames": "fluid.component",
         "components": {
             "server": {
                 "type": "kettle.server",
                 "options": {
+                    "port": 8081,
                     "components": {
                         "app": {
                             "type": "kettle.app",
                             "options": {
                                 "requestHandlers": {
-                                    "requestError": {
-                                        "type": "kettle.tests.error.requestError",
-                                        "route": "/",
-                                        "method": "get"
-                                    },
-                                    "requestErrorCode": {
-                                        "type": "kettle.tests.error.requestErrorCode",
-                                        "route": "/errorCode",
+                                    "getHandler": {
+                                        "type": "examples.simpleConfig.handler",
+                                        "route": "/handlerPath",
                                         "method": "get"
                                     }
                                 }

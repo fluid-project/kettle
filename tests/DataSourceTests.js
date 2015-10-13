@@ -74,21 +74,12 @@ kettle.tests.testUrlResolver = function (urlResolver, directModel) {
 fluid.defaults("kettle.tests.dataSource.resolverTester", {
     gradeNames: ["fluid.test.testEnvironment"],
     components: {
-        urlDataSourceStatic: {
-            type: "kettle.dataSource.URL",
-            options: {
-                url: "file://%expand/test.json",
-                termMap: {
-                    expand: "test with space"
-                }
-            }
-        },
         urlDataSourceDynamic: {
             type: "kettle.dataSource.URL",
             options: {
                 url: "file://%expand/test.json",
                 termMap: {
-                    expand: "%expand"
+                    expand: "expand"
                 }
             }
         },
@@ -105,12 +96,7 @@ fluid.defaults("kettle.tests.urlResolverTester", {
         name: "Kettle UrlResolver Tests",
         tests: [{
             expect: 1,
-            name: "URL Data source initialization",
-            func: "kettle.tests.testUrlResolver",
-            args: "{urlDataSourceStatic}.urlResolver"
-        }, {
-            expect: 1,
-            name: "CouchDB Data source initialization",
+            name: "URL resolver with URI escaping",
             func: "kettle.tests.testUrlResolver",
             args: ["{urlDataSourceDynamic}.urlResolver", {
                 expand: "test with space"
@@ -373,7 +359,7 @@ fluid.defaults("kettle.tests.dataSource.6.URL.expand.present", {
             options: {
                 url: "file://%root/data/%expand.json",
                 termMap: {
-                    expand: "%expand"
+                    expand: "expand"
                 }
             }
         }
@@ -401,7 +387,7 @@ fluid.defaults("kettle.tests.dataSource.7.URL.expand.missing", {
                 url: "file://%root/data/%expand.json",
                 notFoundIsEmpty: true,
                 termMap: {
-                    expand: "%expand"
+                    expand: "expand"
                 }
             }
         }
@@ -424,7 +410,7 @@ fluid.defaults("kettle.tests.dataSource.8.CouchDB.expand.missing", {
                 url: "file://%root/data/%expand.json",
                 notFoundIsEmpty: true,
                 termMap: {
-                    expand: "%expand"
+                    expand: "expand"
                 }
             }
         }
@@ -436,15 +422,12 @@ fluid.defaults("kettle.tests.dataSource.8.CouchDB.expand.missing", {
 
 fluid.defaults("kettle.tests.dataSource.9.URL.expand.static", {
     gradeNames: ["kettle.tests.simpleDataSourceTest"],
-    name: "9. Testing url datasource with filesystem with expansion and static termMap",
+    name: "9. Testing url datasource with filesystem with static expansion",
     components: {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/%expand.json",
-                termMap: {
-                    expand: "dataSourceTestFile"
-                }
+                url: "file://%root/data/dataSourceTestFile.json"
             }
         }
     },
@@ -460,12 +443,12 @@ fluid.defaults("kettle.tests.dataSource.9.URL.expand.static", {
 
 fluid.defaults("kettle.tests.dataSource.10.CouchDB.expand.static", {
     gradeNames: ["kettle.tests.simpleDataSourceTest"],
-    name: "10. Testing couchdb datasource with filesystem with expansion and static termMap",
+    name: "10. Testing couchdb datasource with filesystem with static expansion",
     components: {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/%expand.json",
+                url: "file://%root/data/couchDataSourceTestFile.json",
                 termMap: {
                     expand: "couchDataSourceTestFile"
                 }
@@ -494,7 +477,7 @@ fluid.defaults("kettle.tests.dataSource.11.CouchDB.expand.dynamic", {
             options: {
                 url: "file://%root/data/%expand.json",
                 termMap: {
-                    expand: "%expand"
+                    expand: "expand"
                 }
             }
         }
@@ -619,7 +602,7 @@ fluid.defaults("kettle.tests.dataSource.15.URL.set.expand", {
             options: {
                 url: "file://%root/data/writeable/%expand.json",
                 termMap: {
-                    expand: "%expand"
+                    expand: "expand"
                 },
                 writable: true
             }
@@ -654,7 +637,7 @@ fluid.defaults("kettle.tests.dataSource.16.CouchDB.set.existing.expand", {
             options: {
                 url: "file://%root/data/writeable/%expand.json",
                 termMap: {
-                    expand: "%expand"
+                    expand: "expand"
                 },
                 writable: true
             }
