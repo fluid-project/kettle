@@ -13,9 +13,9 @@
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("../../kettle.js"),
     examples = fluid.registerNamespace("examples");
 
+require("../../kettle.js");
 
 fluid.defaults("examples.httpDataSource", {
     gradeNames: "kettle.dataSource.URL",

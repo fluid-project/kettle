@@ -12,9 +12,7 @@
  
 "use strict";
 
-var fluid = require("infusion"),
-    kettle = require("../../kettle.js"),
-    examples = fluid.registerNamespace("examples");
+var kettle = require("../../kettle.js");
 
 // Load the code implementing the config's request handler
 require("./simpleConfig-config-handler.js");

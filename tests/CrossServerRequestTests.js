@@ -122,7 +122,7 @@ kettle.tests.dataSource.errorRelay = function (dataSource, request) {
     response.then(function () {
         jqUnit.fail("Should not receive resolve from error endpoint");
     }, function (error) {
-        request.handlerPromise.reject(kettle.JSON.parse(error));
+        request.handlerPromise.reject(error);
     });
 };
 
@@ -257,7 +257,6 @@ fluid.defaults("kettle.tests.serverPair", {
 });
 
 kettle.tests.testServerPairResponse = function (expected, data) {
-    console.log("Received data ", data);
     var parsed = JSON.parse(data);
     jqUnit.assertDeepEq("Expected response from request", expected, parsed);
 };

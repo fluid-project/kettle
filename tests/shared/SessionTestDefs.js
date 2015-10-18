@@ -199,7 +199,7 @@ kettle.tests.session.testDefs = {
     expect: 24,
     config: {
         configName: "kettle.tests.session.config",
-        configPath: "${kettle}/tests/configs"
+        configPath: "%kettle/tests/configs"
     },
     components: {
         httpTestNoSessionRequest: {

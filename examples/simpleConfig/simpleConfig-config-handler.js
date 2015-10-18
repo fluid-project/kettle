@@ -13,8 +13,9 @@
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("../../kettle.js"),
     examples = fluid.registerNamespace("examples");
+
+require("../../kettle.js");
 
 // Define the request handler grade for our one handler
 fluid.defaults("examples.simpleConfig.handler", {

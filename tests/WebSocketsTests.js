@@ -61,7 +61,6 @@ kettle.tests.ws.testSocketResponse = function (that, data) {
     jqUnit.assertDeepEq("Socket message delivered confirmed", {
         success: true
     }, data);
-    console.log("FINISHED ASSERT");
 };
 
 kettle.tests.ws.testSocketError = function (that, err) {

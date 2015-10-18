@@ -92,7 +92,6 @@ fluid.defaults("kettle.tests.logNotifierHolder", {
 var logNotifierHolder = kettle.tests.logNotifierHolder();
 
 kettle.tests.notifyGlobalError = function () {
-    console.log("TTTT notifyGlobalError called");
     logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
 };
 
@@ -108,19 +107,7 @@ kettle.tests.testRequestStatusCode = function (request, expectedCode) {
     jqUnit.assertEquals("Expected HTTP status code", expectedCode, request.nativeResponse.statusCode);
 };
 
-kettle.tests.pushInstrumentedErrors = function () {
-    // Beat jqUnit's exception handler so that we can test kettle's instead
-    fluid.failureEvent.addListener(fluid.identity, "jqUnit", "before:fail");
-    // Beat the existing global exception handler for the duration of these tests
-    fluid.onUncaughtException.addListener(kettle.tests.notifyGlobalError, "fail",
-        fluid.handlerPriorities.uncaughtException.fail);
-};
 
-kettle.tests.popInstrumentedErrors = function () {
-    fluid.failureEvent.removeListener("jqUnit");
-    // restore whatever was the old listener in this namespace, as per FLUID-5506 implementation
-    fluid.onUncaughtException.removeListener("fail");
-};
 
 // Tests four effects:
 // i) Triggering a global error will definitely cause a logged message via the uncaught exception handler
@@ -155,7 +142,8 @@ kettle.tests.error.testDefs = [{
         }
     },
     sequence: [{ // Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
-        funcName: "kettle.tests.pushInstrumentedErrors"
+        funcName: "kettle.test.pushInstrumentedErrors",
+        args: "kettle.tests.notifyGlobalError"
     }, {
         funcName: "kettle.tests.triggerGlobalErrorAsync",
         args: "{testCaseHolder}"
@@ -173,7 +161,7 @@ kettle.tests.error.testDefs = [{
         listener: "kettle.tests.testRequestErrorStatus",
         args: ["{httpRequest}"]
     }, {
-        funcName: "kettle.tests.popInstrumentedErrors"
+        funcName: "kettle.test.popInstrumentedErrors"
     }, {
         func: "{httpRequest2}.send"
     }, {

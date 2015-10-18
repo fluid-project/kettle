@@ -1,24 +1,21 @@
 {
-    "type": "kettle.tests.webSockets.config",
+    "type": "kettle.tests.badConfig.config",
     "options": {
         "gradeNames": ["fluid.component"],
         "components": {
             "server": {
                 "type": "kettle.server",
                 "options": {
-                    "gradeNames": ["kettle.server.ws"],
+                    "port": 8081,
                     "components": {
                         "app": {
                             "type": "kettle.app",
                             "options": {
                                 "requestHandlers": {
-                                    "testSocket": {
-                                        "type": "kettle.tests.ws.testSocket.handler",
-                                        "route": "/socket_path"
-                                    },
-                                    "testGet": {
-                                        "type": "kettle.tests.ws.testGet.handler",
-                                        "route": "/"
+                                    "getHandler": {
+                                        "type": "kettle.tests.badConfig.missing.handler",
+                                        "route": "/",
+                                        "method": "get"
                                     }
                                 }
                             }

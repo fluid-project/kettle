@@ -28,7 +28,8 @@ var testIncludes = [
     "./ConfigLoaderTests.js",
     "./WebSocketsTests.js",
     "./SessionWebSocketsTests.js",
-    "./ErrorTests.js"
+    "./ErrorTests.js",
+    "./BadConfigTests.js"
 ];
 
 fluid.each(testIncludes, function (path) {

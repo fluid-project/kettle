@@ -13,8 +13,9 @@
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("../../kettle.js"),
     examples = fluid.registerNamespace("examples");
+    
+require("../../kettle.js");
 
 /* Server definitions - define a Kettle "config" and request handler in an app */
 

@@ -14,8 +14,7 @@
                                 "requestHandlers": {
                                     "testSocket": {
                                         "type": "kettle.tests.session.ws.testSocket.handler",
-                                        "route": "/socket_path",
-                                        "method": "get"
+                                        "route": "/socket_path"
                                     }
                                 }
                             }

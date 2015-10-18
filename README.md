@@ -182,11 +182,6 @@ minimal application will serve as a general template - the full definition of a 
             all of the semantics of nested <a href="http://docs.fluidproject.org/infusion/development/OptionsMerging.html">options merging</a> will
             not be respected and the merging will occur in a simple-minded way below top level)</td>
         </tr>
-        <tr>
-            <td><code>modules</code> (unstable)</td>
-            <td><code>Array of String</code></td>
-            <td>An array of node module names which should be loaded if this config is used. This facility is currently unstable and is not recommended - users are recommended to ensure that any modules that they require loaded by their Kettle app
-            is loaded within code by the node standard <a href="https://nodejs.org/api/modules.html"><code>require</code></a> directive. Contact the development team if you are interested in having this feature developed further.</td>
     </tbody>
 </table>
 

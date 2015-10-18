@@ -13,10 +13,8 @@
 "use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
     kettle = require("../kettle.js"),
-    jqUnit = fluid.require("jqUnit"),
-    configPath = path.resolve(__dirname, "./configs");
+    jqUnit = fluid.require("jqUnit");
 
 kettle.loadTestingSupport();
 
@@ -89,7 +87,6 @@ kettle.tests.CORS.testResponse_Origin = function (data, request) {
 
 kettle.tests.CORS.testResponseHeaders = function (data, request, credentials, origin) {
     var headers = request.nativeResponse.headers;
-    console.log("Testing headers ", headers);
     jqUnit.assertEquals("CORS origin is correct",
         origin || kettle.tests.testCORSOrigin,
         headers["access-control-allow-origin"]);
@@ -122,7 +119,7 @@ var testDefs = [ {
     expect: 11,
     config: {
         configName: "kettle.tests.CORS.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         corsRequest: {
@@ -160,7 +157,7 @@ var testDefs = [ {
     expect: 7,
     config: {
         configName: "kettle.tests.CORS.noCred.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         corsRequest: {
@@ -183,7 +180,7 @@ var testDefs = [ {
     expect: 14,
     config: {
         configName: "kettle.tests.CORS.origin.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         corsRequest: {
@@ -219,7 +216,7 @@ var testDefs = [ {
     expect: 6,
     config: {
         configName: "kettle.tests.CORS.noCORS.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         request: {

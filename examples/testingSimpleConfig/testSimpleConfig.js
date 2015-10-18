@@ -1,7 +1,7 @@
 /**
  * Kettle Sample app - testing Kettle server
  * 
- * Copyright 2015 Raising the Floor (International)
+ * Copyright 2015 Raising the Floor - International
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -10,7 +10,7 @@
  * https://github.com/gpii/universal/LICENSE.txt
  */
  
- "use strict";
+"use strict";
 
 var fluid = require("infusion"),
     kettle = require("../../kettle.js"),
@@ -29,7 +29,7 @@ examples.tests.simpleConfig.testDefs = [{
     expect: 2,
     config: {
         configName: "examples.simpleConfig",
-        configPath: "${kettle}/examples/simpleConfig"
+        configPath: "%kettle/examples/simpleConfig"
     },
     components: {
         getRequest: {

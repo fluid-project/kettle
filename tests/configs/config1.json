@@ -4,5 +4,5 @@
         "gradeNames": ["fluid.component"],
         "option1": "OPTION1"
     },
-    "includes": ["${kettle}/tests/configs/config3.json", "./config2.json"]
+    "includes": ["%kettle/tests/configs/config3.json", "./config2.json"]
 }

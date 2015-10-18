@@ -1,7 +1,7 @@
 /**
  * Kettle HTTP Methods Tests
  *
- * Copyright 2014 Raising The Floor - International
+ * Copyright 2014-2015 Raising The Floor - International
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -13,10 +13,8 @@
 "use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
     kettle = require("../kettle.js"),
-    jqUnit = fluid.require("jqUnit"),
-    configPath = path.resolve(__dirname, "./configs");
+    jqUnit = fluid.require("jqUnit");
     
 kettle.loadTestingSupport();
 
@@ -84,12 +82,12 @@ kettle.tests.HTTPMethods.put.testResponse = function (data) {
 };
 
 //------------- Test defs for GET, POST, PUT ---------------
-var testDefs = [{
+kettle.tests.HTTPMethods.testDefs = [{
     name: "HTTPMethods GET test",
     expect: 2,
     config: {
         configName: "kettle.tests.HTTPMethods.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         getRequest: {
@@ -111,7 +109,7 @@ var testDefs = [{
     expect: 2,
     config: {
         configName: "kettle.tests.HTTPMethods.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         postRequest: {
@@ -134,7 +132,7 @@ var testDefs = [{
     expect: 2,
     config: {
         configName: "kettle.tests.HTTPMethods.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         putRequest: {
@@ -157,7 +155,7 @@ var testDefs = [{
     expect: 6,
     config: {
         configName: "kettle.tests.HTTPMethods.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         postRequest: {
@@ -203,4 +201,4 @@ var testDefs = [{
     }]
 }];
 
-kettle.test.bootstrapServer(testDefs);
+kettle.test.bootstrapServer(kettle.tests.HTTPMethods.testDefs);
