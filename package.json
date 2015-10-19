@@ -19,16 +19,16 @@
         "jsonlint": "1.6.0",
         
         "node-uuid": "~1.4.0",
-        "path-to-regexp": "0.1.7",
-        
+        "path-to-regexp": "0.1.7"
+    },
+    "devDependencies": {
+        "node-jqunit": "1.0.0", 
+                
         "grunt-shell": "0.6.4",
         "grunt-contrib-jshint": "0.9.0",
         "grunt-jsonlint": "1.0.4",
-        "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#a4aca06cbaf7523eb1af56ed65ce6bd30b8ec325",
+        "grunt-gpii": "1.0.0",
         "grunt": "0.4.5"
-    },
-    "devDependencies": {
-        "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#b7ef53aac1ca365bf23d35d255fae874faa88b70"
     },
     "license" : "BSD-3-Clause",
     "keywords": [

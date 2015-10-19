@@ -15,9 +15,59 @@ https://github.com/GPII/kettle/LICENSE.txt
 var fluid = require("infusion"),
      kettle = require("../kettle.js"),
      fs = require("fs"),
+     http = require("http"),
      jqUnit = fluid.require("jqUnit");
      
 require ("./shared/DataSourceTestUtils.js");
+
+fluid.defaults("kettle.tests.KETTLE34dataSource", {
+    gradeNames: "kettle.dataSource.URL",
+    url: "https://user:password@thing.available:997/path",
+    headers: {
+        "x-custom-header": "x-custom-value"
+    }
+});
+
+jqUnit.test("KETTLE-34 request option resolution test", function () {
+    var httpRequest = http.request,
+        expectedOptions = {
+            protocol: "https:",
+            port: 999,
+            auth: "user:password",
+            path: "/path",
+            method: "GET",
+            host: "thing.available:997", // appears to be a parsing fault in url module
+            family: 4,
+            headers: {
+                "x-custom-header": "x-custom-value",
+                "x-custom-header2": "x-custom-value2"
+            }
+        },
+        capturedOptions;
+    http.request = function (requestOptions) {
+        capturedOptions = requestOptions;
+        return {
+            on: fluid.identity,
+            end: fluid.identity
+        };
+    };
+    try {
+        var dataSource = kettle.tests.KETTLE34dataSource({
+            port: 998,
+            family: 4
+        });
+        dataSource.get(null, {
+            headers: {
+                "x-custom-header2": "x-custom-value2"
+            },
+            port: 999
+        });
+        jqUnit.assertLeftHand("Resolved expected requestOptions", expectedOptions, capturedOptions);
+    } finally {
+        http.request = httpRequest;
+    }
+});
+
 
 // Basic initialisation tests
 
