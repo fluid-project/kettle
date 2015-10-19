@@ -14,7 +14,6 @@
 
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
-    $ = fluid.registerNamespace("jQuery"),
     jqUnit = fluid.require("jqUnit");
     
 require("./shared/SessionTestDefs.js");
@@ -31,7 +30,7 @@ kettle.tests.session.ws.testSocket.receiveMessage = function (request) {
     jqUnit.assertValue("Received socket message from qualified session", session);
     console.log("testSocket.receiveMessage got session ", session);
     jqUnit.assertEquals("Session data retrieved from HTTP request", kettle.tests.session.token, session.token);
-    var response = $.extend(true, {
+    var response = fluid.extend(true, {
         token: session.token
     }, kettle.tests.session.response.success);
     request.events.onSendMessage.fire(response);
@@ -95,7 +94,7 @@ kettle.tests.session.ws.midSequence = [
     }
 ];
 
-kettle.tests.session.ws.testDefs = $.extend(true, {}, kettle.tests.session.testDefs, kettle.tests.session.ws.proto);
+kettle.tests.session.ws.testDefs = fluid.extend(true, {}, kettle.tests.session.testDefs, kettle.tests.session.ws.proto);
 
 kettle.tests.session.ws.spliceSequence = function () {
     // TODO: backport DISRUPTOR from GPII's CloudBasedOAuth2.js

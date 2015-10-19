@@ -241,6 +241,15 @@ multiple apps are merged together from different sources to produce combined app
             that should be captured. The exact syntax for route matching is documented more precisely at <a href="https://github.com/pillarjs/path-to-regexp">pillarjs</a></td>
         </tr>
         <tr>
+            <td><code>prefix</code> (optional)</td>
+            <td><code>String</code></td>
+            <td>A routing prefix to be prepended to this handler's <code>route</code>. The prefix plus the route expression must match the incoming request in order for this handler to be activated - 
+            but if it is, it will only see the portion of the URL matched by <code>route</code> in the member <code>request.req.url</code>. The entire incoming URL will remain visible in <code>request.req.originalUrl</code> - 
+            this is the same behaviour as express.js <a href="http://expressjs.com/api.html#app.use">routing system</a>. It is primarily useful when using <a href="#thing">static middleware</a> which will compare the
+            <code>req.url</code> value with the filesystem path relative to its mount point.
+        </tr>
+        
+        <tr>
             <td><code>method</code> (optional)</td>
             <td><code>String</code> value - one of the valid <a href="https://github.com/nodejs/node/blob/master/deps/http_parser/http_parser.h#L88">HTTP methods</a> supported by node.js, expressed in lower case, or else a comma-separated 
             sequence of such values.
@@ -509,6 +518,146 @@ fluid.defaults("kettle.middleware.json", {
 
 Consult the Infusion documentation on the [compact format for expanders](http://docs.fluidproject.org/infusion/development/ExpansionOfComponentOptions.html#compact-format-for-expanders) if you
 are unfamiliar with this syntax for designating elements in component options which arise from function calls.
+
+### Built-in standard middleware bundled with Kettle
+
+Here we describe the built-in middleware supplied with Kettle, which is mostly sourced from standard middleware in the [express](http://expressjs.com/) and [pillarjs](https://github.com/pillarjs)
+communities. You can consult the straightforward implementations in [KettleMiddleware.js](https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js) for suggestions for how
+to implement your own.
+
+<div style="font-size: smaller">
+<table>
+<thead>
+<tr><th>Grade name</th><th>Middleware name</th><th>Description</th><th>Accepted options</th><th>Standard IoC Path</th></tr>
+</thead>
+<tbody>
+<tr>
+    <td><code>kettle.middleware.json</code></td>
+    <td><a href="https://github.com/expressjs/body-parser">expressjs/body-parser</a></td>
+    <td>Parses JSON request bodies, possibly with compression.</td>
+    <td><code>middlewareOptions</code>, forwarded to <a href="https://github.com/expressjs/body-parser#bodyparserjsonoptions"<code>bodyParser.json(options)</code></a></td>
+    <td><code>{middlewareHolder}.json</code></td>
+</tr>
+<tr>
+    <td><code>kettle.middleware.urlencoded</code></td>
+    <td><a href="https://github.com/expressjs/body-parser">expressjs/body-parser</a></td>
+    <td>Applies URL decoding to a submitted request body</td>
+    <td><code>middlewareOptions</code>, forwarded to <a href="https://github.com/expressjs/body-parser#bodyparserurlencodedoptions"><code>bodyParser.urlencoded(options)</code></a></td>
+    <td><code>{middlewareHolder}.urlencoded</code></td>
+</tr>
+<tr>
+    <td><code>kettle.middleware.cookieParser</code></td>
+    <td><a href="https://github.com/expressjs/cookie-parser">expressjs/cookie-parser</a></td>
+    <td>Parses the <code>Cookie</code> header as well as signed cookies via <code>req.secret</code>.</td>
+    <td><code>secret</code> and <code>middlewareOptions</code>, forwarded to the two arguments of <a href="https://github.com/expressjs/cookie-parser#cookieparsersecret-options"><code>cookieParser(secret, options)</code></a></td>
+    <td>none</td>
+</tr>
+<tr> 
+    <td><code>kettle.middleware.session</code></td>
+    <td><a href="https://github.com/expressjs/session">expessjs/session</a></td>
+    <td>Stores and retrieves <code>req.session</code> from various backends</td>
+    <td><code>middlewareOptions</code>, forwarded to <a href="https://github.com/expressjs/session#sessionoptions"><code>session(options)</code></a></td>
+    <td><code>{middlewareHolder}.session</code> when using <code>kettle.server.sessionAware</code> server</td>
+</tr>
+<tr>
+    <td><code>kettle.middleware.static</code></td>
+    <td><a href="https://github.com/expressjs/serve-static">expressjs/serve-static</a></td>
+    <td>Serves static content from the filesystem</td>
+    <td><code>root</code> and <code>middlewareOptions</code>, forwarded to the two arguments of <a href="https://github.com/expressjs/serve-static#servestaticroot-options"><code>serveStatic(root, options)</code></a></td>
+    <td>none - user must configure on each use</td>
+</tr>
+<tr>
+    <td><code>kettle.middleware.CORS</code></td>
+    <td><a href="https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js">Kettle built-in</a></td>
+    <td>Adds <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a> headers to outgoing HTTP request to enable cross-domain access</td>
+    <td><code>allowMethods {String}</code> (default <code>"GET"</code>), </br><code>origin {String}</code> (default <code>*`), </br> <code>credentials {Boolean}</code> (default <code>true</code>) </br>- 
+        see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#The_HTTP_response_headers">CORS response headers</a></td>
+    <td><code>{middlewareHolder}.CORS</code></td>
+</tr>
+<tr>
+    <td><code>kettle.middleware.null</code></td>
+    <td><a href="https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js">Kettle built-in</a></td>
+    <td>No-op middleware, useful for overriding and inactivating undesired middleware</td>
+    <td>none</td>
+    <td><code>{middlewareHolder}.null</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+Middleware which it makes sense to share configuration application-wide is stored in a standard holder of grade `kettle.standardMiddleware` which is descended from the grade `kettle.middlewareHolder` - the 
+context reference `{middlewareHolder}` is recommended for referring to this if required - e.g. `{middlewareHolder}.session`.
+
+#### Using the static middleware
+
+Here is an example of mounting a section of a module's filesystem path at a particular URL. In this case, we want to mount the `src` directory of our Infusion module at the global path `/infusion/`, a common
+enough requirement. Note that this is done by registering a *handler* just as with any other Kettle request handler, even though in this case the useful request handling function is actually achieved
+by the middleware. The only function of the request handler is to serve the 404 message in case the referenced file is not found in the mounted image - in this case, it can refer to the standard builtin handler
+named `kettle.request.notFoundHandler`. Note that the request handler must declare explicitly that it will handle all URLs under its prefix path by declaring a route of `/*` - this is different to the express
+model of routing and middleware handling. Kettle will not dispatch a request to a handler unless its route matches all of the incoming URL.
+
+Note that our static middleware can refer symbolically to the path of any module loaded using Infusion's module system 
+[`fluid.module.register`](http://docs.fluidproject.org/infusion/development/NodeAPI.html#fluid-module-register-name-basedir-modulerequire-) by means of interpolated terms such as `%infusion`.
+
+Our config:
+
+```json
+{
+    "type": "examples.static.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "port": 8081,
+                    "components": {
+                        "infusionStatic": {
+                            "type": "kettle.middleware.static",
+                            "options": {
+                                "root": "%infusion/src/"
+                            }
+                        },
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "staticHandler": {
+                                        "type": "examples.static.handler",
+                                        "prefix": "/infusion",
+                                        "route": "/*",
+                                        "method": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Our handler:
+
+```javascript
+fluid.defaults("examples.static.handler", {
+    gradeNames: "kettle.request.http",
+    requestMiddleware: {
+        "static": {
+            middleware: "{server}.infusionStatic"
+        }
+    },
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.request.notFoundHandler"
+        }
+    }
+});
+
+```
 
 ### Configuration options for a `kettle.server`
 

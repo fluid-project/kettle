@@ -14,7 +14,6 @@
 
 var fluid = require("infusion"),
     kettle = require("../../kettle.js"),
-    $ = fluid.registerNamespace("jQuery"),
     jqUnit = fluid.registerNamespace("jqUnit");
 
 kettle.loadTestingSupport();
@@ -89,7 +88,7 @@ kettle.tests.session.existing.handleRequest = function (request, session) {
     jqUnit.assertTrue("The request was received", true);
     jqUnit.assertValue("Session exists", session);
     jqUnit.assertEquals("Session is correct and has a current token", kettle.tests.session.token, session.token);
-    var response = $.extend(true, {
+    var response = fluid.extend(true, {
         token: session.token
     }, kettle.tests.session.response.success);
     request.events.onSuccess.fire(response);
