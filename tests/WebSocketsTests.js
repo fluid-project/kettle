@@ -13,10 +13,8 @@
 "use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
     kettle = require("../kettle.js"),
-    jqUnit = fluid.require("jqUnit"),
-    configPath = path.resolve(__dirname, "./configs");
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
     
 kettle.loadTestingSupport();
 
@@ -78,7 +76,7 @@ kettle.tests.ws.testDefs = {
     expect: 15,
     config: {
         configName: "kettle.tests.webSockets.config",
-        configPath: configPath
+        configPath: "%kettle/tests/configs"
     },
     components: {
         httpRequest: {

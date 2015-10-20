@@ -16,7 +16,7 @@ var fluid = require("infusion"),
      kettle = require("../kettle.js"),
      fs = require("fs"),
      http = require("http"),
-     jqUnit = fluid.require("jqUnit");
+     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
      
 require ("./shared/DataSourceTestUtils.js");
 

@@ -15,7 +15,7 @@
 
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
-    jqUnit = fluid.require("jqUnit");
+    jqUnit = fluid.require("node-jqunit", null, "jqUnit");
     
     
 fluid.defaults("kettle.tests.init.server", {

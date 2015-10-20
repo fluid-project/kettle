@@ -1,5 +1,5 @@
 /**
- * Kettle Middleware Tests
+ * Kettle CORS Middleware Tests
  *
  * Copyright 2013 OCAD University
  *
@@ -14,7 +14,7 @@
 
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
-    jqUnit = fluid.require("jqUnit");
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 kettle.loadTestingSupport();
 

@@ -2,7 +2,7 @@
  * Kettle Config Loader Tests
  *
  * Copyright 2013 OCAD University
- * Copyright 2012-2014 Raising the Floor - International
+ * Copyright 2012-2015 Raising the Floor - International
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -14,10 +14,8 @@
 "use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
     kettle = require("../kettle.js"), // TODO: New module loader
-    jqUnit = fluid.require("jqUnit"),
-    configPath = path.resolve(__dirname, "./configs");
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 kettle.loadTestingSupport();
 
@@ -101,7 +99,7 @@ var expectedSubcomponentOptions = {
 kettle.tests.testConfigToGrade = function (headName, configNames) {
     var componentName = kettle.config.createDefaults({
             configName: configNames[0],
-            configPath: configPath
+            configPath: "%kettle/tests/configs"
         });
     var expectedParents = fluid.copy(configNames);
 
@@ -159,4 +157,3 @@ fluid.defaults("kettle.tests.configLoader", {
 });
 
 kettle.test.bootstrap("kettle.tests.configLoader");
-
