@@ -43,7 +43,6 @@ fluid.defaults("kettle.tests.noCORS.handler", {
 kettle.tests.testCORSOrigin = "localhost:8081";
 
 kettle.tests.testGetCORS = function (request) {
-    console.log("Handling request");
     jqUnit.assertTrue("The request was received", true);
     request.events.onSuccess.fire({
         success: true
