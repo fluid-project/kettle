@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Declarative IoC-based framework for HTTP servers on node.js based on express",
-    "version": "1.0.0-beta.1",
+    "version": "1.0.0",
     "author": {
         "name": "The Fluid Project"
     },
@@ -45,13 +45,10 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git://github.com/GPII/kettle.git"
+        "url": "https://github.com/fluid-project/kettle"
     },
     "main": "./kettle.js",
     "engines": {
         "node": ">=0.10"
-    },
-    "scripts": {
-        "postinstall": "grunt dedupe-infusion"
     }
 }
