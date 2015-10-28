@@ -125,6 +125,9 @@ kettle.tests.testCreateDefaults = function () {
     var config1 = fluid.invokeGlobalFunction("config1");
     jqUnit.assertLeftHand("Subcomponent options are correct",
         expectedSubcomponentOptions, config1.subcomponent1.options);
+    jqUnit.assertValue("Module-based require has executed from config4", kettle.tests.testModule);
+    jqUnit.assertValue("Bare file require has executed from config3", kettle.tests.testBareRequire);
+    jqUnit.assertValue("Module-relative require has executed from config2", kettle.tests.testModuleRelativeRequire);
 };
 
 kettle.tests.testCreateNoTypeNameDefaults = function () {
@@ -136,7 +139,7 @@ fluid.defaults("kettle.tests.configLoaderTester", {
     modules: [{
         name: "Config Loader",
         tests: [{
-            expect: 11,
+            expect: 14,
             name: "kettle.config.createDefaults",
             func: "kettle.tests.testCreateDefaults"
         }, {
