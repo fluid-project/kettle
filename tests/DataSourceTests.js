@@ -69,6 +69,21 @@ jqUnit.test("KETTLE-34 request option resolution test", function () {
 });
 
 
+fluid.defaults("kettle.tests.KETTLE38base", {
+    gradeNames: "kettle.dataSource.URL",
+    writable: true
+});
+
+fluid.defaults("kettle.tests.KETTLE38derived", {
+    gradeNames: "kettle.tests.KETTLE38base"
+});
+
+jqUnit.test("KETTLE-38 derived writable dataSource test", function () {
+    var dataSource = kettle.tests.KETTLE38derived();
+    jqUnit.assertValue("Resolved writable grade via base grade", dataSource.set);
+});
+
+
 // Basic initialisation tests
 
 kettle.tests.dataSource.testInit = function (dataSource) {
