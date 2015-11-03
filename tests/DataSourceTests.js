@@ -15,6 +15,7 @@ https://github.com/GPII/kettle/LICENSE.txt
 var fluid = require("infusion"),
      kettle = require("../kettle.js"),
      fs = require("fs"),
+     querystring = require("querystring"),
      http = require("http"),
      jqUnit = fluid.require("node-jqunit", require, "jqUnit");
      
@@ -81,6 +82,59 @@ fluid.defaults("kettle.tests.KETTLE38derived", {
 jqUnit.test("KETTLE-38 derived writable dataSource test", function () {
     var dataSource = kettle.tests.KETTLE38derived();
     jqUnit.assertValue("Resolved writable grade via base grade", dataSource.set);
+});
+
+
+kettle.tests.formencData = {
+    "text1": "text default",
+    "text2": "aωb"
+};
+
+fluid.defaults("kettle.tests.formencSource", {
+    gradeNames: "kettle.dataSource.URL",
+    termMap: kettle.module.terms,
+    url: "file://%kettle/tests/data/formenc.txt",
+    components: {
+        encoding: {
+            type: "kettle.dataSource.encoding.formenc"
+        }
+    }
+});
+
+jqUnit.asyncTest("Reading file in formenc encoding", function () {
+    var that = kettle.tests.formencSource();
+    jqUnit.expect(1);
+    that.get().then(function (result) {
+        jqUnit.assertDeepEq("Received decoded result", kettle.tests.formencData, result);
+        jqUnit.start();
+    }, function (err) {
+        jqUnit.fail("Got error " + JSON.stringify(err));
+    });
+});
+
+fluid.defaults("kettle.tests.formencSourceWrite", {
+    gradeNames: "kettle.dataSource.URL",
+    termMap: kettle.module.terms,
+    url: "file://%kettle/tests/data/writeable/formenc.txt",
+    writable: true,
+    components: {
+        encoding: {
+            type: "kettle.dataSource.encoding.formenc"
+        }
+    }
+});
+
+jqUnit.asyncTest("Writing file in formenc encoding", function () {
+    var that = kettle.tests.formencSourceWrite();
+    jqUnit.expect(1);
+    that.set(null, kettle.tests.formencData).then(function () {
+        var written = fs.readFileSync("./data/writeable/formenc.txt", "utf8");
+        var decoded = querystring.parse(written);
+        jqUnit.assertDeepEq("Written decoded result", kettle.tests.formencData, decoded);
+        jqUnit.start();
+    }, function (err) {
+        jqUnit.fail("Got error " + JSON.stringify(err));
+    });
 });
 
 
@@ -753,6 +807,6 @@ var tests = kettle.tests.dataSource.standardTests.concat(kettle.tests.dataSource
     "kettle.tests.dataSource.resolverTester"
 ]);
 
-kettle.tests.dataSource.ensureWriteableEmpty();
+jqUnit.onAllTestsDone.addListener(kettle.tests.dataSource.ensureWriteableEmpty);
 
 kettle.test.bootstrap(tests);
