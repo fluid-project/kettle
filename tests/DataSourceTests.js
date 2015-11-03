@@ -91,7 +91,6 @@ kettle.tests.dataSource.testInit = function (dataSource) {
     jqUnit.assertValue("Data source should have a get method", dataSource.get);
     jqUnit.assertUndefined("Data source should not have a set method by default", dataSource.set);
     jqUnit.assertDeepEq("Data source should have a termMap", {}, dataSource.options.termMap);
-    jqUnit.assertValue("urlResolver is initialized", dataSource.urlResolver);
 };
 
 
@@ -116,12 +115,12 @@ fluid.defaults("kettle.tests.dataSource.initCases", {
     modules: [{
         name: "Kettle Data Source Init Tester",
         tests: [{
-            expect: 5,
+            expect: 4,
             name: "URL Data source initialization",
             func: "kettle.tests.dataSource.testInit",
             args: ["{urlDataSource}"]
         }, {
-            expect: 5,
+            expect: 4,
             name: "CouchDB Data source initialization",
             func: "kettle.tests.dataSource.testInit",
             args: ["{couchDBDataSource}"]
@@ -131,9 +130,10 @@ fluid.defaults("kettle.tests.dataSource.initCases", {
 
 // Attached URL resolver tests
 
-kettle.tests.testUrlResolver = function (urlResolver, directModel) {
+kettle.tests.testUrlResolver = function (dataSource, directModel) {
+    var resolved = dataSource.resolveUrl(dataSource.options.url, dataSource.options.termMap, directModel);
     jqUnit.assertEquals("Data source should should expand urls based on termMap with URIEncoding",
-        "file://test%20with%20space/test.json", urlResolver.resolve(directModel));
+        "file://test%20with%20space/test.json", resolved);
 };
 
 fluid.defaults("kettle.tests.dataSource.resolverTester", {
@@ -144,7 +144,7 @@ fluid.defaults("kettle.tests.dataSource.resolverTester", {
             options: {
                 url: "file://%expand/test.json",
                 termMap: {
-                    expand: "expand"
+                    expand: "%expand"
                 }
             }
         },
@@ -163,7 +163,7 @@ fluid.defaults("kettle.tests.urlResolverTester", {
             expect: 1,
             name: "URL resolver with URI escaping",
             func: "kettle.tests.testUrlResolver",
-            args: ["{urlDataSourceDynamic}.urlResolver", {
+            args: ["{urlDataSourceDynamic}", {
                 expand: "test with space"
             }]
         }]
@@ -303,7 +303,7 @@ kettle.tests.dataSource.testErrorResponse = function (expected, data) {
 };
 
 kettle.tests.dataSource.testSetResponse = function (dataSource, directModel, expected) {
-    var fileName = dataSource.urlResolver.resolve(directModel).substring("file://".length),
+    var fileName = dataSource.resolveUrl(dataSource.options.url, dataSource.options.termMap, directModel).substring("file://".length),
         data = JSON.parse(fs.readFileSync(fileName, "utf8"));
     jqUnit.assertDeepEq("Response is correct", expected, data);
     fs.unlink(fileName);
@@ -317,7 +317,7 @@ fluid.defaults("kettle.tests.dataSource.1.URL.empty", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/emptyDataSourceTestFile.txt"
+                url: "file://%kettle/tests/data/emptyDataSourceTestFile.txt"
             }
         }
     },
@@ -333,7 +333,7 @@ fluid.defaults("kettle.tests.dataSource.2.URL.standard", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/dataSourceTestFile.json"
+                url: "file://%kettle/tests/data/dataSourceTestFile.json"
             }
         }
     },
@@ -354,7 +354,7 @@ fluid.defaults("kettle.tests.dataSource.3.CouchDB.standard", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/couchDataSourceTestFile.json"
+                url: "file://%kettle/tests/data/couchDataSourceTestFile.json"
             }
         }
     },
@@ -375,7 +375,7 @@ fluid.defaults("kettle.tests.dataSource.4.CouchDB.empty", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/emptyDataSourceTestFile.txt"
+                url: "file://%kettle/tests/data/emptyDataSourceTestFile.txt"
             }
         }
     },
@@ -385,8 +385,7 @@ fluid.defaults("kettle.tests.dataSource.4.CouchDB.empty", {
 });
 
 kettle.tests.dataSource.expandRoot = function (template) {
-    var terms = fluid.defaults("kettle.tests.fileRootedDataSource").vars;
-    return fluid.stringTemplate(template, terms);
+    return kettle.module.resolvePath(template);
 };
 
 fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
@@ -397,7 +396,7 @@ fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/couchDataSourceError.json"
+                url: "file://%kettle/tests/data/couchDataSourceError.json"
             }
         }
     },
@@ -406,7 +405,7 @@ fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
             funcName: "kettle.tests.dataSource.testErrorResponse",
             args: [{
                 isError: true,
-                message: kettle.tests.dataSource.expandRoot("not_found: missing while reading file %root/data/couchDataSourceError.json")
+                message: kettle.tests.dataSource.expandRoot("not_found: missing while reading file %kettle/tests/data/couchDataSourceError.json")
             }, "{arguments}.0"]
         }
     }
@@ -422,9 +421,9 @@ fluid.defaults("kettle.tests.dataSource.6.URL.expand.present", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/%expand.json",
+                url: "file://%kettle/tests/data/%expand.json",
                 termMap: {
-                    expand: "expand"
+                    expand: "%expand"
                 }
             }
         }
@@ -449,10 +448,10 @@ fluid.defaults("kettle.tests.dataSource.7.URL.expand.missing", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/%expand.json",
+                url: "file://%kettle/tests/data/%expand.json",
                 notFoundIsEmpty: true,
                 termMap: {
-                    expand: "expand"
+                    expand: "%expand"
                 }
             }
         }
@@ -472,10 +471,10 @@ fluid.defaults("kettle.tests.dataSource.8.CouchDB.expand.missing", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/%expand.json",
+                url: "file://%kettle/tests/data/%expand.json",
                 notFoundIsEmpty: true,
                 termMap: {
-                    expand: "expand"
+                    expand: "%expand"
                 }
             }
         }
@@ -492,7 +491,7 @@ fluid.defaults("kettle.tests.dataSource.9.URL.expand.static", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/dataSourceTestFile.json"
+                url: "file://%kettle/tests/data/dataSourceTestFile.json"
             }
         }
     },
@@ -513,10 +512,7 @@ fluid.defaults("kettle.tests.dataSource.10.CouchDB.expand.static", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/couchDataSourceTestFile.json",
-                termMap: {
-                    expand: "couchDataSourceTestFile"
-                }
+                url: "file://%kettle/tests/data/couchDataSourceTestFile.json"
             }
         }
     },
@@ -540,9 +536,9 @@ fluid.defaults("kettle.tests.dataSource.11.CouchDB.expand.dynamic", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/%expand.json",
+                url: "file://%kettle/tests/data/%expand.json",
                 termMap: {
-                    expand: "expand"
+                    expand: "%expand"
                 }
             }
         }
@@ -568,7 +564,7 @@ fluid.defaults("kettle.tests.dataSource.12.URL.set", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/writeable/test.json",
+                url: "file://%kettle/tests/data/writeable/test.json",
                 writable: true
             }
         }
@@ -595,7 +591,7 @@ fluid.defaults("kettle.tests.dataSource.13.CouchDB.set", {
             type: "kettle.dataSource.CouchDB",
             options: {
                 notFoundIsEmpty: true,
-                url: "file://%root/data/writeable/test.json",
+                url: "file://%kettle/tests/data/writeable/test.json",
                 writable: true
             }
         }
@@ -632,7 +628,7 @@ fluid.defaults("kettle.tests.dataSource.14.CouchDB.set.existing", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/writeable/couchDataSourceTestFile.json",
+                url: "file://%kettle/tests/data/writeable/couchDataSourceTestFile.json",
                 writable: true
             }
         }
@@ -665,9 +661,9 @@ fluid.defaults("kettle.tests.dataSource.15.URL.set.expand", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "file://%root/data/writeable/%expand.json",
+                url: "file://%kettle/tests/data/writeable/%expand.json",
                 termMap: {
-                    expand: "expand"
+                    expand: "%expand"
                 },
                 writable: true
             }
@@ -700,9 +696,9 @@ fluid.defaults("kettle.tests.dataSource.16.CouchDB.set.existing.expand", {
         dataSource: {
             type: "kettle.dataSource.CouchDB",
             options: {
-                url: "file://%root/data/writeable/%expand.json",
+                url: "file://%kettle/tests/data/writeable/%expand.json",
                 termMap: {
-                    expand: "expand"
+                    expand: "%expand"
                 },
                 writable: true
             }

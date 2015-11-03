@@ -29,23 +29,22 @@ kettle.tests.dataSource.ensureWriteableEmpty = function () {
 };
 
 
-// allow "%root" to be expanded to current directory name in all nested dataSources,
-// as well as distributing down a standard error handler for any nested dataSource
+// distribute down a standard error handler for any nested dataSource
 
 fluid.defaults("kettle.tests.fileRootedDataSource", {
     gradeNames: ["fluid.component"],
-    vars: {
-        root: fluid.module.resolvePath("${kettle}/tests")
-    },
-    distributeOptions: [{
-        source: "{that}.options.vars",
-        target: "{that urlExpander}.options.vars"
-    },  {
-        record: {
-            namespace: "testEnvironment",
-            func: "{testEnvironment}.events.onError.fire",
-            args: "{arguments}.0"
+    distributeOptions: {
+        onError: {
+            record: {
+                namespace: "testEnvironment",
+                func: "{testEnvironment}.events.onError.fire",
+                args: "{arguments}.0"
+            },
+            target: "{that dataSource}.options.listeners.onError"
         },
-        target: "{that dataSource}.options.listeners.onError"
-    }]
+        moduleTerms: {
+            record: kettle.module.terms,
+            target: "{that dataSource}.options.termMap"
+        }
+    }
 });
