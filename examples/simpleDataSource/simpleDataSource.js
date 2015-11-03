@@ -21,7 +21,7 @@ fluid.defaults("examples.httpDataSource", {
     gradeNames: "kettle.dataSource.URL",
     url: "http://jsonplaceholder.typicode.com/posts/%postId",
     termMap: {
-        postId: "directPostId"
+        postId: "%directPostId"
     }
 });
 

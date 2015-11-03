@@ -786,8 +786,8 @@ an emphasis on JSON payloads.
 
 The DataSource API is drawn from the following two methods – a read-only DataSource will just implement `get`, and a writeable DataSource will implement both `get` and `set`:
 
-    /* @param directModel {Object} A JSON structure holding the "coordinates" of the state to be read 
-     * (morally equivalent to a file path or URL)
+    /* @param directModel {Object} A JSON structure holding the "coordinates" of the state to be read -  
+     * this model is morally equivalent to (the substitutable parts of) a file path or URL
      * @param options {Object} [Optional] A JSON structure holding configuration options good for just 
      * this request. These will be specially interpreted by the particular concrete grade of DataSource 
      * – there are no options valid across all implementations of this grade.
@@ -850,10 +850,10 @@ next section:
 <table>
     <thead>
         <tr>
-            <th colspan="3">Supported configurable options for a </code>kettle.dataSource.URL</code></th>
+            <th colspan="3">Supported configurable options for a <code>kettle.dataSource.URL</code></th>
         </tr>
         <tr>
-            <th>Option</th>
+            <th>Option Path</th>
             <th>Type</th>
             <th>Description</th>
         </tr>
@@ -863,6 +863,12 @@ next section:
             <td><code>writable</code></td>
             <td><code>Boolean</code> (default: <code>false</code>)</td>
             <td>If this option is set to <code>true</code>, a <code>set</code> method will be fabricated for this dataSource – otherwise, it will implement only a <code>get</code> method.</td>
+        </tr>
+        <tr>
+            <td><code>writeMethod</code></td>
+            <td><code>String</code> (default: <code>PUT</code>)</td>
+            <td>The HTTP method to be used when the <code>set</code> method is operated on this writable DataSource (with <code>writable: true</code>). This defaults to <code>PUT</code> but
+            <code>POST</code> is another option. Note that this option can also be supplied within the <code>options</code> argument to the <code>set</code> method itself.</td>
         </tr>
         <tr>
             <td><code>url</code></td>
@@ -883,15 +889,88 @@ next section:
             <td><code>Boolean</code></a> (default: <code>false</code>)</td>
             <td>If this option is set to <code>true</code>, a fetch of a nonexistent resource (that is, a nonexistent file, or an HTTP resource giving a 404) will result in a <code>resolve</code> with an empty
             payload rather than a <code>reject</code> response.</td>
-        </tr>        
+        </tr>
+        <tr>
+            <td><code>components.encoding.type</code></td>
+            <td><code>String</code> (grade name)</td>
+            <td>A <code>kettle.dataSource.URL</code> has a subcomponent named <code>encoding</code> which the user can override in order to choose the encoding used to read and write the <code>model</code>
+            object to and from the textual form in persistence. This defaults to <code>kettle.dataSource.encoding.JSON</code>. Other builtin encodings are <code>kettle.dataSource.encoding.formenc</code> operating
+            HTML <a href="http://www.w3.org/TR/html401/interact/forms.html#didx-applicationx-www-form-urlencoded">form encoding</code> and <code>kettle.dataSource.encoding.none</code> which applies no encoding.
+            More details in <a href="#using-encodings-with-a-datasource">Using Encodings with a DataSource</a>.</td>
+        </tr>
+        <tr>
+            <td><code>setResponseNamespaces</code></td>
+            <td><code>Array of String</code></a> (default: <code>["encoding"]</code>)</td>
+            <td>Contains a list of the namespaces of the transform elements (see section <a href="#transforming-promise-chains">transforming promise chains</a> that are to be applied if there is a response payload
+            from the <code>set</code> method, which is often the case with an HTTP backend. With a JSON encoding these encoding typically happens symmetrically - with a JSON request one will receive a JSON response - 
+            however, with other encoding such as <a href="http://www.w3.org/TR/html401/interact/forms.html#didx-applicationx-www-form-urlencoded">form encoding</a> this is often not the case and one might like to
+            defeat the effect of trying to decode the HTTP response as a form. In this case, for example, one can override <code>setResponseNamespaces</code> with the empty array <code>[]</code>. </td>
+        </tr>
     </tbody>
 </table>
 
-In addition, if the url's protocol is an HTTP/HTTPS protocol, rather than `file://`, a `kettle.dataSource.URL` component will accept any options accepted by node's native [`http.request`](https://nodejs.org/api/http.html#http_http_request_options_callback) constructor – 
-supported in addition to the above are `protocol`, `host`, `port`, `headers`, `hostname`, `family`, `localAddress`, `socketPath`, `auth` and `agent`. All of these options will be overriden by options of the same names supplied as the `options` object 
+In addition, if the url's protocol is an HTTP/HTTPS protocol, rather than `file://`, a `kettle.dataSource.URL` component will accept any options accepted by node's native 
+[`http.request`](https://nodejs.org/api/http.html#http_http_request_options_callback) constructor – supported in addition to the above are 
+`protocol`, `host`, `port`, `headers`, `hostname`, `family`, `localAddress`, `socketPath`, `auth` and `agent`. All of these options will be overriden by options of the same names supplied as the `options` object 
 supplied as the last argument to the dataSource's `get` and `set` methods. This is a good way, for example, to send custom HTTP headers along with a URL dataSource request. 
 Note that any of these component-level options (e.g. `port`, `protocol`, etc.) that can be derived from parsing the `url` option will override the value from the url. Compare this setup with
 the very similar one operated in the testing framework for [`kettle.test.request.http`](#kettle.test.request.http).
+
+### Using encodings with a DataSource
+
+`kettle.dataSource.URL` has a subcomponent named `encoding` which the user can override in order to choose the encoding used to convert the model seen at the `get/set` API to the textual form in which it is
+transmitted by the dataSource. The encoding subcomponent will also correctly set the [`Content-Type`](http://www.w3.org/Protocols/rfc1341/4_Content-Type.html) header of the outgoing HTTP request in the
+case of a `set` request. The encoding defaults to a JSON encoding represented by a subcomponent of type `kettle.dataSource.encoding.JSON`. Here is an example of choosing a different encoding to submit 
+[form encoded](http://www.w3.org/TR/html401/interact/forms.html#didx-applicationx-www-form-urlencoded) data to an HTTP endpoint:
+
+```javascript
+fluid.defaults("examples.formDataSource", {
+    gradeNames: "kettle.dataSource.URL",
+    url: "http://httpbin.org/post",
+    writable: true,
+    writeMethod: "POST",
+    components: {
+        encoding: {
+            type: "kettle.dataSource.encoding.formenc"
+        }
+    },
+    setResponseNamespaces: [] // Do not parse the "set" response as formenc - it is in fact JSON
+});
+
+var myDataSource = examples.formDataSource();
+var promise = myDataSource.set(null, {myField1: "myValue1", myField2: "myValue2"});
+
+promise.then(function (response) {
+    console.log("Got dataSource response of ", JSON.parse(response));
+}, function (error) {
+    console.error("Got dataSource error response of ", error);
+});
+```
+
+In this example we set up a form-encoded, writable dataSource targetted at the popular HTTP testing site `httpbin.org` sending a simple payload encoding two form elements. We use Kettle's built-in form encoding
+grade by configuring an `encoding` subcomponent name `kettle.dataSource.encoding.formenc`. You can try out this
+sample live in its place in the [examples directory](examples/formDataSource/formDataSource.js). Note that since this particular endpoint sends a JSON response rather than a form-encoded response,
+we need to defeat the dataSource's attempt to apply the inverse decoding in the response by writing `setResponseNamespaces: []`.
+
+### Built-in encodings 
+
+Kettle features three built-in encoding grades which can be configured as the subcomponent of a dataSource named `encoding` in order to determine what encoding it applies to models. They are described in this table:
+
+|Grade name| Encoding type | Content-Type header |
+|----------|---------------|----------------|
+|`kettle.dataSource.encoding.JSON`|[JSON](http://json.org)|`application/json`|
+|`kettle.dataSource.encoding.formenc`|[form encoding](http://www.w3.org/TR/html401/interact/forms.html#didx-applicationx-www-form-urlencoded)|`application/x-www-form-urlencoded`|
+|`kettle.dataSource.encoding.none`|No encoding|`text/plain`|
+
+### Elements of an encoding component
+
+You can operate a custom encoding by implementing a grade with the following elements, and using it as the `encoding` subcomponent in place of one of the built-in implementations in the above table:
+
+|Member name| Type | Description |
+|-----------|------|-------------|
+|`parse`|`Function (String) -> Any`| Parses the textual form of the data from its encoded form into the in-memory form|
+|`render`|`Function (Any) -> String`| Renders the in-memory form of the data into its textual form|
+|`contentType`|`String`| Holds the value that should be supplied in the [`Content-Type`](http://www.w3.org/Protocols/rfc1341/4_Content-Type.html) of an outgoing HTTP request whose body is encoded in this form|
 
 ### The `kettle.dataSource.CouchDB` grade
 
@@ -909,7 +988,7 @@ you are interested in improved Couch-specific functionality.
 
 In this section are a few notes for advanced users of DataSources, who are interested in extending their functionality or else in issuing I/O in Kettle by other means.
 
-### Implementation strategy – transforming promise chains
+### Transforming promise chains
 
 The detailed implementation of the Kettle DataSource is structured around a particular device taken from the Infusion Promises library, the concept of a "transforming promise chain". The core
 DataSource grade implements two events, `onRead` and and `onWrite`. These events are fired during the `get` and `set` operations of the DataSource, respectively. 
