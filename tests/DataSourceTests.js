@@ -92,7 +92,7 @@ kettle.tests.formencData = {
 
 fluid.defaults("kettle.tests.formencSource", {
     gradeNames: "kettle.dataSource.URL",
-    termMap: kettle.module.terms,
+    termMap: kettle.module.terms(),
     url: "file://%kettle/tests/data/formenc.txt",
     components: {
         encoding: {
@@ -114,7 +114,7 @@ jqUnit.asyncTest("Reading file in formenc encoding", function () {
 
 fluid.defaults("kettle.tests.formencSourceWrite", {
     gradeNames: "kettle.dataSource.URL",
-    termMap: kettle.module.terms,
+    termMap: kettle.module.terms(),
     url: "file://%kettle/tests/data/writeable/formenc.txt",
     writable: true,
     components: {

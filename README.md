@@ -899,12 +899,12 @@ next section:
             More details in <a href="#using-encodings-with-a-datasource">Using Encodings with a DataSource</a>.</td>
         </tr>
         <tr>
-            <td><code>setResponseNamespaces</code></td>
+            <td><code>setResponseTransforms</code></td>
             <td><code>Array of String</code></a> (default: <code>["encoding"]</code>)</td>
             <td>Contains a list of the namespaces of the transform elements (see section <a href="#transforming-promise-chains">transforming promise chains</a> that are to be applied if there is a response payload
             from the <code>set</code> method, which is often the case with an HTTP backend. With a JSON encoding these encoding typically happens symmetrically - with a JSON request one will receive a JSON response - 
             however, with other encoding such as <a href="http://www.w3.org/TR/html401/interact/forms.html#didx-applicationx-www-form-urlencoded">form encoding</a> this is often not the case and one might like to
-            defeat the effect of trying to decode the HTTP response as a form. In this case, for example, one can override <code>setResponseNamespaces</code> with the empty array <code>[]</code>. </td>
+            defeat the effect of trying to decode the HTTP response as a form. In this case, for example, one can override <code>setResponseTransforms</code> with the empty array <code>[]</code>. </td>
         </tr>
     </tbody>
 </table>
@@ -934,7 +934,7 @@ fluid.defaults("examples.formDataSource", {
             type: "kettle.dataSource.encoding.formenc"
         }
     },
-    setResponseNamespaces: [] // Do not parse the "set" response as formenc - it is in fact JSON
+    setResponseTransforms: [] // Do not parse the "set" response as formenc - it is in fact JSON
 });
 
 var myDataSource = examples.formDataSource();
@@ -950,7 +950,7 @@ promise.then(function (response) {
 In this example we set up a form-encoded, writable dataSource targetted at the popular HTTP testing site `httpbin.org` sending a simple payload encoding two form elements. We use Kettle's built-in form encoding
 grade by configuring an `encoding` subcomponent name `kettle.dataSource.encoding.formenc`. You can try out this
 sample live in its place in the [examples directory](examples/formDataSource/formDataSource.js). Note that since this particular endpoint sends a JSON response rather than a form-encoded response,
-we need to defeat the dataSource's attempt to apply the inverse decoding in the response by writing `setResponseNamespaces: []`.
+we need to defeat the dataSource's attempt to apply the inverse decoding in the response by writing `setResponseTransforms: []`.
 
 ### Built-in encodings 
 

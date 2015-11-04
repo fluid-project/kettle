@@ -43,7 +43,7 @@ fluid.defaults("kettle.tests.fileRootedDataSource", {
             target: "{that dataSource}.options.listeners.onError"
         },
         moduleTerms: {
-            record: kettle.module.terms,
+            record: kettle.module.terms(),
             target: "{that dataSource}.options.termMap"
         }
     }

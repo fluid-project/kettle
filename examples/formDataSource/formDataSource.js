@@ -29,7 +29,7 @@ fluid.defaults("examples.formDataSource", {
             type: "kettle.dataSource.encoding.formenc"
         }
     },
-    setResponseNamespaces: [] // Do not attempt to parse the "set" response as formenc - it is in fact JSON
+    setResponseTransforms: [] // Do not attempt to parse the "set" response as formenc - it is in fact JSON
 });
 
 var myDataSource = examples.formDataSource();
