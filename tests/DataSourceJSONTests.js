@@ -21,15 +21,15 @@ require("./shared/DataSourceTestUtils.js");
 // JSON parsing and diagnostics tests
 
 fluid.defaults("kettle.tests.dataSourceJSONTester", {
-    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.fileRootedDataSource", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.dataSource.onErrorLink"],
     events: {
         onError: null
     },
     components: {
         faultyJSONDataSource: {
-            type: "kettle.dataSource.URL",
+            type: "kettle.dataSource.file.moduleTerms",
             options: {
-                url: "file://%kettle/tests/data/invalidJSONFile.jsonx"
+                path: "%kettle/tests/data/invalidJSONFile.jsonx"
             }
         },
         testCaseHolder: {

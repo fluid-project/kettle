@@ -31,8 +31,7 @@ kettle.tests.dataSource.ensureWriteableEmpty = function () {
 
 // distribute down a standard error handler for any nested dataSource
 
-fluid.defaults("kettle.tests.fileRootedDataSource", {
-    gradeNames: ["fluid.component"],
+fluid.defaults("kettle.tests.dataSource.onErrorLink", {
     distributeOptions: {
         onError: {
             record: {
@@ -41,10 +40,6 @@ fluid.defaults("kettle.tests.fileRootedDataSource", {
                 args: "{arguments}.0"
             },
             target: "{that dataSource}.options.listeners.onError"
-        },
-        moduleTerms: {
-            record: kettle.module.terms(),
-            target: "{that dataSource}.options.termMap"
         }
     }
 });

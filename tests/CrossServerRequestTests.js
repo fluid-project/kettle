@@ -173,6 +173,10 @@ fluid.defaults("kettle.tests.serverPair", {
             type: "kettle.server",
             options: {
                 port: 8085,
+                distributeOptions: {
+                    source: "{that}.options.port", // ideally we will move this top level once we can support non-that here
+                    target: "{serverPair relayServer dataSource}.options.termMap.sourcePort"
+                },
                 components: {
                     sourceApp: {
                         type: "kettle.app",
@@ -212,7 +216,7 @@ fluid.defaults("kettle.tests.serverPair", {
                     relayDataSource: {
                         type: "kettle.dataSource.URL",
                         options: {
-                            url: "http://localhost:8085/endpoint",
+                            url: "http://localhost:%sourcePort/endpoint",
                             writable: true,
                             writeMethod: "POST"
                         }
@@ -220,7 +224,7 @@ fluid.defaults("kettle.tests.serverPair", {
                     errorDataSource: {
                         type: "kettle.dataSource.URL",
                         options: {
-                            url: "http://localhost:8085/errorEndpoint"
+                            url: "http://localhost:%sourcePort/errorEndpoint"
                         }
                     },
                     relayApp: {
