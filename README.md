@@ -821,7 +821,7 @@ fluid.defaults("examples.httpDataSource", {
     gradeNames: "kettle.dataSource.URL",
     url: "http://jsonplaceholder.typicode.com/posts/%postId",
     termMap: {
-        postId: "directPostId"
+        postId: "%directPostId"
     }
 });
 
@@ -841,8 +841,14 @@ a 404 or an error, please contact us and we'll update this sample to contact a n
 
 An interesting element in this snippet is the `termMap` configured as options of our dataSource. This sets up an indirection between the `directModel` supplied as the 
 argument to the `dataSource.get` call, and the URL issued in the HTTP request. The keys in the `termMap` are interpolation variables in the URL, which in the URL are
-prefixed by `%`. The values in the `termMap` represent paths which are dereferenced from the `directModel` argument. We document these configuration options in the
-next section:
+prefixed by `%`. The values in the `termMap` represent either
+
+* Plain values to be interpolated as strings directly into the URL, or
+* If the first character of the value in the `termMap` is %, the remainder of the string represents a path which will be dereferenced from the `directModel` argument to the current `set` or `get` request.  
+
+In addition, if the term value has the prefix `noencode:`, it will be interpolated without any [URI encoding](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent").
+
+We document these configuration options in the next section:
 
 ### Configuration options accepted by `kettle.dataSource.URL`
 
@@ -879,7 +885,8 @@ next section:
         <tr>
             <td><code>termMap</code></td>
             <td><code>Object</code> (map of <code>String</code> to <code>String</code>)</td>
-            <td>A map, of which the keys are some of the interpolation terms held in the <code>url</code> string, and the values of which are paths into the <code>directModel</code> argument
+            <td>A map, of which the keys are some of the interpolation terms held in the <code>url</code> string, and the values will be used to perform the interpolation. If a value begins with <code>%</code>, the remainder of the string 
+            represents a <a href="http://docs.fluidproject.org/infusion/development/FrameworkConcepts.html#el-paths">path</a> into the <code>directModel</code> argument
             accepted by the <code>get</code> and <code>set</code> methods of the DataSource. By default any such values looked up will be <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent">
             URI Encoded</a> before being interpolated into the URL – unless their value in the termMap is prefixed by the string <code>noencode:</code>.</td>
         </tr>
@@ -956,7 +963,7 @@ a further option named `charEncoding` which can select between various of the ch
         <tr>
             <td><code>termMap</code></td>
             <td><code>Object</code> (map of <code>String</code> to <code>String</code>)</td>
-            <td>A map, of which the keys are some of the interpolation terms held in the <code>url</code> string, and the values of which are paths into the <code>directModel</code> argument
+            <td>A map, of which the keys are some of the interpolation terms held in the <code>url</code> string, and the values, if prefixed by <code>%</code> are paths into the <code>directModel</code> argument
             accepted by the <code>get</code> and <code>set</code> methods of the DataSource.</td>
         </tr>
         <tr>
