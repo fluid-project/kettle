@@ -29,45 +29,75 @@ fluid.defaults("kettle.tests.KETTLE34dataSource", {
     }
 });
 
-jqUnit.test("KETTLE-34 request option resolution test", function () {
-    var httpRequest = http.request,
-        expectedOptions = {
-            protocol: "https:",
-            port: 999,
-            auth: "user:password",
-            path: "/path",
-            method: "GET",
-            host: "thing.available:997", // appears to be a parsing fault in url module
-            family: 4,
-            headers: {
-                "x-custom-header": "x-custom-value",
-                "x-custom-header2": "x-custom-value2"
-            }
-        },
-        capturedOptions;
-    http.request = function (requestOptions) {
-        capturedOptions = requestOptions;
-        return {
-            on: fluid.identity,
-            end: fluid.identity
-        };
-    };
-    try {
-        var dataSource = kettle.tests.KETTLE34dataSource({
-            port: 998,
-            family: 4
-        });
-        dataSource.get(null, {
-            headers: {
-                "x-custom-header2": "x-custom-value2"
-            },
-            port: 999
-        });
-        jqUnit.assertLeftHand("Resolved expected requestOptions", expectedOptions, capturedOptions);
-    } finally {
-        http.request = httpRequest;
-    }
+fluid.defaults("kettle.tests.KETTLE34dataSource2", {
+    gradeNames: "kettle.dataSource.URL",
+    url: "http://localhost/device",
+    port: 998
 });
+    
+
+kettle.tests.dataSource.resolutionTests = [ {
+    gradeName: "kettle.tests.KETTLE34dataSource",
+    expectedOptions: {
+        protocol: "https:",
+        port: 999,
+        auth: "user:password",
+        path: "/path",
+        method: "GET",
+        host: "thing.available:997", // appears to be a parsing fault in url module
+        family: 4,
+        headers: {
+            "x-custom-header": "x-custom-value",
+            "x-custom-header2": "x-custom-value2"
+        }
+    },
+    creatorArgs: {
+        port: 998,
+        family: 4
+    },
+    directOptions: {
+        headers: {
+            "x-custom-header2": "x-custom-value2"
+        },
+        port: 999
+    }
+}, {
+    gradeName: "kettle.tests.KETTLE34dataSource2",
+    expectedOptions: {
+        protocol: "http:",
+        port: 998,
+        path: "/device",
+        host: "localhost"
+    }
+}
+];
+
+kettle.tests.dataSource.resolutionTest = function (fixture) {
+    jqUnit.test("KETTLE-34 request option resolution test", function () {
+        var httpRequest = http.request,
+            capturedOptions;
+        http.request = function (requestOptions) {
+            capturedOptions = requestOptions;
+            return {
+                on: fluid.identity,
+                end: fluid.identity
+            };
+        };
+        try {
+            var dataSource = fluid.invokeGlobalFunction(fixture.gradeName, [fixture.creatorArgs]);
+            dataSource.get(null, fixture.directOptions);
+            jqUnit.assertLeftHand("Resolved expected requestOptions", fixture.expectedOptions, capturedOptions);
+        } finally {
+            http.request = httpRequest;
+        }
+    });
+};
+
+fluid.each(kettle.tests.dataSource.resolutionTests, function (fixture) {
+    kettle.tests.dataSource.resolutionTest(fixture);
+});
+
+
 
 
 fluid.defaults("kettle.tests.KETTLE38base", {
