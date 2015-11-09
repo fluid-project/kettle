@@ -17,8 +17,13 @@
                                         "method": "get"
                                     },
                                     "requestErrorCode": {
-                                        "type": "kettle.tests.error.requestErrorCode",
+                                        "type": "kettle.tests.error.requestErrorCode.handler",
                                         "route": "/errorCode",
+                                        "method": "get"
+                                    },
+                                    "requestErrorAsync": {
+                                        "type": "kettle.tests.error.requestErrorAsync.handler",
+                                        "route": "/errorAsync",
                                         "method": "get"
                                     }
                                 }

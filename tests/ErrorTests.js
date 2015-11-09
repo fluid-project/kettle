@@ -42,21 +42,40 @@ kettle.tests.error.handleFullRequest = function (request, fullRequestPromise, ne
     });
 };
 
-fluid.defaults("kettle.tests.error.requestErrorCode", {
+fluid.defaults("kettle.tests.error.requestErrorCode.handler", {
     gradeNames: "kettle.request.http",
     invokers: {
         handleRequest: {
-            funcName: "kettle.tests.triggerOnErrorCode"
+            funcName: "kettle.tests.error.requestErrorCode.handleRequest"
         }
     }
 });
 
-kettle.tests.triggerOnErrorCode = function (request) {
+kettle.tests.error.requestErrorCode.handleRequest = function (request) {
     request.events.onError.fire({
         isError: true,
         message: "Unauthorised",
         statusCode: 401
     });
+};
+
+fluid.defaults("kettle.tests.error.requestErrorAsync.handler", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.error.requestErrorAsync.handleRequest"
+        }
+    }
+});
+
+kettle.tests.error.requestErrorAsync.handleRequest = function () {
+    var wrappedFail = kettle.wrapCallback(function () {
+        throw new Error( // not an appropriate failure strategy, but
+            // we need to test that the next stack will be properly contextualised to back out the request
+                "Uncharacterised error which should cause request failure"
+        );
+    });
+    fluid.invokeLater(wrappedFail);
 };
 
 kettle.tests.triggerGlobalErrorSync = function () {
@@ -107,14 +126,16 @@ kettle.tests.testRequestStatusCode = function (request, expectedCode) {
 
 
 
-// Tests four effects:
+// Tests five effects:
 // i) Triggering a global error will definitely cause a logged message via the uncaught exception handler
 // ii) Triggering an error during a request will also cause a logged message
 // iii) Error within request will generate HTTP error status code
 // iv) Ability to trigger custom HTTP response code with error 
+// and
+// v) Triggering an uncaught exception, even asynchronously, will back out the current request (via wrapper)
 
 kettle.tests.error.testDefs = [{
-    name: "Error tests",
+    name: "Error tests I",
     expect: 4,
     config: {
         configName: "kettle.tests.error.config",
@@ -167,6 +188,33 @@ kettle.tests.error.testDefs = [{
         listener: "kettle.tests.testRequestStatusCode",
         args: ["{httpRequest2}", 401]
     }]
-}];
+}, {
+    name: "Error tests II",
+    expect: 1,
+    config: {
+        configName: "kettle.tests.error.config",
+        configPath: "%kettle/tests/configs"
+    },
+    components: {
+        httpRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/errorAsync"
+            }
+        }
+    },
+    sequence: [{ // Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
+            funcName: "kettle.test.pushInstrumentedErrors",
+            args: "kettle.requestUncaughtExceptionHandler"
+        }, {
+            func: "{httpRequest}.send"
+        }, {
+            event: "{httpRequest}.events.onComplete",
+            listener: "kettle.tests.testRequestErrorStatus",
+            args: ["{httpRequest}"]
+        }
+    ]
+    }
+];
 
 kettle.test.bootstrapServer(kettle.tests.error.testDefs);
