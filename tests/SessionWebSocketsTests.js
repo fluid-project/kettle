@@ -33,7 +33,7 @@ kettle.tests.session.ws.testSocket.receiveMessage = function (request) {
     var response = fluid.extend(true, {
         token: session.token
     }, kettle.tests.session.response.success);
-    request.events.onSendMessage.fire(response);
+    request.sendMessage(response);
 };
 
 kettle.tests.session.ws.proto = {

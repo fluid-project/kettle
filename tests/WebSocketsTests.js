@@ -37,7 +37,16 @@ kettle.tests.ws.testSocket.receiveMessage = function (request, data) {
         index: kettle.tests.ws.messageCount++,
         test: true
     }, data);
-    request.events.onSendMessage.fire(kettle.tests.ws.successResponse);
+    var promise = request.sendMessage(kettle.tests.ws.successResponse);
+    // Interestingly we can do close EITHER synchronously OR asynchronously, but
+    // we cannot do terminate EITHER synchronously OR asynchronously - so there's little
+    // value currently to listening to the promise, but it's there as a courtesy
+    if (data.index === 1) {
+        request.ws.close(); // leave this here for early warning if synchronous close fails in future
+        promise.then(function() {
+            request.ws.close();
+        });
+    }
     console.log("Finished receiveMessage");
 };
 
