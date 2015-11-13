@@ -8,7 +8,7 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://github.com/gpii/kettle/LICENSE.txt
+https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 */
 
 var fluid = require("infusion"),
@@ -22,6 +22,7 @@ require("./lib/dataSource.js");
 require("./lib/KettleApp.js");
 require("./lib/KettleConfigLoader.js");
 require("./lib/KettleMiddleware.js");
+require("./lib/KettleMultiConfig.js");
 require("./lib/KettleRouter.js");
 require("./lib/KettleRequest.js");
 require("./lib/KettleRequest.ws.js");

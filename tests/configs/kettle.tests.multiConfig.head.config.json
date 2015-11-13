@@ -1,0 +1,16 @@
+{
+    "type": "kettle.tests.multiConfig.head.config",
+    "options": {
+        "gradeNames": ["kettle.multiConfig.config"],
+        "configs": {
+            "sourceConfig": {
+                "configName": "kettle.tests.multiConfig.source.config",
+                "configPath": "%kettle/tests/configs"
+            },
+            "targetConfig": {
+                "configName": "kettle.tests.multiConfig.target.config",
+                "configPath": "%kettle/tests/configs"
+            }
+        }
+    }
+}

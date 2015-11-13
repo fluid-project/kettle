@@ -7,7 +7,7 @@
  * compliance with this License.
  *
  * You may obtain a copy of the License at
- * https://github.com/GPII/kettle/LICENSE.txt
+ * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
  
 "use strict";
