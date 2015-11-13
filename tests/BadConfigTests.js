@@ -13,6 +13,7 @@
 "use strict";
 
 var fluid = require("infusion"),
+    jqUnit = fluid.registerNamespace("jqUnit"),
     kettle = require("../kettle.js");
 
 kettle.loadTestingSupport();
@@ -74,5 +75,14 @@ kettle.tests.badConfig.testDefs = [{
         }
     ]
 }];
+
+jqUnit.test("Config with bad top-level keys", function () {
+    jqUnit.expectFrameworkDiagnostic("Got framework diagnostic on loading config with faulty top-level keys", function () {
+        kettle.config.createDefaults({
+            configPath: "%kettle/tests/configs",
+            configName: "kettle.tests.badConfig.keys.config"
+        });
+    }, "distributeOptions");
+});
 
 kettle.test.bootstrapServer(kettle.tests.badConfig.testDefs);
