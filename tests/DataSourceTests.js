@@ -486,7 +486,7 @@ fluid.defaults("kettle.tests.dataSource.5.CouchDB.error", {
             funcName: "kettle.tests.dataSource.testErrorResponse",
             args: [{
                 isError: true,
-                message: kettle.module.resolvePath("not_found: missing while reading file %kettle/tests/data/couchDataSourceError.json")
+                message: fluid.module.resolvePath("not_found: missing while reading file %kettle/tests/data/couchDataSourceError.json")
             }, "{arguments}.0"]
         }
     }

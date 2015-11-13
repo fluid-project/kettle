@@ -33,7 +33,7 @@ fluid.defaults("kettle.tests.static.handler", {
     }
 });
 
-var infusionPackage = fluid.require("${infusion}/package.json");
+var infusionPackage = fluid.require("%infusion/package.json");
 
 //------------- Test defs for GET, POST, PUT ---------------
 kettle.tests["static"].testDefs = [{

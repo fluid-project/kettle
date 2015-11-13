@@ -23,7 +23,7 @@ fluid.registerNamespace("kettle.tests.dataSource");
 // reinitialise the "writeable" directory area used by tests which issue dataSource writes,
 // the start of every test run
 kettle.tests.dataSource.ensureWriteableEmpty = function () {
-    var writeableDir = fluid.module.resolvePath("${kettle}/tests/data/writeable");
+    var writeableDir = fluid.module.resolvePath("%kettle/tests/data/writeable");
     kettle.test.deleteFolderRecursive(writeableDir);
     fs.mkdirSync(writeableDir);
 };

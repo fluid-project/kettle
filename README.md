@@ -1404,7 +1404,7 @@ using an invoker named `send`, with the difference that method may be invoked an
         <tr>
             <td><code>receiveJSON</code></td>
             <td><code>Boolean</code> (default: <code>true</code>)</td>
-            <td>If this is set to <code>true</code>, the argument fired to the component's <code>onMessage</code> method will be encoded as JSON. Otherwise the value will be transmitted as from the WebSocket's <code>message</code> event unchanged.</td>
+            <td>If this is set to <code>true</code>, the argument fired to the component's <code>onReceiveMessage</code> method will be encoded as JSON. Otherwise the value will be transmitted as from the WebSocket's <code>message</code> event unchanged.</td>
         </tr>
         <tr>
             <td><code>webSocketsProtocols</code></td>
@@ -1445,20 +1445,20 @@ The following events may be listened to on a `kettle.test.request.ws` component:
     <tbody>
         <tr>
             <td><code>onConnect</code></td>
-            <td>None</td>
+            <td><code>(that: Component)</code>/td>
             <td>Fired when the <code>open</code> event of the underlying <code>ws.WebSocket</code> is fired. This event must be listened to in the fixture sequence before any attempt is made to fire messages from the
             component with <code>send</code></td>
         </tr>
         <tr>
             <td><code>onError</code></td>
-            <td><code>(that: Component, error: Object)</td>
+            <td><code>(error: Object, that: Component, res: <a href="https://nodejs.org/api/http.html#http_http_incomingmessage">http.IncomingMessage</a>)</td>
             <td>Fired either if an error occurs during the HTTP upgrade process, or if an <code>error</code> event is fired from the <code>ws.WebSocket</code> object once the socket is established. For an error during
             handshake, the <code>error</code> argument will be an object with <code>isError: true</code> and a <code>statusCode</code> field taken from the HTTP statusCode. For an <code>error</code> event, the 
             error will be the original error payload.</td>
         </tr>
         <tr>
-            <td><code>onMessage</code></td>
-            <td><code>(that: Component, data: String/Object)</td>
+            <td><code>onReceiveMessage</code></td>
+            <td><code>(data: String/Object, that: Component)</td>
             <td>Fired whenever the underlying <code>ws.WebSocket</code> receives an <code>message</code> event. If the <code>receiveJSON</code> option to the component is <code>true</code> this value will have been
             JSON decoded.
         </tr>

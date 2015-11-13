@@ -33,7 +33,7 @@ kettle.tests.session.ws.testSocket.receiveMessage = function (request) {
     var response = fluid.extend(true, {
         token: session.token
     }, kettle.tests.session.response.success);
-    request.sendMessage(response);
+    request.sendTypedMessage("midSuccess", response);
 };
 
 kettle.tests.session.ws.proto = {
@@ -59,8 +59,12 @@ kettle.tests.session.ws.proto = {
     }
 };
 
-kettle.tests.session.ws.testSocketResponse = function (that, data) {
-    jqUnit.assertDeepEq("Received session-qualified socket response", kettle.tests.session.response.midSuccess, data);
+kettle.tests.session.ws.testSocketResponse = function (data) {
+    var expected = {
+        type: "midSuccess",
+        payload: kettle.tests.session.response.midSuccess
+    };
+    jqUnit.assertDeepEq("Received session-qualified socket response in \"typed message\"", expected, data);
 };
 
 kettle.tests.session.ws.midSequence = [
@@ -77,7 +81,7 @@ kettle.tests.session.ws.midSequence = [
             test: true
         }
     }, {
-        event: "{wsRequest}.events.onMessage",
+        event: "{wsRequest}.events.onReceiveMessage",
         listener: "kettle.tests.session.ws.testSocketResponse"
     }, {
         func: "{badRequest}.connect"
@@ -88,7 +92,7 @@ kettle.tests.session.ws.midSequence = [
             message: "Received 403 error for non-session qualified request to WebSockets endpoint",
             errorTexts: "HTTP",
             statusCode: 403,
-            string: "{arguments}.1",
+            string: "{arguments}.0",
             request: "{badRequest}"
         }
     }

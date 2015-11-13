@@ -64,13 +64,13 @@ kettle.tests.ws.testGet.handleRequest = function (request) {
     request.events.onSuccess.fire(kettle.tests.ws.successResponse);
 };
 
-kettle.tests.ws.testSocketResponse = function (that, data) {
+kettle.tests.ws.testSocketResponse = function (data) {
     jqUnit.assertDeepEq("Socket message delivered confirmed", {
         success: true
     }, data);
 };
 
-kettle.tests.ws.testSocketError = function (that, err) {
+kettle.tests.ws.testSocketError = function (err, that) {
     kettle.test.assertErrorResponse({
         request: that,
         message: "Received WebSockets error event applying to plain HTTP endpoint",
@@ -123,7 +123,7 @@ kettle.tests.ws.testDefs = {
             test: true
         }
     }, {
-        event: "{wsRequest}.events.onMessage",
+        event: "{wsRequest}.events.onReceiveMessage",
         listener: "kettle.tests.ws.testSocketResponse"
     }, {
         func: "{wsRequest}.send",
@@ -132,7 +132,7 @@ kettle.tests.ws.testDefs = {
             test: true
         }
     }, {
-        event: "{wsRequest}.events.onMessage",
+        event: "{wsRequest}.events.onReceiveMessage",
         listener: "kettle.tests.ws.testSocketResponse"
     }, {
         func: "{httpRequest}.send"
