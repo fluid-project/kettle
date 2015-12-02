@@ -145,6 +145,45 @@ You can try out these samples in [examples/simpleConfig](examples/simpleConfig) 
 load a common module, `simpleConfig-client.js` which tests the server by firing an HTTP request to it and logging the payload – this uses one of the HTTP client drivers taken from Kettle's
 [testing](#kettle-testing-framework) definitions. Later on, we will see how to issue formal test fixtures against this application by using the [Kettle testing framework](#kettle-testing-framework).
 
+## Starting a Kettle application
+
+Kettle applications can be started in a variety of ways, both programmatically and from the command line - as well as easily embedded into other applications, be they Infusion component trees or raw Express apps.
+
+### Starting a Kettle config programmatically
+
+Kettle includes a driver function, `kettle.config.loadConfig` which will load and run a Kettle application defined as a JSON file in the filesystem. It accepts an `options` structure which includes the
+following fields:
+
+|Member name| Type | Description |
+|-----------|------|-------------|
+|`configName`| `String` | The name of the config (the bare filename, minus any extension) which is to be loaded|
+|`configPath`| `String` | The directory holding the config. This path may start with a symbolic module reference, e.g. of the form `%kettle`, to a module which has been registered using Infusion's module API [`fluid.module.register`](http://docs.fluidproject.org/infusion/development/NodeAPI.html#fluid-module-register-name-basedir-modulerequire-)|
+
+`kettle.config.loadConfig` will return the (Infusion) component instance of the initialised application. You could use this, for example, to terminate the application using its ``destroy()`` method.
+
+An alternative to `kettle.config.loadConfig` is `kettle.config.createDefaults`. This accepts the same arguments but simply loads the config as a [grade](http://docs.fluidproject.org/infusion/development/ComponentGrades.html)
+rather than instantiating it as well. The return value from `kettle.config.loadConfig` is the grade name of the application. You can construct this application later by use of Infusion's [`invokeGlobalFunction`](http://docs.fluidproject.org/infusion/development/CoreAPI.html#fluid-invokeglobalfunction-functionpath-args-) API, or else
+embed it in a wider application as a subcomponent.
+
+### Starting a Kettle config from the command line
+
+Kettle includes a top-level driver file named `init.js` which will accept values from the command line and the environment variable ``NODE_ENV`` in order to determine which application config to start.
+For example, from Kettle's top-level directory you can run
+
+```
+    node init.js <configPath> [<configName>]
+````
+
+The `configPath` argument is required - its meaning is as given in the `configPath` option to `kettle.config.loadConfig` call described in the previous section.
+
+The `configName` argument is optional. If this value is not supplied at the command line, it will be read from the environment variable ``NODE_ENV``. The meaning is as given in the `configName` option to `kettle.config.loadConfig` described in the previous section.
+
+For example, you can start the sample app from the [previous section](#a-simple-kettle-application) by running
+```
+   node init.js examples/simpleConfig examples.simpleConfig
+```
+from the root directory of a Kettle checkout.
+
 ## Structure of a Kettle config
 
 In the previous section, we saw a [simple example](./examples/simpleConfig/simpleConfig-config.json) of a JSON-formatted Kettle config, which declaratively encodes a Kettle application structure.
@@ -176,7 +215,7 @@ minimal application will serve as a general template – the full definition of 
             next level of containment of the application, the <code>kettle.server</code> level – see the next section on <a href="#containent-structure-of-a-kettle-application">containment structure of a Kettle application</a> for the full structure</td>
         </tr>
         <tr>
-            <td><code>includes</code> (optional)</td>
+            <td><code>mergeConfigs</code> (optional)</td>
             <td><code>String/Array of String</code></td>
             <td>A filename (or array of these) of other config files which are to be included into this application. These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a>
             such as <code>%kettle</code> or else will be interpreted as 
@@ -184,6 +223,14 @@ minimal application will serve as a general template – the full definition of 
             structure of this config (via an algorithm similar to <a href="https://api.jquery.com/jquery.extend/">jQuery.extend</a> – note that because of a current Infusion framework bug <a href="https://issues.fluidproject.org/browse/FLUID-5614">FLUID-5614</a>, 
             all of the semantics of nested <a href="http://docs.fluidproject.org/infusion/development/OptionsMerging.html">options merging</a> will
             not be respected and the merging will occur in a simple-minded way below top level)</td>
+        </tr>
+        <tr>
+            <td><code>loadConfigs</code> (optional)</td>
+            <td><code>String/Array of String</code></td>
+            <td>A filename (or array of these) of other config files which will be loaded before this config is interpreted. These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a>
+            such as <code>%kettle</code> or else will be interpreted as 
+            paths relative to this config's location in the filesystem. Each filename listed here will be loaded and resolved as a grade. The workflow is similar to that with <code>mergeConfigs</code>, only the grades represented in <code>loadConfigs</code>
+            will not be automatically merged with the current config as parent grades. Instead, the user is free to refer to them as required - for example as the <code>type</code> or <code>gradeNames</code> of a <a href="http://docs.fluidproject.org/infusion/development/SubcomponentDeclaration.html">subcomponent</a></td>
         </tr>
         <tr>
             <td><code>require</code> (optional)</td>

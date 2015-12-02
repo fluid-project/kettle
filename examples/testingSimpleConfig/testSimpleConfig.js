@@ -16,10 +16,6 @@ var fluid = require("infusion"),
     kettle = require("../../kettle.js"),
     examples = fluid.registerNamespace("examples");
 
-// Load the request handler definition for the Kettle app 
-
-require("../simpleConfig/simpleConfig-config-handler.js");
-
 kettle.loadTestingSupport();
  
 fluid.registerNamespace("examples.tests.simpleConfig");

@@ -60,3 +60,39 @@ jqUnit.asyncTest("Kettle server initialisation test", function () {
   
     kettle.tests.init.server({});
 });
+
+require("./shared/HTTPMethodsTestDefs.js");
+
+kettle.tests.init.envTest = function (options) {
+    jqUnit.asyncTest(options.message, function () {
+        jqUnit.expect(2);
+        var oldArgv = process.argv;
+        var oldEnv = process.env.NODE_ENV;
+        process.argv = options.argv;
+        process.env.NODE_ENV = options.nodeEnv;
+        var server = kettle.config.initCLI();
+        var request = kettle.test.request.http({
+            listeners: {
+                onComplete: function (data) {
+                    kettle.tests.HTTPMethods.get.testResponse(data);
+                    server.destroy();
+                    jqUnit.start();
+                    process.argv = oldArgv;
+                    process.env.NODE_ENV = oldEnv;
+                }
+            }
+        });
+        request.send();
+    });
+};
+
+kettle.tests.init.envTest({
+    message: "Kettle server initialisation test via init.js and args",
+    argv: ["node.exe", "init.js", fluid.module.resolvePath("%kettle/tests/configs"), "kettle.tests.HTTPMethods.config"]
+});
+
+kettle.tests.init.envTest({
+    message: "Kettle server initialisation test via init.js and NODE_ENV",
+    argv: ["node.exe", "init.js", fluid.module.resolvePath("%kettle/tests/configs")],
+    nodeEnv: "kettle.tests.HTTPMethods.config"
+});

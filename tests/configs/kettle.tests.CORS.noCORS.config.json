@@ -7,5 +7,5 @@
             "target": "{that app}.options.requestHandlers.CORS.type"
         }
     },
-    "includes": ["./kettle.tests.CORS.config.json"]
+    "mergeConfigs": ["./kettle.tests.CORS.config.json"]
 }

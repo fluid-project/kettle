@@ -24,5 +24,6 @@
                 }
             }
         }
-    }
+    },
+    "require": "./simpleConfig-config-handler.js"
 }

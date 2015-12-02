@@ -9,6 +9,6 @@
             }
         }
     },
-    "includes": "./config4.json",
+    "mergeConfigs": "./config4.json",
     "require": "%kettle/tests/requires/testModuleRelativeRequire.js"
 }

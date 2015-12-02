@@ -13,7 +13,4 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 
 var kettle = require("./kettle.js");
 
-kettle.config.makeConfigLoader({
-    configName: kettle.config.getNodeEnv(),
-    configPath: kettle.config.getConfigPath()
-});
+module.exports = kettle.config.initCLI();

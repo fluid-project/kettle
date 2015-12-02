@@ -1,7 +1,7 @@
 /**
  * Kettle Sample app - simpleConfig using declarative config
  * 
- * Copyright 2015 Raising the Floor (International)
+ * Copyright 2015 Raising the Floor - International
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -14,13 +14,10 @@
 
 var kettle = require("../../kettle.js");
 
-// Load the code implementing the config's request handler
-require("./simpleConfig-config-handler.js");
-
 // Load the server configuration from the file referencing the handler
-kettle.config.makeConfigLoader({
+kettle.config.loadConfig({
     configName: "examples.simpleConfig",
-    configPath: __dirname
+    configPath: "%kettle/examples/simpleConfig"
 });
 
 // Load the client to make a test request
