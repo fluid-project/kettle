@@ -294,7 +294,7 @@ are numerous other parts of its lifecycle which can be customised, but these are
         </tr>
         <tr>
             <td><code>rootMiddleware</code></td>
-            <td><a href="#middlewareSequence"><code>middlewareSequence</code></a></td>
+            <td><a href="#structure-of-entries-in-a-middlewaresequence"><code>middlewareSequence</code></a></td>
             <td>The group of middleware which is to be executed for every request handled by this server</td>
         </tr>
         <tr>
