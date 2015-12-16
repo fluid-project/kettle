@@ -19,7 +19,9 @@ var fluid = require("infusion"),
      http = require("http"),
      jqUnit = fluid.require("node-jqunit", require, "jqUnit");
      
-require ("./shared/DataSourceTestUtils.js");
+require("./shared/DataSourceTestUtils.js");
+
+kettle.tests.dataSource.ensureWriteableEmpty();
 
 fluid.defaults("kettle.tests.KETTLE34dataSource", {
     gradeNames: "kettle.dataSource.URL",

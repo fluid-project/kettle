@@ -70,7 +70,8 @@ fluid.defaults("kettle.tests.error.requestErrorAsync.handler", {
 
 kettle.tests.error.requestErrorAsync.handleRequest = function () {
     var wrappedFail = kettle.wrapCallback(function () {
-        throw new Error( // not an appropriate failure strategy, but
+        throw new Error(
+            // not an appropriate failure strategy, but
             // we need to test that the next stack will be properly contextualised to back out the request
                 "Uncharacterised error which should cause request failure"
         );
@@ -78,16 +79,29 @@ kettle.tests.error.requestErrorAsync.handleRequest = function () {
     fluid.invokeLater(wrappedFail);
 };
 
-kettle.tests.triggerGlobalErrorSync = function () {
-    //fluid.onUncaughtException.fire("Global Error Triggered");
-    // we'd like to do the following but it busts express permanently
-    "Global Error Triggered".triggerError();
+fluid.defaults("kettle.tests.error.plainRequestError.handler", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.error.plainRequestError.handleRequest"
+        }
+    }
+});
+
+kettle.tests.error.plainRequestError.handleRequest = function (request) {
+    var res = request.res;
+    res.type("text/plain");
+    res.status(500).send("Sending plaintext response error");
 };
 
 
+kettle.tests.triggerGlobalErrorSync = function () {
+    "Global Error Triggered".triggerError();
+};
+
 kettle.tests.triggerGlobalErrorAsync = function () {
     process.nextTick(function () {
-         // Trigger this error asynchronously to avoid infuriating any of the testing frameworks 
+        // Trigger this error asynchronously to avoid infuriating any of the testing frameworks 
         kettle.tests.triggerGlobalErrorSync();
     });
 };
@@ -204,17 +218,47 @@ kettle.tests.error.testDefs = [{
         }
     },
     sequence: [{ // Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
-            funcName: "kettle.test.pushInstrumentedErrors",
-            args: "kettle.requestUncaughtExceptionHandler"
-        }, {
-            func: "{httpRequest}.send"
-        }, {
-            event: "{httpRequest}.events.onComplete",
-            listener: "kettle.tests.testRequestErrorStatus",
-            args: ["{httpRequest}"]
+        funcName: "kettle.test.pushInstrumentedErrors",
+        args: "kettle.requestUncaughtExceptionHandler"
+    }, {
+        func: "{httpRequest}.send"
+    }, {
+        event: "{httpRequest}.events.onComplete",
+        listener: "kettle.tests.testRequestErrorStatus",
+        args: ["{httpRequest}"]
+    }, {
+        funcName: "kettle.test.popInstrumentedErrors"
+    }]
+}, {
+    name: "Plaintext response error test",
+    expect: 2,
+    config: {
+        configName: "kettle.tests.error.config",
+        configPath: "%kettle/tests/configs"
+    },
+    components: {
+        httpRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/plainRequestError"
+            }
         }
-    ]
-    }
+    },
+    sequence: [ {
+        func: "{httpRequest}.send"
+    }, {
+        event: "{httpRequest}.events.onComplete",
+        listener: "kettle.test.assertErrorResponse",
+        args: {
+            message: "Verified plaintext error response",
+            plainText: true,
+            errorTexts: "plaintext response error",
+            statusCode: 500,
+            string: "{arguments}.0",
+            request: "{httpRequest}"
+        }
+    }]
+}
 ];
 
 kettle.test.bootstrapServer(kettle.tests.error.testDefs);

@@ -16,7 +16,7 @@
         "express-session": "~1.11.3",
         "serve-static": "1.10.0",
         "ws": "~0.8.0",
-        "infusion": "2.0.0-dev.20151130T180545Z.18ee3f8",
+        "infusion": "2.0.0-dev.20151211T025229Z.eabb4fc",
         "jsonlint": "1.6.0",
         "resolve": "~1.1.6",
         "node-uuid": "~1.4.0",

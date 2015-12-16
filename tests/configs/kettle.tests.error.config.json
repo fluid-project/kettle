@@ -25,6 +25,11 @@
                                         "type": "kettle.tests.error.requestErrorAsync.handler",
                                         "route": "/errorAsync",
                                         "method": "get"
+                                    },
+                                    "plainRequestError": {
+                                        "type": "kettle.tests.error.plainRequestError.handler",
+                                        "route": "/plainRequestError",
+                                        "method": "get"
                                     }
                                 }
                             }
