@@ -158,7 +158,7 @@ jqUnit.asyncTest("Writing file in formenc encoding", function () {
     var that = kettle.tests.formencSourceWrite();
     jqUnit.expect(1);
     that.set(null, kettle.tests.formencData).then(function () {
-        var written = fs.readFileSync("./data/writeable/formenc.txt", "utf8");
+        var written = fs.readFileSync(fluid.module.resolvePath("%kettle/tests/data/writeable/formenc.txt"), "utf8");
         var decoded = querystring.parse(written);
         jqUnit.assertDeepEq("Written decoded result", kettle.tests.formencData, decoded);
         jqUnit.start();
