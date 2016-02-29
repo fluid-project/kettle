@@ -8,6 +8,9 @@
     "bugs": {
         "url": "http://issues.fluidproject.org/browse/KETTLE"
     },
+    "scripts": {
+        "test": "node tests/all-tests.js"
+    },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
         "express": "~4.13.3",
