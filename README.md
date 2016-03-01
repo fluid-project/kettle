@@ -1089,7 +1089,7 @@ This can be applied to either a `kettle.dataSource.URL` or a `kettle.dataSource.
 This is a basic implementation which simply adapts the base documents in this API to a simple CRUD contract, taking care of:
 
 * Packaging and unpackaging the special `_id` and `_rev` fields which appear at top level in a CouchDB document
-    * The user's document is in fact escaped in a top-level path named `value` to avoid conflicts between its keys and any of those of the CouchDB machinery.  If you wish to change this behavior, you can do so by providing different []model transformation rules](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html) in `options.rules.readPayload` and `options.rules.writePayload`.
+    * The user's document is in fact escaped in a top-level path named `value` to avoid conflicts between its keys and any of those of the CouchDB machinery.  If you wish to change this behavior, you can do so by providing different [model transformation rules](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html) in `options.rules.readPayload` and `options.rules.writePayload`.
 * Applying a "read-before-write" of the `_rev` field to minimise (but not eliminate completely) the possibility for a Couch-level conflict
 
 This grade is not properly tested and still carries some (though very small) risk of a conflict during update – it should be used with caution. Please contact the development team if
