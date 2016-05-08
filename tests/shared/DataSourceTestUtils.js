@@ -156,6 +156,7 @@ kettle.tests.simpleDSModuleSource = function (options) {
         listener: "fluid.identity",
         priority: "last"
     });
+    sequence.push.apply(sequence, fluid.makeArray(options.finalSequence));
     var modules = [{
         name: options.name + (options.testPromiseAPI ? " - via promise API" : ""),
         tests: [{
@@ -173,7 +174,6 @@ kettle.tests.dataSource.testEmptyResponse = function (data) {
 };
 
 kettle.tests.dataSource.testResponse = function (expected, data) {
-    console.log("GOT DATA ", data);
     jqUnit.assertDeepEq("Data response should hold correct value", expected, data);
 };
 

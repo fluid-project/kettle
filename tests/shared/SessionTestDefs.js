@@ -41,13 +41,10 @@ fluid.defaults("kettle.tests.middleware.validateSession", {
 });
 
 kettle.tests.session.validate = function (request) {
-    console.log("VALIDATOR EXECUTING");
     var token = fluid.get(request, ["req", "session", "token"]);
     var togo = fluid.promise();
     if (token === undefined) {
-        console.log("REJECTING FOR MISSING TOKEN from session ", request.req.session);
         request.events.onDestroySession.fire();
-        console.log("rejecting");
         togo.reject({
             statusCode: 403,
             message: "Session is invalid"
@@ -84,7 +81,6 @@ fluid.defaults("kettle.tests.session.existing.handler", {
 });
 
 kettle.tests.session.existing.handleRequest = function (request, session) {
-    console.log("GOT EXISTING HANDLER");
     jqUnit.assertTrue("The request was received", true);
     jqUnit.assertValue("Session exists", session);
     jqUnit.assertEquals("Session is correct and has a current token", kettle.tests.session.token, session.token);

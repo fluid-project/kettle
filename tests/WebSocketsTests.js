@@ -47,7 +47,6 @@ kettle.tests.ws.testSocket.receiveMessage = function (request, data) {
             request.ws.close();
         });
     }
-    console.log("Finished receiveMessage");
 };
 
 fluid.defaults("kettle.tests.ws.testGet.handler", {

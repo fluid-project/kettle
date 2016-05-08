@@ -80,7 +80,7 @@ descended from `kettle.request.http` in the case of an HTTP request, or `kettle.
 is matched, and be supplied a single argument holding the ***request object***, an object whose grade is your request handler's grade, which the framework has
 constructed to handle the request.
  
-We duplicate the definitions from the [sample application](#a-simple-kettle-application) in order to show a minimal request handler grade and request handler function:
+We duplicate the definitions from the [sample application](ConfigsAndApplications.md#a-simple-kettle-application) in order to show a minimal request handler grade and request handler function:
 
 ```javascript
 fluid.defaults("examples.simpleConfig.handler", {

@@ -154,7 +154,7 @@ In addition, a `kettle.dataSource.URL` component will accept any options accepte
 `protocol`, `host`, `port`, `headers`, `hostname`, `family`, `localAddress`, `socketPath`, `auth` and `agent`. All of these options will be overriden by options of the same names supplied as the `options` object 
 supplied as the last argument to the dataSource's `get` and `set` methods. This is a good way, for example, to send custom HTTP headers along with a URL dataSource request. 
 Note that any of these component-level options (e.g. `port`, `protocol`, etc.) that can be derived from parsing the `url` option will override the value from the url. Compare this setup with
-the very similar one operated in the testing framework for [`kettle.test.request.http`](#kettle.test.request.http).
+the very similar one operated in the testing framework for [`kettle.test.request.http`](KettleTestingFramework.md#kettle.test.request.http).
 
 ### Configuration options accepted by `kettle.dataSource.file`
 
@@ -270,7 +270,7 @@ This can be applied to either a `kettle.dataSource.URL` or a `kettle.dataSource.
 This is a basic implementation which simply adapts the base documents in this API to a simple CRUD contract, taking care of:
 
 * Packaging and unpackaging the special `_id` and `_rev` fields which appear at top level in a CouchDB document
-    * The user's document is in fact escaped in a top-level path named `value` to avoid conflicts between its keys and any of those of the CouchDB machinery.  If you wish to change this behavior, you can do so by providing different [model transformation rules](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html) in `options.rules.readPayload` and `options.rules.writePayload`.
+    * The user's document is in fact escaped in a top-level path named `value` to avoid conflicts between its keys and any of those of the CouchDB machinery. If you wish to change this behavior, you can do so by providing different [model transformation rules](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html) in `options.rules.readPayload` and `options.rules.writePayload`.
 * Applying a "read-before-write" of the `_rev` field to minimise (but not eliminate completely) the possibility for a Couch-level conflict
 
 This grade is not properly tested and still carries some (though very small) risk of a conflict during update – it should be used with caution. Please contact the development team if
@@ -298,8 +298,8 @@ implementation strategy which we plan to extend in future.
 ### Callback wrapping in DataSources
 
 It's important that Kettle's inbuilt DataSources are used whenever possible when performing I/O from a Kettle application, since it is crucial that any running implementation
-code is always properly contextualised by its appropriate [request component](#request-components). Kettle guarantees that the [IoC context](http://docs.fluidproject.org/infusion/development/Contexts.html) `{request}` 
+code is always properly contextualised by its appropriate [request component](RequestHandlersAndApps.md#request-components). Kettle guarantees that the [IoC context](http://docs.fluidproject.org/infusion/development/Contexts.html) `{request}` 
 will always be resolvable onto the appropriate request component from any code executing within that request. If arbitrary callbacks are supplied to node I/O APIs, the code executing in them
 will not be properly contextualised. If for some reason a DataSource is not appropriate, you can manually wrap any callbacks that you use by supplying them to the API `kettle.wrapCallback`.
-[Get in touch](#getting-started-and-community) with the dev team if you find yourself in this situation.
+[Get in touch](../README.md#getting-started-and-community) with the dev team if you find yourself in this situation.
 

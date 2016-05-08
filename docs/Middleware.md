@@ -11,7 +11,7 @@ In its most basic form, a piece of middleware is simply a function with the foll
 
     middleware(req, res, next)
     
-The elements `req` and `res` have been described in the section on [request components](#members-defined-by-the-kettle-framework-at-top-level-on-a-request-component). The element `next` is a callback provided
+The elements `req` and `res` have been described in the section on [request components](RequestHandlersAndApps.md#members-defined-by-the-kettle-framework-at-top-level-on-a-request-component). The element `next` is a callback provided
 by the framework to be invoked when the middleware has completed its task. This could be seen as a form of [continuation passing style](https://en.wikipedia.org/wiki/Continuation-passing_style) with 0 arguments – 
 although only in terms of control flow since in general middleware has its effect as a result of side-effects on the request and response. In express, middleware are typically accumulated in arrays or groups of arrays
 by directives such as `app.use`. If a piece of middleware completes without error, it will invoke the `next` callback with no argument, which will signal that control should pass to the next middleware in the

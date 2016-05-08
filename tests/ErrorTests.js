@@ -37,7 +37,7 @@ kettle.tests.error.handleFullRequest = function (request, fullRequestPromise, ne
         next();
     }, function (err) {
         request.events.onRequestError.fire(err);
-        console.log("FORWARDING ERROR TO EXPRESS");
+        fluid.log("kettle.tests.error.handleFullRequest forwarding error to express");
         next(err);
     });
 };

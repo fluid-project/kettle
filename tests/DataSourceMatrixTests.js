@@ -15,15 +15,13 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 var fluid = require("infusion"),
      kettle = require("../kettle.js"),
      fs = require("fs"),
-     querystring = require("querystring"),
-     http = require("http"),
      jqUnit = fluid.require("node-jqunit", require, "jqUnit");
      
 require("./shared/DataSourceTestUtils.js");
 
 kettle.tests.dataSource.ensureWriteableEmpty();
 
-kettle.tests.dataSource.testSetResponse = function (dataSource, directModel, expected) {
+kettle.tests.dataSource.testFileSetResponse = function (dataSource, directModel, expected) {
     var fileName = kettle.dataSource.URL.resolveUrl(dataSource.options.path, dataSource.options.termMap, directModel, true),
         data = JSON.parse(fs.readFileSync(fileName, "utf8"));
     jqUnit.assertDeepEq("Response is correct", expected, data);
@@ -320,7 +318,7 @@ fluid.defaults("kettle.tests.dataSource.13.file.set", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.dataSource.testSetResponse",
+            funcName: "kettle.tests.dataSource.testFileSetResponse",
             args: ["{testEnvironment}.dataSource", null, {
                 test: "test"
             }]
@@ -348,7 +346,7 @@ fluid.defaults("kettle.tests.dataSource.14.CouchDB.file.set", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.dataSource.testSetResponse",
+            funcName: "kettle.tests.dataSource.testFileSetResponse",
             args: ["{testEnvironment}.dataSource", "{testEnvironment}.options.directModel", {
                 value: {
                     test: "test"
@@ -379,6 +377,7 @@ fluid.defaults("kettle.tests.dataSource.15.CouchDB.file.set.existing", {
             type: "kettle.dataSource.file.moduleTerms",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
+                notFoundIsEmpty: true,
                 path: "%kettle/tests/data/writeable/couchDataSourceTestFile.json",
                 writable: true
             }
@@ -386,7 +385,7 @@ fluid.defaults("kettle.tests.dataSource.15.CouchDB.file.set.existing", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.dataSource.testSetResponse",
+            funcName: "kettle.tests.dataSource.testFileSetResponse",
             args: ["{testEnvironment}.dataSource", "{testEnvironment}.options.directModel", {
                 value: {
                     test: "test"
@@ -422,7 +421,7 @@ fluid.defaults("kettle.tests.dataSource.16.file.set.expand", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.dataSource.testSetResponse",
+            funcName: "kettle.tests.dataSource.testFileSetResponse",
             args: ["{testEnvironment}.dataSource", "{testEnvironment}.options.directModel", {
                 test: "test"
             }]
@@ -458,7 +457,7 @@ fluid.defaults("kettle.tests.dataSource.17.CouchDB.file.set.existing.expand", {
     },
     invokers: {
         responseFunc: {
-            funcName: "kettle.tests.dataSource.testSetResponse",
+            funcName: "kettle.tests.dataSource.testFileSetResponse",
             args: ["{testEnvironment}.dataSource", "{testEnvironment}.options.directModel", {
                 value: {
                     test: "test"
@@ -500,67 +499,6 @@ kettle.tests.dataSource.promisifiedTests = fluid.transform(kettle.tests.dataSour
         }
     };
 });
-
-fluid.defaults("kettle.tests.dataSource.fileToURLHandler", {
-    gradeNames: "kettle.request.http",
-    invokers: {
-        handleRequest: {
-            funcName: "kettle.tests.dataSource.fileToURLHandler.handleRequest",
-            args: ["{arguments}.0", "{testEnvironment}.rawDataSource"]
-        }
-    }
-});
-
-kettle.tests.dataSource.fileToURLHandler.handleRequest = function (request, rawDataSource) {
-    var method = request.method;
-    if (method === "get") {
-        var response = rawDataSource.get(request.req.params);
-        fluid.promise.follow(response, request.requestPromise);
-    } else {
-        var response = rawDataSource.get(request.req.params, request.req.body);
-        fluid.promise.follow(response, request.requestPromise);        
-    }
-};
-
-fluid.defaults("kettle.tests.dataSource.fileToURLAdapter", {
-    components: {
-        dataSource: {
-            type: "kettle.dataSource.URL",
-            options: {
-                url: "http://localhost:8081/dataSource",
-                writable: true
-            }
-        },
-        server: { // A "self-apped" server which we hereby verify is supported
-            type: "kettle.server",
-            options: {
-                gradeNames: "kettle.app",
-                requestHandlers: {
-                    dataSourceHandler: {
-                        type: "kettle.tests.dataSource.fileToURLHandler",
-                        route: "/dataSource",
-                        method: "get, put"
-                    }
-                }
-            }
-        }
-    }
-});
-
-kettle.tests.dataSource.fileToURLFixture = function (element) {
-    var defaults = fluid.defaults(element);
-    var outGrade = element + ".URL";
-    var togo = fluid.copy(defaults);
-    var dataSource = defaults.components.dataSource;
-    togo.components.rawDataSource = dataSource;
-    delete togo.components.dataSource;
-    togo.components.dataSource = {
-        type: "fluid.dataSource.URL",
-        
-    }
-    fluid.defaults(outGrade, togo);
-    return outGrade;
-};
 
 var tests = kettle.tests.dataSource.standardTests.concat(kettle.tests.dataSource.promisifiedTests);
 

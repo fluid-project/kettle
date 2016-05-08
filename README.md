@@ -67,14 +67,14 @@ but slightly different in emphasis –
 
 * gpii-express allows independently mounted application units with nested routing, in the Express 4.x style – whereas Kettle is currently limited to flat Express 3.x-style routing
 * Kettle incorporates support for WebSockets endpoints, whereas gpii-express does not
-* Kettle incorporates support for DataSources (see [DataSources](#datasources) )
+* Kettle incorporates support for DataSources (see [DataSources](./docs/DataSources.md) )
 
 The request handling architecture for gpii-express and Kettle is quite similar and the projects will probably converge over time. gpii-express currently already depends on Kettle to get access to its
-HTTP [testing](#testing) support.
+HTTP [testing](./docs/KettleTestingFramework.md) support.
 
 # Documentation
 
-Documentation and sample code for working with Kettle is contained in the [docs](#docs) directory. Kettle is based on Fluid [Infusion](http://fluidproject.org/infusion.html)'s
+Documentation and sample code for working with Kettle is contained in the [docs](./docs) directory. Kettle is based on Fluid [Infusion](http://fluidproject.org/infusion.html)'s
 [component model](http://docs.fluidproject.org/infusion/development/HowToUseInfusionIoC.html). If you aren't familiar
 with the syntax and meaning of Infusion component trees, it is a good idea to browse the documentation, tutorials and examples at the 
 Infusion [documentation site](http://docs.fluidproject.org/infusion/development/).

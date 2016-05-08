@@ -28,7 +28,7 @@ fluid.defaults("kettle.tests.session.ws.testSocket.handler", {
 kettle.tests.session.ws.testSocket.receiveMessage = function (request) {
     var session = request.req.session;
     jqUnit.assertValue("Received socket message from qualified session", session);
-    console.log("testSocket.receiveMessage got session ", session);
+    fluid.log("testSocket.receiveMessage got session ", session);
     jqUnit.assertEquals("Session data retrieved from HTTP request", kettle.tests.session.token, session.token);
     var response = fluid.extend(true, {
         token: session.token

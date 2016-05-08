@@ -61,7 +61,7 @@ kettle.tests.fallibleDataSourceRead = function (dataSource) {
 };
 
 kettle.tests.expectJSONDiagnostic = function (error) {
-    console.log("Received JSON diagnostic error " + JSON.stringify(error, null, 2));
+    fluid.log("Received JSON diagnostic error " + JSON.stringify(error, null, 2));
     jqUnit.assertTrue("Got message mentioning filename ", error.message.indexOf("invalidJSONFile") !== -1);
     jqUnit.assertTrue("Got message mentioning line number of error ", error.message.indexOf("59") !== -1);
 };
