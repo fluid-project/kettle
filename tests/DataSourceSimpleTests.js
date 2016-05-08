@@ -256,3 +256,7 @@ fluid.defaults("kettle.tests.urlResolverTester", {
         }]
     }]
 });
+
+jqUnit.onAllTestsDone.addListener(kettle.tests.dataSource.ensureWriteableEmpty);
+
+fluid.test.runTests(["kettle.tests.dataSource.initTester", "kettle.tests.dataSource.resolverTester"]);
