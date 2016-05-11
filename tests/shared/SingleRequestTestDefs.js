@@ -46,7 +46,7 @@ fluid.defaults("kettle.tests.singleRequest.config", {
     }
 });
 
-/** Merge the config testDefs, generate their grades derived the "kettle.tests.singleReuqest.config" and execute them **/
+/** Merge the config testDefs, generate their grades derived from "kettle.tests.singleRequest.config" and execute them **/
 
 /** 
  * @param testDefs {Array of String} An array of the grade names holding "hollow grades" to be merged into full fixtures
