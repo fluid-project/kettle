@@ -78,6 +78,7 @@ fluid.defaults("kettle.tests.simpleDataSourceTest", {
         onError: null
     },
     components: {
+        // cf. kettle.test.serverEnvironment which calls this "tests"
         testCaseHolder: {
             type: "kettle.tests.dataSourceTestCaseHolder"
         },
@@ -120,8 +121,9 @@ fluid.defaults("kettle.tests.promiseDataSourceTest", {
     }
 });
 
-// Accepts options for the overall environment and produces a 2-element sequence
-// operating the test. 
+// Accepts options for the overall testEnvironment and produces a 2-element sequence
+// operating the test. Configured as a func moduleSource in dataSourceTestCaseHolder and accepts {testEnvironment}.options
+// TODO: This terrible mess should be resolved with FLUID-5903
 kettle.tests.simpleDSModuleSource = function (options) {
     var dataSourceMethod = options.dataSourceMethod || "get";
     var dataSourceArgs = [options.directModel];
@@ -178,5 +180,12 @@ kettle.tests.dataSource.testResponse = function (expected, data) {
 };
 
 kettle.tests.dataSource.testErrorResponse = function (expected, data) {
-    jqUnit.assertDeepEq("Error response should hold correct value", expected, data);
+    var cloned = kettle.cloneError(data);
+    jqUnit.assertDeepEq("Error response should hold correct value", expected, cloned);
+};
+
+kettle.tests.expectJSONDiagnostic = function (error) {
+    fluid.log("Received JSON diagnostic error " + JSON.stringify(error, null, 2));
+    jqUnit.assertTrue("Got message mentioning filename ", error.message.indexOf("invalidJSONFile") !== -1);
+    jqUnit.assertTrue("Got message mentioning line number of error ", error.message.indexOf("59") !== -1);
 };

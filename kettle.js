@@ -38,6 +38,7 @@ kettle.loadTestingSupport = function () {
 };
 
 // A variant of loadTestingSupport that does not complain if no tests are queued - for examples and samples
+/* istanbul ignore next */
 kettle.loadTestingSupportQuiet = function () {
     kettle.loadTestingSupport();
     var jqUnit = fluid.registerNamespace("jqUnit");

@@ -155,7 +155,7 @@ to implement your own.
 </tr>
 <tr> 
     <td><code>kettle.middleware.session</code></td>
-    <td><a href="https://github.com/expressjs/session">expessjs/session</a></td>
+    <td><a href="https://github.com/expressjs/session">expressjs/session</a></td>
     <td>Stores and retrieves <code>req.session</code> from various backends</td>
     <td><code>middlewareOptions</code>, forwarded to <a href="https://github.com/expressjs/session#sessionoptions"><code>session(options)</code></a></td>
     <td><code>{middlewareHolder}.session</code> when using <code>kettle.server.sessionAware</code> server</td>

@@ -314,7 +314,7 @@ kettle.tests.errorServerPairSequence = [
             statusCode: 500,
             string: "{arguments}.0",
             request: "{errorRequest}",
-            expected: kettle.dataSource.upgradeError(kettle.tests.dataSource.errorPayload, " while executing HTTP GET on url http://localhost:%sourcePort/errorEndpoint")
+            expected: kettle.upgradeError(kettle.tests.dataSource.errorPayload, " while executing HTTP GET on url http://localhost:%sourcePort/errorEndpoint")
         }
     }
 ];

@@ -128,8 +128,9 @@ for which this component is a wrapper. A `kettle.test.request.http` component ac
         </tr>
         <tr>
             <td><code>headers</code></td>
-            <td><code>Object/code></td>
+            <td><code>Object</code></td>
             <td>The HTTP headers to be sent with the request</td>
+        </tr>
     </tbody>
 </table>
 
@@ -378,7 +379,7 @@ The following events may be listened to on a `kettle.test.request.ws` component:
     <tbody>
         <tr>
             <td><code>onConnect</code></td>
-            <td><code>(that: Component)</code>/td>
+            <td><code>(that: Component)</code></td>
             <td>Fired when the <code>open</code> event of the underlying <code>ws.WebSocket</code> is fired. This event must be listened to in the fixture sequence before any attempt is made to fire messages from the
             component with <code>send</code></td>
         </tr>

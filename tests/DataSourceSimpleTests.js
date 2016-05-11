@@ -171,6 +171,7 @@ jqUnit.asyncTest("Writing file in formenc encoding", function () {
 // Basic initialisation tests
 
 kettle.tests.dataSource.testInit = function (dataSource) {
+    jqUnit.expect(4);
     jqUnit.assertValue("Data source is initialized", dataSource);
     jqUnit.assertValue("Data source should have a get method", dataSource.get);
     jqUnit.assertUndefined("Data source should not have a set method by default", dataSource.set);
@@ -179,7 +180,7 @@ kettle.tests.dataSource.testInit = function (dataSource) {
 
 
 fluid.defaults("kettle.tests.dataSource.initTester", {
-    gradeNames: ["fluid.test.testEnvironment"],
+    gradeNames: "fluid.component",
     components: {
         urlDataSource: {
             type: "kettle.dataSource.URL"
@@ -189,74 +190,65 @@ fluid.defaults("kettle.tests.dataSource.initTester", {
             options: {
                 gradeNames: "kettle.dataSource.CouchDB"
             }
-        },
-        testCases: {
-            type: "kettle.tests.dataSource.initCases"
         }
     }
 });
 
+jqUnit.test("DataSource basic init tests", function () {
+    var initTester = kettle.tests.dataSource.initTester();
+    kettle.tests.dataSource.testInit(initTester.urlDataSource);
+    kettle.tests.dataSource.testInit(initTester.couchDBDataSource);
+});
 
-fluid.defaults("kettle.tests.dataSource.initCases", {
-    gradeNames: ["fluid.test.testCaseHolder"],
-    modules: [{
-        name: "Kettle Data Source Init Tester",
-        tests: [{
-            expect: 4,
-            name: "URL Data source initialization",
-            func: "kettle.tests.dataSource.testInit",
-            args: ["{urlDataSource}"]
-        }, {
-            expect: 4,
-            name: "CouchDB Data source initialization",
-            func: "kettle.tests.dataSource.testInit",
-            args: ["{couchDBDataSource}"]
-        }]
-    }]
+
+fluid.defaults("kettle.tests.dataSource.fileWithoutPath", {
+    gradeNames: "kettle.dataSource.file"
+});
+
+jqUnit.test("DataSource without path", function () {
+    jqUnit.expectFrameworkDiagnostic("DataSource without path", function () {
+        var source = kettle.tests.dataSource.fileWithoutPath();
+        source.get();
+    }, ["without an option", "path"]);
 });
 
 // Attached URL resolver tests
 
-kettle.tests.testUrlResolver = function (dataSource, directModel) {
-    var resolved = dataSource.resolveUrl(dataSource.options.url, dataSource.options.termMap, directModel);
-    jqUnit.assertEquals("Data source should should expand urls based on termMap with URIEncoding",
-        "http://test%20with%20space/test.json", resolved);
+kettle.tests.testUrlResolver = function (gradeName) {
+    var dataSource = fluid.invokeGlobalFunction(gradeName);
+    var resolved = dataSource.resolveUrl(dataSource.options.url, dataSource.options.termMap, dataSource.options.directModel);
+    jqUnit.assertEquals(dataSource.options.message, resolved, dataSource.options.expected, resolved);
 };
 
-fluid.defaults("kettle.tests.dataSource.resolverTester", {
-    gradeNames: ["fluid.test.testEnvironment"],
-    components: {
-        urlDataSourceDynamic: {
-            type: "kettle.dataSource.URL",
-            options: {
-                url: "http://%expand/test.json",
-                termMap: {
-                    expand: "%expand"
-                }
-            }
-        },
-        testCases: {
-            type: "kettle.tests.urlResolverTester"
-        }
-    }
+fluid.defaults("kettle.tests.dataSource.dynamicURL", {
+    gradeNames: "kettle.dataSource.URL",
+    url: "http://%expand/test.json",
+    termMap: {
+        expand: "%expand"
+    },
+    message: "URL resolver with URI escaping",
+    directModel: {
+        expand: "test with space"
+    },
+    expected: "http://test%20with%20space/test.json"
 });
 
+fluid.defaults("kettle.tests.dataSource.unescapedUrl", {
+    gradeNames: "kettle.dataSource.URL",
+    url: "http://%expand/test.json",
+    termMap: {
+        expand: "noencode:%expand"
+    },
+    message: "URL resolver with URI escaping",
+    directModel: {
+        expand: "test/with/slash"
+    },
+    expected: "http://test/with/slash/test.json"
+});
 
-fluid.defaults("kettle.tests.urlResolverTester", {
-    gradeNames: ["fluid.test.testCaseHolder"],
-    modules: [{
-        name: "Kettle UrlResolver Tests",
-        tests: [{
-            expect: 1,
-            name: "URL resolver with URI escaping",
-            func: "kettle.tests.testUrlResolver",
-            args: ["{urlDataSourceDynamic}", {
-                expand: "test with space"
-            }]
-        }]
-    }]
+jqUnit.test("Attached URLResolver tests", function () {
+    kettle.tests.testUrlResolver("kettle.tests.dataSource.dynamicURL");
+    kettle.tests.testUrlResolver("kettle.tests.dataSource.unescapedUrl");
 });
 
 jqUnit.onAllTestsDone.addListener(kettle.tests.dataSource.ensureWriteableEmpty);
-
-fluid.test.runTests(["kettle.tests.dataSource.initTester", "kettle.tests.dataSource.resolverTester"]);

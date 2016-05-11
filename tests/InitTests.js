@@ -86,6 +86,28 @@ kettle.tests.init.envTest = function (options) {
     });
 };
 
+kettle.tests.init.badEnvTest = function (options) {
+    jqUnit.test(options.message, function () {
+        jqUnit.expectFrameworkDiagnostic(options.message, function () {
+            var oldArgv = process.argv;
+            var oldEnv = process.env.NODE_ENV;
+            process.argv = options.argv;
+            if (options.nodeEnv) {
+                process.env.NODE_ENV = options.nodeEnv;
+            } else { // assigning `undefined` will call toString on it!
+                delete process.env.NODE_ENV;
+            }
+            try {
+                kettle.config.initCLI();
+            } catch (e) {
+                process.argv = oldArgv;
+                process.env.NODE_ENV = oldEnv;
+                throw e;
+            }
+        }, options.errorTexts);
+    });
+};
+
 kettle.tests.init.envTest({
     message: "Kettle server initialisation test via init.js and args",
     argv: ["node.exe", "init.js", fluid.module.resolvePath("%kettle/tests/configs"), "kettle.tests.HTTPMethods.config"]
@@ -93,6 +115,18 @@ kettle.tests.init.envTest({
 
 kettle.tests.init.envTest({
     message: "Kettle server initialisation test via init.js and NODE_ENV",
-    argv: ["node.exe", "init.js", fluid.module.resolvePath("%kettle/tests/configs")],
+    argv: ["node.exe", "init.js", "%kettle/tests/configs"],
     nodeEnv: "kettle.tests.HTTPMethods.config"
+});
+
+kettle.tests.init.badEnvTest({
+    message: "Kettle server initialisation test via init.js without config name",
+    argv: ["node.exe", "init.js", "%kettle/tests/configs"],
+    errorTexts: "No configuration"
+});
+
+kettle.tests.init.badEnvTest({
+    message: "Kettle server initialisation test via init.js without config path",
+    argv: ["node.exe", "init.js"],
+    errorTexts: "Config path"
 });

@@ -13,8 +13,7 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../kettle.js"),
-     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
+     kettle = require("../kettle.js");
 
 require("./shared/DataSourceTestUtils.js");
 
@@ -58,12 +57,6 @@ fluid.defaults("kettle.tests.dataSourceJSONTester", {
 
 kettle.tests.fallibleDataSourceRead = function (dataSource) {
     dataSource.get(); // we expect failure - forwarded to root handler
-};
-
-kettle.tests.expectJSONDiagnostic = function (error) {
-    fluid.log("Received JSON diagnostic error " + JSON.stringify(error, null, 2));
-    jqUnit.assertTrue("Got message mentioning filename ", error.message.indexOf("invalidJSONFile") !== -1);
-    jqUnit.assertTrue("Got message mentioning line number of error ", error.message.indexOf("59") !== -1);
 };
 
 fluid.test.runTests(["kettle.tests.dataSourceJSONTester"]);

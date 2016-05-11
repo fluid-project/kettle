@@ -4,7 +4,7 @@ layout: default
 category: Kettle
 ---
 
-Kettle includes two builtin grades, [kettle.server](#kettle.server) for defining a plain HTTP server, and a derived grade [kettle.server.ws)(#kettle.server.ws) for defining a server
+Kettle includes two builtin grades, [`kettle.server`](#kettle.server) for defining a plain HTTP server, and a derived grade [`kettle.server.ws`](#kettle.server.ws) for defining a server
 capable of handling WebSockets endpoints. The former wraps the standard facilities of node.js for constructing an [`http.Server`](https://nodejs.org/api/http.html#http_class_http_server), and
 the latter wraps the facilities of the [ws WebSockets library](https://github.com/websockets/ws) for constructing a [`ws.Server`](https://github.com/websockets/ws/blob/master/doc/ws.md#new-wsserveroptions-callback). In both
 cases, the Kettle grades can either accept servers previously constructed and injected in configuration, or can take responsibility for constructing the native servers themselves (the default).
