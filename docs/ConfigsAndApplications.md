@@ -62,14 +62,14 @@ examples.simpleConfig.handleRequest = function (request) {
 examples.simpleConfig();
 ```
 
-The JSON "config" form of the application itself is held at [examples/simpleConfig/examples.simpleConfig.json](./examples/simpleConfig/examples.simpleConfig.json), 
+The JSON "config" form of the application itself is held at [examples/simpleConfig/examples.simpleConfig.json](../examples/simpleConfig/examples.simpleConfig.json), 
 which encodes the same information as in the first `fluid.defaults` call above. The definitions for request handlers such as `examples.simpleConfig.handler` and
-`examples.simpleConfig.handleRequest`, which in our sample are held in [examples/simpleConfig/simpleConfig-config-handler.js](./examples/simpleConfig/simpleConfig-config-handler.js), 
+`examples.simpleConfig.handleRequest`, which in our sample are held in [examples/simpleConfig/simpleConfig-config-handler.js](../examples/simpleConfig/simpleConfig-config-handler.js), 
 always need to be supplied in standard `.js` files required by the application – although future versions of Kettle
 may allow the defaults for the handler grade to be encoded in JSON. Consult the Infusion framework documentation on [grades](http://docs.fluidproject.org/infusion/development/ComponentGrades.html) if
 you are not familiar with this kind of configuration.
 
-You can try out these samples in [examples/simpleConfig](examples/simpleConfig) by, for example, from that directory, typing `node simpleConfig-config-driver.js`. The last line of the driver files
+You can try out these samples in [examples/simpleConfig](../examples/simpleConfig) by, for example, from that directory, typing `node simpleConfig-config-driver.js`. The last line of the driver files
 load a common module, `simpleConfig-client.js` which tests the server by firing an HTTP request to it and logging the payload – this uses one of the HTTP client drivers taken from Kettle's
 [testing](KettleTestingFramework.md) definitions. Later on, we will see how to issue formal test fixtures against this application by using the [Kettle testing framework](KettleTestingFramework.md).
 

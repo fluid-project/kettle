@@ -399,11 +399,16 @@ The following events may be listened to on a `kettle.test.request.ws` component:
     </tbody>
 </table>
 
+### Connecting a `kettle.test.request.ws` client with the `connect` method
+
+Before a `kettle.test.request.ws` component can be used to send messages, it must be connected by calling the `connect` method. This method accepts no arguments. When the client has been connected to the server,
+the `onConnect` event documented in the above table will be fired on the component.
+
 ### Sending a message using the `send` method of `kettle.test.request.ws`
 
 The signature of `kettle.test.request.ws` `send` is the same as that for `kettle.test.request.http`, with a very similar meaning: 
 
-The primarily useful method on `kettle.test.request.http` is `send`. It accepts two arguments, `(model, directOptions)` :
+The primarily useful method on `kettle.test.request.ws` is `send`. It accepts two arguments, `(model, directOptions)` :
 
 <table>
     <thead>
@@ -439,4 +444,4 @@ to be contextualised by the same session cookies.
 
 ## Framework tests
 
-Please consult the [test cases](./tests) for the framework for more examples of Kettle primitives as well as the Kettle testing framework in action.
+Please consult the [test cases](../tests) for the framework for more examples of Kettle primitives as well as the Kettle testing framework in action.
