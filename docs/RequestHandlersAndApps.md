@@ -107,14 +107,18 @@ A ***request component*** is constructed by Kettle when it has determined the co
 the incoming request. This request component will be usefully populated with material drawn from the request and node.js initial process of handling it. It also contains
 various elements supplied by Kettle in order to support you in handling the request. You can add any further material that you like to the request object by adding
 entries to its grade definition, of any of the types supported by Infusion's [component configuration options](http://docs.fluidproject.org/infusion/development/ComponentConfigurationOptions.html).
-Here we will document the standard members that are placed there by Kettle for the two standard request types which are supported, `kettle.request.http` and `kettle.request.ws`.
+Here we will document the standard members that are placed there by Kettle for the two standard request types which are supported, `kettle.request.http` and `kettle.request.ws`. These
+are derived from a common grade `kettle.request` which defines several common members and workflow elements.
 
-### Members defined by the Kettle framework at top-level on a request component
+### Members defined by the Kettle framework at top-level on an HTTP request component
+
+The following table describes the members defined on `kettle.request.http`. Where these are not listed as "only for `kettle.request.http`" they are defined in the
+base grade `kettle.request` and so are also available for WebSockets components of type `kettle.request.ws`.
 
 <table>
     <thead>
         <tr>
-            <th colspan="3">Members defined by default at top-level on a (HTTP) request component of type <code>kettle.request.http</code></th>
+            <th colspan="3">Members defined by default at top-level on an HTTP request component of type <code>kettle.request.http</code></th>
         </tr>
         <tr>
             <th>Member</th>
@@ -159,19 +163,20 @@ Here we will document the standard members that are placed there by Kettle for t
     </tbody>
 </table>
 
-Note that, in return, the Kettle request component will be marked onto the node.js request object so that it can easily be retrieved from standard middleware, etc. – it will be available as `req.fluidRequest` where `req` is the
+Note that, conversely with the `req` property of the Kettle request component, the Kettle request component itself will be marked onto the node.js request object so that it can easily 
+be retrieved from standard middleware, etc. – it will be available as `req.fluidRequest` where `req` is the
 request object described in the table above. More details follow on middleware in the section [working with middleware](Middleware.md#working-with-middleware).
 
 <a id="kettle.request.ws"></a>
 
-### Members defined by the Kettle framework at top-level on a WebSockets request component
+### WebSockets request components of type `kettle.request.ws`
 
 WebSockets communications in a Kettle application are mediated by the [ws](https://github.com/websockets/ws) WebSockets library – you should get familiar with the documentation for
 that library if you intend to use this functionality significantly. It is also worth spending some time familiarising yourself with at least some of the `ws` implementation code since there are several
 aspects not properly covered by the documentation.
 
-The request component for a WebSockets request, derived from the grade `kettle.request.ws` includes the members in the above table which are not marked as
-`kettle.request.http` only, as well as several more members described in the following table:
+The request component for a WebSockets request, derived from the grade `kettle.request.ws`, includes the members in the above table which are not marked as
+`kettle.request.http` only via `kettle.request`, as well as several more members described in the following table:
 
 <table>
     <thead>
@@ -201,17 +206,31 @@ The request component for a WebSockets request, derived from the grade `kettle.r
             referred to in the <code>ws</code> docs as "a WebSocket constructed by a Server". This member will only be present after the <code>onBindWs</code> event described in the previous row has fired.</td>
         </tr>
         <tr>
+            <td><code>sendMessage</code></td>
+            <td><code>Function(message: Any)</code></a></td>
+            <td>The <code>sendMessage</code> method is used to sent a WebSocket message to the client. By default, the <code>sendMessageJSON</code> options described in the table below is set to <code>true</code> and so <code>sendMessage</code> will
+            accept a JavaScript object which will be encoded as JSON. </td>
+        </tr>
+        <tr>
+            <td><code>sendTypedMessage</code></td>
+            <td><code>Function(type: String, payload: Object)</code></a></td>
+            <td>Operates a simple "typed message" system which will fire a payload to <code>sendMessage</code> consisting of <code>{type: type, payload: payload}</code>. This method is only useful together with the 
+            <code>sendMessageJSON: true</code> option (its default value).</td>
+        </tr>
+        <tr>
             <td><code>events.onReceiveMessage</code></td>
             <td><a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html"><code>Event</code></a></td>
             <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which is fired by the framework when a message is received from the client
-            at the other end of the WebSockets connection. The arguments to the event are <code>(that, payload)</code> where <code>that</code> represents this request component itself, and <code>payload</code> represnts
-            the payload sent by the client. If the <code>receiveMessageJSON</code> option is set to <code>true</code> for this component (the default), the payload will have been decoded as JSON.</td>
+            at the other end of the WebSockets connection. The arguments to the event are <code>(that, message)</code> where <code>that</code> represents this request component itself, and <code>message</code> represnts
+            the message sent by the client. If the <code>receiveMessageJSON</code> option is set to <code>true</code> for this component (the default), the message will have been decoded as JSON.</td>
         </tr>
         <tr>
             <td><code>events.onSendMessage</code></td>
             <td><a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html"><code>Event</code></a></td>
-            <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which can be fired by the implementor of the request handler when they want to send a message to the client.
-            This event expects to receive just a single argument, the message payload. If the <code>sendMessageJSON</code> option is set to <code>true</code> for this component (the default), the payload will be encoded by the framework as JSON.</td>
+            <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which operates the workflow started by the <code>sendMessage</code> method.
+            This is a <a href="./DataSources.md#transforming-promise-chains">transforming promise chain</a> event for which each listener has 
+            the chance to transform the payload before it is sent to the next. More information is available for the 
+            <a href="http://docs.fluidproject.org/infusion/development/PromisesAPI.html#fluid-promise-firetransformevent-event-payload-options-"><code>fireTransformEvent</code></a> function from Infusion's Promises API</td>
         </tr>
         <tr>
             <td><code>events.onError</code></td>
@@ -220,6 +239,33 @@ The request component for a WebSockets request, derived from the grade `kettle.r
             This event has the same name as the one fired by a <code>kettle.request.http</code> but the behaviour and semantic is different. Rather than sending an HTTP error response, the framework instead
             emits a WebSockets  event of type <code>error</code>. Because of this, the <code>statusCode</code> field of the event argument should not be used. However, it is recommended that the event payload
             still includes a field <code>message</code> of type <code>String</code> holding the error message to be returned to the client, as well as a boolean member <code>isError</code> with the value <code>true</code>.</td>
+        </tr>
+    </tbody>
+</table>
+
+A `kettle.request.ws` accepts the following configurable options at top level:
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="3">Supported configurable options for a <code>kettle.request.ws</code></th>
+        </tr>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>sendMessageJSON</code></td>
+            <td><code>Boolean</code> (default: <code>true</code>)</td>
+            <td>If this is set to <code>true</code>, the argument supplied to the component's <code>sendMessage</code> method will be encoded as JSON. Otherwise the argument will be sent to <code>websocket.send</code> as is.</td>
+        </tr>
+        <tr>
+            <td><code>receiveMessageJSON</code></td>
+            <td><code>Boolean</code> (default: <code>true</code>)</td>
+            <td>If this is set to <code>true</code>, the argument received by listeners to the component's <code>onReceiveMessage</code> event will be encoded as JSON. Otherwise the value will be transmitted as from the WebSocket's <code>message</code> event unchanged.</td>
         </tr>
     </tbody>
 </table>

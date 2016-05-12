@@ -127,6 +127,6 @@ kettle.tests.init.badEnvTest({
 
 kettle.tests.init.badEnvTest({
     message: "Kettle server initialisation test via init.js without config path",
-    argv: ["node.exe", "init.js"],
+    argv: ["node.exe", "init.js", "-"],
     errorTexts: "Config path"
 });

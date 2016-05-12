@@ -338,7 +338,7 @@ using an invoker named `send`, with the difference that method may be invoked an
         <tr>
             <td><code>receiveJSON</code></td>
             <td><code>Boolean</code> (default: <code>true</code>)</td>
-            <td>If this is set to <code>true</code>, the argument fired to the component's <code>onReceiveMessage</code> method will be encoded as JSON. Otherwise the value will be transmitted as from the WebSocket's <code>message</code> event unchanged.</td>
+            <td>If this is set to <code>true</code>, the argument received by listeners to the component's <code>onReceiveMessage</code> event will be encoded as JSON. Otherwise the value will be transmitted as from the WebSocket's <code>message</code> event unchanged.</td>
         </tr>
         <tr>
             <td><code>webSocketsProtocols</code></td>
