@@ -14,24 +14,36 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 
 var fluid = require("infusion"),
      kettle = require("../kettle.js"),
+     gpii = fluid.registerNamespace("gpii"),
      jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
+require("gpii-pouchdb");
+require("gpii-express");
+gpii.express.loadTestingSupport();
+
+fluid.require("%gpii-pouchdb/tests/js/environment.js");
+fluid.require("%gpii-pouchdb/tests/js/harness.js");
 require("./shared/DataSourceTestUtils.js");
 
-require("./shared/gpii-pouchdb-harness.js");
+fluid.defaults("kettle.tests.pouchDB.harness", {
+    gradeNames: "gpii.test.pouch.harness",
+    mergePolicy: {
+        databases: "replace"
+    },
+    databases: {
+        testFile: { data: "%kettle/tests/data/pouchDataSourceTestFile.json"}
+    }
+});
 
 fluid.defaults("kettle.tests.dataSource.pouchDB.environment", {
-    gradeNames: ["gpii.pouch.tests.environment", "kettle.tests.simpleDataSourceTest"],
-
-    initSequence: [ // duplicated material from gpii-express helpers-caseholder.js, needed everywhere we evade QUnit's bug
-        {
-            func: "{testEnvironment}.events.constructServer.fire"
-        },
-        {
-            listener: "fluid.identity",
-            event: "{testEnvironment}.events.onStarted"
+    gradeNames: ["gpii.test.pouch.environment", "kettle.tests.simpleDataSourceTest"],
+    port: 6789,
+    components: {
+        harness: {
+            type: "kettle.tests.pouchDB.harness"
         }
-    ]
+    },
+    initSequence: gpii.test.express.standardSequenceStart
 });
 
 fluid.defaults("kettle.tests.dataSource.pouchDB.write.environment", {
@@ -58,6 +70,11 @@ kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directM
 
 /** These fixture are analogues of some of those in DataSourceMatrixTests.js, and their index numbers are taken from those **/
 
+// Tests support for custom URL resolving - simply returns a static predetermined URL
+kettle.tests.dataSource.resolveStaticCouchURL = function () {
+    return "http://localhost:6789/testFile/test_id";
+};
+
 fluid.defaults("kettle.tests.dataSource.3.CouchDB.URL.standard", {
     gradeNames: ["kettle.tests.dataSource.pouchDB.environment"],
     name: "3. Testing CouchDB URL datasource with standard response",
@@ -65,8 +82,12 @@ fluid.defaults("kettle.tests.dataSource.3.CouchDB.URL.standard", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "http://localhost:6789/testFile/test_id",
-                gradeNames: "kettle.dataSource.CouchDB"
+                gradeNames: "kettle.dataSource.CouchDB",
+                invokers: {
+                    resolveUrl: {
+                        funcName: "kettle.tests.dataSource.resolveStaticCouchURL"
+                    }
+                }
             }
         }
     },

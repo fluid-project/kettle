@@ -13,7 +13,7 @@
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("../../kettle.js"),
+    kettle = fluid.require("%kettle"),
     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
     
 kettle.loadTestingSupport();
@@ -31,12 +31,12 @@ fluid.defaults("kettle.tests.HTTPMethods.get.handler", {
 });
 
 kettle.tests.HTTPMethods.get.handleRequest = function (request) {
-    jqUnit.assertTrue("GET request successfully received", true);
-    request.events.onSuccess.fire("GET Call retrieved");
+    jqUnit.assert("GET request successfully received");
+    request.events.onSuccess.fire({message: "GET response"});
 };
 
 kettle.tests.HTTPMethods.get.testResponse = function (data) {
-    jqUnit.assertEquals("GET response successfully received", "GET Call retrieved", data);
+    jqUnit.assertDeepEq("GET response successfully received", {message: "GET response"}, JSON.parse(data));
 };
 
 // ----------------- POST HANDLING ------------------------
@@ -50,7 +50,7 @@ fluid.defaults("kettle.tests.HTTPMethods.post.handler", {
 });
 
 kettle.tests.HTTPMethods.post.handleRequest = function (request) {
-    jqUnit.assertTrue("POST request successfully received", true);
+    jqUnit.assert("POST request successfully received");
     request.events.onSuccess.fire(request.req.body);
 };
 
@@ -71,7 +71,7 @@ fluid.defaults("kettle.tests.HTTPMethods.put.handler", {
 });
 
 kettle.tests.HTTPMethods.put.handleRequest = function (request) {
-    jqUnit.assertTrue("PUT request successfully received", true);
+    jqUnit.assert("PUT request successfully received");
     request.events.onSuccess.fire(request.req.body);
 };
 
