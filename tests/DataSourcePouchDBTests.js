@@ -70,11 +70,6 @@ kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directM
 
 /** These fixture are analogues of some of those in DataSourceMatrixTests.js, and their index numbers are taken from those **/
 
-// Tests support for custom URL resolving - simply returns a static predetermined URL
-kettle.tests.dataSource.resolveStaticCouchURL = function () {
-    return "http://localhost:6789/testFile/test_id";
-};
-
 fluid.defaults("kettle.tests.dataSource.3.CouchDB.URL.standard", {
     gradeNames: ["kettle.tests.dataSource.pouchDB.environment"],
     name: "3. Testing CouchDB URL datasource with standard response",
@@ -83,9 +78,12 @@ fluid.defaults("kettle.tests.dataSource.3.CouchDB.URL.standard", {
             type: "kettle.dataSource.URL",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
+                customUrl: "http://localhost:6789/testFile/test_id",
+                // Tests support for custom URL resolving - simply returns an chosen options member
                 invokers: {
                     resolveUrl: {
-                        funcName: "kettle.tests.dataSource.resolveStaticCouchURL"
+                        funcName: "fluid.identity",
+                        args: "{that}.options.customUrl"
                     }
                 }
             }

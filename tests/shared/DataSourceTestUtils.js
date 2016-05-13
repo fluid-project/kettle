@@ -162,7 +162,7 @@ kettle.tests.simpleDSModuleSource = function (options) {
     var modules = [{
         name: options.name + (options.testPromiseAPI ? " - via promise API" : ""),
         tests: [{
-            expect: 1,
+            expect: 1 + (options.expect || 0),
             name: "Simple " + dataSourceMethod + " test",
             sequence: sequence
         }]

@@ -26,13 +26,14 @@ fluid.registerNamespace("kettle.tests.dataSource.URL");
 
 // HTTPS test
 
-// TODO: This test currently just hangs
-
 // See http://stackoverflow.com/questions/23601989/client-certificate-validation-on-server-side-depth-zero-self-signed-cert-error
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 fluid.defaults("kettle.tests.dataSource.https", {
+    // NB, slight misuse of singleRequest.config since we are not using its accompanying testDefs
     gradeNames: ["kettle.tests.singleRequest.config", "kettle.tests.simpleDataSourceTest"],
+    name: "HTTPS dataSource test",
+    expect: 1, // for assertion inside HTTPMethods get handler
     httpsServerOptions: {
         key: fs.readFileSync(__dirname + "/data/testkey.pem"),
         cert: fs.readFileSync(__dirname + "/data/testkey-cert.pem")
@@ -40,11 +41,17 @@ fluid.defaults("kettle.tests.dataSource.https", {
     distributeOptions: {
         serverType: {
             target: "{that kettle.server}.options.members.httpServer",
-            record: "@expand:kettle.server.httpsServer({kettle.tests.dataSource.https}.options.httpsServerOptions, {that}.expressApp)"
+            record: "@expand:kettle.server.httpsServer({kettle.tests.dataSource.https}.options.httpsServerOptions, {kettle.server}.expressApp)"
         },
         handlerType: {
             target: "{that kettle.app}.options.requestHandlers.testHandler.type",
             record: "kettle.tests.HTTPMethods.get.handler"
+        }
+    },
+    invokers: {
+        responseFunc: {
+            funcName: "kettle.tests.dataSource.testResponse",
+            args: ["{that}.options.expected", "{arguments}.0"]
         }
     },
     expected: {
@@ -137,7 +144,7 @@ fluid.defaults("kettle.tests.dataSouce.URL.notFound", {
 
 fluid.test.runTests([
 // Attempt to test HTTPS datasource - server currently just hangs without passing on request
-//    "kettle.tests.dataSource.https"
+    "kettle.tests.dataSource.https",
     "kettle.tests.dataSource.URL.hangup",
     "kettle.tests.dataSouce.CouchDB.hangup",
     "kettle.tests.dataSouce.URL.notFound"

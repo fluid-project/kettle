@@ -142,9 +142,17 @@ We document these configuration options in the next section:
         </tr>
         <tr>
             <td><code>charEncoding</code></td>
-            <td><code>String</code> (default: <code>utf8</code></td>
+            <td><code>String</code> (default: <code>utf8</code>)</td>
             <td>The character encoding of the incoming HTTP stream used to convert its data to characters - this will be sent directly to the <a href="https://nodejs.org/api/stream.html#stream_readable_setencoding_encoding">setEncoding</code> method of
             the response stream</td>
+        </tr>
+        <tr>
+            <td><code>invokers.resolveUrl</code></td>
+            <td><a href="http://docs.fluidproject.org/infusion/development/Invokers.html"><code>IoC Invoker</code></a> (default: <code>kettle.dataSource.URL.resolveUrl</code>)</td>
+            <td>This invoker can be overridden to customise the process of building the url for a dataSource request. The default implementation uses an invocation of 
+            <a href="http://docs.fluidproject.org/infusion/development/CoreAPI.html#fluid-stringtemplate-template-terms-"><code>fluid.stringTemplate</code></a> to interpolate elements from <code>termMap</code> and the <code>directModel</code>
+            argument into the template string held in <code>url</code>. By overriding this invoker, the user can implement a strategy of their choosing. The supplied arguments to the invoker consist of the values 
+            <code>(url, termMap, directModel)</code> taken from these options and the dataSource request arguments, but the override can replace these with any IoC-sourced values in the invoker definition.</td>
         </tr>
     </tbody>
 </table>
