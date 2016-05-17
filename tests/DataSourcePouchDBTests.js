@@ -13,34 +13,24 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../kettle.js"),
+     kettle = fluid.require("%kettle"),
      gpii = fluid.registerNamespace("gpii"),
      jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 require("gpii-pouchdb");
 require("gpii-express");
+
+gpii.pouch.loadTestingSupport();
 gpii.express.loadTestingSupport();
 
-fluid.require("%gpii-pouchdb/tests/js/environment.js");
-fluid.require("%gpii-pouchdb/tests/js/harness.js");
 require("./shared/DataSourceTestUtils.js");
-
-fluid.defaults("kettle.tests.pouchDB.harness", {
-    gradeNames: "gpii.test.pouch.harness",
-    mergePolicy: {
-        databases: "replace"
-    },
-    databases: {
-        testFile: { data: "%kettle/tests/data/pouchDataSourceTestFile.json"}
-    }
-});
 
 fluid.defaults("kettle.tests.dataSource.pouchDB.environment", {
     gradeNames: ["gpii.test.pouch.environment", "kettle.tests.simpleDataSourceTest"],
     port: 6789,
-    components: {
-        harness: {
-            type: "kettle.tests.pouchDB.harness"
+    pouchConfig: {
+        databases: {
+            testFile: { data: "%kettle/tests/data/pouchDataSourceTestFile.json"}
         }
     },
     initSequence: gpii.test.express.standardSequenceStart
