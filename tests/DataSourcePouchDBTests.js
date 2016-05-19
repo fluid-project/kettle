@@ -18,10 +18,8 @@ var fluid = require("infusion"),
      jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 require("gpii-pouchdb");
-require("gpii-express");
 
 gpii.pouch.loadTestingSupport();
-gpii.express.loadTestingSupport();
 
 require("./shared/DataSourceTestUtils.js");
 
