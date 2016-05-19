@@ -19,7 +19,7 @@
         "express-session": "~1.11.3",
         "serve-static": "1.10.0",
         "ws": "~0.8.0",
-        "infusion": "git://github.com/amb26/infusion.git#e627acf48233f792f993cfae4aa77048616df01c",
+        "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
         "jsonlint": "1.6.0",
         "resolve": "~1.1.6",
         "node-uuid": "~1.4.0",
