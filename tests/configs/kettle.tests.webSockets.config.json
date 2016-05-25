@@ -1,0 +1,31 @@
+{
+    "type": "kettle.tests.webSockets.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "gradeNames": ["kettle.server.ws"],
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "testSocket": {
+                                        "type": "kettle.tests.ws.testSocket.handler",
+                                        "route": "/socket_path"
+                                    },
+                                    "testGet": {
+                                        "type": "kettle.tests.ws.testGet.handler",
+                                        "route": "/"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

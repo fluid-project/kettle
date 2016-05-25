@@ -1,0 +1,35 @@
+{
+    "type": "kettle.tests.static.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "port": 8081,
+                    "components": {
+                        "infusionStatic": {
+                            "type": "kettle.middleware.static",
+                            "options": {
+                                "root": "%infusion/"
+                            }
+                        },
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "staticHandler": {
+                                        "type": "kettle.tests.static.handler",
+                                        "prefix": "/infusion",
+                                        "route": "/*",
+                                        "method": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "type": "kettle.tests.loadConfig.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "subConfig": {
+                "type": "kettle.tests.loadConfig.sub.config"
+            }
+        }
+    },
+    "loadConfigs": "kettle.tests.loadConfig.sub.config.json"
+}

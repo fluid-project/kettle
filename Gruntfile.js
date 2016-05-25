@@ -9,21 +9,19 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://github.com/fluid-project/infusion/raw/master/Infusion-LICENSE.txt
 */
 
-// Declare dependencies
-
 module.exports = function(grunt) {
     "use strict";
 
     grunt.initConfig({
         jshint: {
-            all: ["lib/**/*.js", "test/**/*.js"],
+            all: ["lib/**/*.js", "tests/**/*.js", "examples/**/*.js"],
             buildScripts: ["Gruntfile.js"],
             options: {
                 jshintrc: true
             }
         },
         jsonlint: {
-            src: ["lib/**/*.json", "test/**/*.json"]
+            src: ["lib/**/*.json", "tests/**/*.json", "examples/**/*.json"]
         }
     });
 

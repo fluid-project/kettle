@@ -1,0 +1,11 @@
+{
+    "type": "kettle.tests.CORS.origin.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "distributeOptions": {
+            "record": "@expand:fluid.getGlobalValue(kettle.tests.testCORSOrigin)",
+            "target": "{that middlewareHolder CORS}.options.origin"
+        }
+    },
+    "mergeConfigs": ["./kettle.tests.CORS.config.json"]
+}

@@ -1,0 +1,7 @@
+{
+    "type": "kettle.tests.badConfig.keys.config",
+    "distributeOptions": {
+        "record": "This is a frequent type of mistake that I make",
+        "target": "Forgetting to write the top-level key named \"options\""
+    }
+}

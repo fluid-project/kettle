@@ -1,52 +1,58 @@
 {
     "name": "kettle",
-    "description": "Declarative IoC-based framework for HTTP servers on node.js",
-    "version": "0.1.0-SNAPSHOT",
+    "description": "Declarative IoC-based framework for HTTP and WebSockets servers on node.js based on express and ws",
+    "version": "1.0.0",
     "author": {
         "name": "The Fluid Project"
     },
     "bugs": {
         "url": "http://issues.fluidproject.org/browse/KETTLE"
     },
+    "scripts": {
+        "test": "node tests/all-tests.js"
+    },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
-        "express": "~3.4.3",
-        "socket.io": "~0.9.16",
-        "infusion": "git://github.com/fluid-project/infusion.git#df5f8cfabf815a4086b778e73125c3c952dda4ec",
+        "express": "~4.13.3",
+        "body-parser": "~1.13.3",
+        "cookie-parser": "~1.3.5",
+        "express-session": "~1.11.3",
+        "serve-static": "1.10.0",
+        "ws": "~0.8.0",
+        "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
+        "jsonlint": "1.6.0",
+        "resolve": "~1.1.6",
         "node-uuid": "~1.4.0",
-        "xmlhttprequest": "~1.6.0",
-        "socket.io-client": "~0.9.16"
+        "path-to-regexp": "0.1.7"
     },
     "devDependencies": {
-        "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#b7ef53aac1ca365bf23d35d255fae874faa88b70",
+        "node-jqunit": "~1.1.3",
+        "gpii-pouchdb": "git://github.com/GPII/gpii-pouchdb#5e13a1b6556e70261b3dc204fde67743f1e3ebf1",
+        "gpii-express": "git://github.com/GPII/gpii-express#218d42f2f27d4da92c3eb8b0149daa7a5a0faa88",
         "grunt-shell": "0.6.4",
-        "grunt-contrib-jshint": "~0.9.0",
+        "grunt-contrib-jshint": "0.9.0",
         "grunt-jsonlint": "1.0.4",
-        "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#a4aca06cbaf7523eb1af56ed65ce6bd30b8ec325",
-        "grunt": "~0.4.4"
+        "grunt-gpii": "1.0.0",
+        "grunt": "0.4.5"
     },
-    "licenses": [
-        {
-            "type": "BSD-3-Clause",
-            "url": "http://www.opensource.org/licenses/BSD-3-Clause"
-        }
-    ],
+    "license": "BSD-3-Clause",
     "keywords": [
         "infusion",
         "framework",
         "application",
         "fluid",
         "IoC",
+        "express",
         "Inversion of Control",
         "MVC",
         "evented"
     ],
     "repository": {
         "type": "git",
-        "url": "git://github.com/GPII/kettle.git"
+        "url": "https://github.com/fluid-project/kettle"
     },
     "main": "./kettle.js",
     "engines": {
-        "node": ">=0.8"
+        "node": ">=4.2.1"
     }
 }

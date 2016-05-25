@@ -18,15 +18,26 @@ var fluid = require("infusion"),
 kettle.loadTestingSupport();
 
 var testIncludes = [
+    "./KettleUtilsTests.js",
     "./InitTests.js",
-    "./DataSourceTests.js",
+    "./DataSourceJSONTests.js",
+    "./DataSourceFileTests.js",
+    "./DataSourceURLTests.js",
+    "./DataSourcePouchDBTests.js",
+    "./DataSourceSimpleTests.js",
     "./CrossServerRequestTests.js",
     "./HTTPMethodsTests.js",
-    "./MiddlewareTests.js",
+    "./CORSTests.js",
     "./SessionTests.js",
     "./ConfigLoaderTests.js",
-    "./SocketTests.js",
-    "./ErrorTests.js"
+    "./WebSocketsTests.js",
+    "./SessionWebSocketsTests.js",
+    "./ErrorTests.js",
+    "./BadConfigTests.js",
+    "./BadRequestTests.js",
+    "./GoodRequestTests.js",
+    "./MultiConfigTests.js",
+    "./StaticTests.js"
 ];
 
 fluid.each(testIncludes, function (path) {

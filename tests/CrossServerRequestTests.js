@@ -7,14 +7,14 @@ Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
 
 You may obtain a copy of the License at
-https://github.com/GPII/kettle/LICENSE.txt
+https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 */
 
 "use strict";
 
 var fluid = require("infusion"),
      kettle = require("../kettle.js"),
-     jqUnit = fluid.require("jqUnit");
+     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
  
 kettle.loadTestingSupport();
 
@@ -43,51 +43,66 @@ kettle.tests.endpointReturns = {
     "put":  {payload: "put return value"}
 };
 
-kettle.tests.endpoint = function (type, requestProxy, request) {
-    jqUnit.assertValue("Request proxy is resolvable", requestProxy.events.onSuccess);
+kettle.tests.endpoint = function (type, request) {
     jqUnit.assertValue("Request is resolvable", request.events.onSuccess);
     var value = kettle.tests.endpointReturns[type];
     // test operation of "request promise" as well as requirement for callback wrapper
     fluid.invokeLater(kettle.wrapCallback(function () {
         fluid.log("ENDPOINT Resolving with value ", value);
-        request.requestPromise.resolve(JSON.stringify(value) + "\n");
+        request.handlerPromise.resolve(JSON.stringify(value) + "\n");
     }));
 };
 
-fluid.defaults("kettle.requests.request.handler.getEndpoint", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+fluid.defaults("kettle.tests.serverPair.getEndpoint", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
+        handleRequest: {
             funcName: "kettle.tests.endpoint",
-            args: ["get", "{requestProxy}", "{request}"],
-            dynamic: true
+            args: ["get", "{request}"]
         }
     }
 });
 
-fluid.defaults("kettle.requests.request.handler.postEndpoint", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+fluid.defaults("kettle.tests.serverPair.postEndpoint", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
+        handleRequest: {
             funcName: "kettle.tests.endpoint",
-            args: ["post", "{requestProxy}", "{request}"],
-            dynamic: true
+            args: ["post", "{request}"]
         }
     }
 });
 
-fluid.defaults("kettle.requests.request.handler.putEndpoint", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+fluid.defaults("kettle.tests.serverPair.putEndpoint", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
+        handleRequest: {
             funcName: "kettle.tests.endpoint",
-            args: ["put", "{requestProxy}", "{request}"],
-            dynamic: true
+            args: ["put", "{request}"]
         }
     }
 });
 
-kettle.tests.relay = function (type, dataSource, requestPromise, writeMethod) {
+kettle.tests.dataSource.errorPayload = {
+    isError: true,
+    value: 123,
+    message: "Error payload message"
+};
+
+kettle.tests.dataSource.errorEndpoint = function (request) {
+    request.handlerPromise.reject(kettle.tests.dataSource.errorPayload);
+};
+
+fluid.defaults("kettle.tests.serverPair.errorEndpoint", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.errorEndpoint"
+        }
+    }
+});
+
+kettle.tests.dataSource.relay = function (type, dataSource, handlerPromise, writeMethod) {
     var args = writeMethod ? [undefined, undefined, {writeMethod: writeMethod}] : [];
     var response = dataSource[type].apply(null, args);
     response.then(function (value) { // white-box testing for dataSource resolution
@@ -96,68 +111,96 @@ kettle.tests.relay = function (type, dataSource, requestPromise, writeMethod) {
         if (type === "set") {
             jqUnit.assertEquals("dataSource set payload must have been parsed", "object", typeof(value));
         }
-        requestPromise.resolve(value);
+        handlerPromise.resolve(value);
     }, function (error) {
-        requestPromise.reject(error);
+        handlerPromise.reject(error);
     });
 };
 
-fluid.defaults("kettle.requests.request.handler.getRelay", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+kettle.tests.dataSource.errorRelay = function (dataSource, request) {
+    var response = dataSource.get(null);
+    response.then(function () {
+        jqUnit.fail("Should not receive resolve from error endpoint");
+    }, function (error) {
+        request.handlerPromise.reject(error);
+    });
+};
+
+fluid.defaults("kettle.tests.serverPair.getRelay", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
-            funcName: "kettle.tests.relay",
-            args: ["get", "{relayDataSource}", "{request}.requestPromise"],
-            dynamic: true
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.relay",
+            args: ["get", "{relayDataSource}", "{request}.handlerPromise"]
         }
     }
 });
 
-fluid.defaults("kettle.requests.request.handler.postRelay", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+fluid.defaults("kettle.tests.serverPair.postRelay", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
-            funcName: "kettle.tests.relay",
-            args: ["set", "{relayDataSource}", "{request}.requestPromise"],
-            dynamic: true
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.relay",
+            args: ["set", "{relayDataSource}", "{request}.handlerPromise"]
         }
     }
 });
 
-fluid.defaults("kettle.requests.request.handler.putRelay", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+fluid.defaults("kettle.tests.serverPair.putRelay", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
-            funcName: "kettle.tests.relay",
-            args: ["set", "{relayDataSource}", "{request}.requestPromise", "PUT"],
-            dynamic: true
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.relay",
+            args: ["set", "{relayDataSource}", "{request}.handlerPromise", "PUT"]
+        }
+    }
+});
+
+fluid.defaults("kettle.tests.serverPair.errorRelay", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.errorRelay",
+            args: ["{errorDataSource}", "{request}"]
         }
     }
 });
 
 fluid.defaults("kettle.tests.serverPair", {
-    gradeNames: ["fluid.eventedComponent", "autoInit"],
+    gradeNames: ["fluid.component"],
     components: {
         sourceServer: {
             type: "kettle.server",
             options: {
                 port: 8085,
+                distributeOptions: {
+                    source: "{that}.options.port", // ideally we will move this top level once we can support non-that here
+                    target: "{serverPair relayServer dataSource}.options.termMap.sourcePort"
+                },
                 components: {
                     sourceApp: {
                         type: "kettle.app",
                         options: {
-                            handlers: {
+                            requestHandlers: {
                                 getEndpoint: {
+                                    type: "kettle.tests.serverPair.getEndpoint",
                                     route: "/endpoint",
-                                    type: "get"
+                                    method: "get"
                                 },
                                 postEndpoint: {
+                                    type: "kettle.tests.serverPair.postEndpoint",
                                     route: "/endpoint",
-                                    type: "post"
+                                    method: "post"
                                 },
                                 putEndpoint: {
+                                    type: "kettle.tests.serverPair.putEndpoint",
                                     route: "/endpoint",
-                                    type: "put"
+                                    method: "put"
+                                },
+                                errorEndpoint: {
+                                    type: "kettle.tests.serverPair.errorEndpoint",
+                                    route: "/errorEndpoint",
+                                    method: "get"
                                 }
                             }
                         }
@@ -173,26 +216,40 @@ fluid.defaults("kettle.tests.serverPair", {
                     relayDataSource: {
                         type: "kettle.dataSource.URL",
                         options: {
-                            url: "http://localhost:8085/endpoint",
+                            url: "http://localhost:%sourcePort/endpoint",
                             writable: true,
                             writeMethod: "POST"
+                        }
+                    },
+                    errorDataSource: {
+                        type: "kettle.dataSource.URL",
+                        options: {
+                            url: "http://localhost:%sourcePort/errorEndpoint"
                         }
                     },
                     relayApp: {
                         type: "kettle.app",
                         options: {
-                            handlers: {
+                            requestHandlers: {
                                 getRelay: {
+                                    type: "kettle.tests.serverPair.getRelay",
                                     route: "/relay",
-                                    type: "get"
+                                    method: "get"
                                 },
                                 postRelay: {
+                                    type: "kettle.tests.serverPair.postRelay",
                                     route: "/relay",
-                                    type: "post"
+                                    method: "post"
                                 },
                                 putRelay: {
+                                    type: "kettle.tests.serverPair.putRelay",
                                     route: "/relay",
-                                    type: "put"
+                                    method: "put"
+                                },
+                                errorRelay: {
+                                    type: "kettle.tests.serverPair.errorRelay",
+                                    route: "/errorRelay",
+                                    method: "get"
                                 }
                             }
                         }
@@ -243,8 +300,27 @@ kettle.tests.putServerPairSequence = [
     }
 ];
 
+kettle.tests.errorServerPairSequence = [
+    {
+        func: "{errorRequest}.send",
+        args: [null, {
+            path: "/errorRelay"
+        }]
+    }, {
+        event: "{errorRequest}.events.onComplete",
+        listener: "kettle.test.assertJSONResponse",
+        args: {
+            message: "Received relayed failure from original failed dataSource",
+            statusCode: 500,
+            string: "{arguments}.0",
+            request: "{errorRequest}",
+            expected: kettle.upgradeError(kettle.tests.dataSource.errorPayload, " while executing HTTP GET on url http://localhost:%sourcePort/errorEndpoint")
+        }
+    }
+];
+
 fluid.defaults("kettle.tests.serverPairTester", {
-    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.serverPair", "autoInit"],
+    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.serverPair"],
     components: {
         getRequest: {
             type: "kettle.test.request.http",
@@ -270,6 +346,13 @@ fluid.defaults("kettle.tests.serverPairTester", {
                 method: "PUT"
             }
         },
+        errorRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                port: 8086,
+                path: "/errorRelay"
+            }
+        },
         fixtures: {
             type: "fluid.test.testCaseHolder",
             options: {
@@ -277,16 +360,20 @@ fluid.defaults("kettle.tests.serverPairTester", {
                     name: "Cross server datasource access",
                     tests: [{
                         name: "Access GET request",
-                        expect: 4,
+                        expect: 3,
                         sequence: kettle.tests.getServerPairSequence
                     }, {
                         name: "Access SET request via POST",
-                        expect: 5, // one extra assertion tests the type of a set response payload
+                        expect: 4, // one extra assertion tests the type of a set response payload
                         sequence: kettle.tests.postServerPairSequence
                     }, {
                         name: "Access SET request via PUT",
-                        expect: 5, // one extra assertion tests the type of a set response payload
+                        expect: 4, // one extra assertion tests the type of a set response payload
                         sequence: kettle.tests.putServerPairSequence
+                    }, {
+                        name: "Relay error state via GET",
+                        expect: 2,
+                        sequence: kettle.tests.errorServerPairSequence
                     }]
                 }]
             }

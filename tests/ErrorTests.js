@@ -7,57 +7,101 @@
  * compliance with this License.
  *
  * You may obtain a copy of the License at
- * https://github.com/GPII/kettle/LICENSE.txt
+ * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
 
 "use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
     kettle = require("../kettle.js"),
-    jqUnit = fluid.require("jqUnit"),
-    configPath = path.resolve(__dirname, "./configs");
+     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 kettle.loadTestingSupport();
 
 fluid.registerNamespace("kettle.tests.error");
 
-fluid.defaults("kettle.requests.request.handler.requestError", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+fluid.defaults("kettle.tests.error.requestError", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
+        handleRequest: {
             funcName: "fluid.fail",
-            args: "Assertion failed in request - this failure is expected: "
-        }
+            args: "Simulated assertion failed in request - this failure is expected: "
+        },
+        handleFullRequest: "kettle.tests.error.handleFullRequest"
     }
 });
 
-fluid.defaults("kettle.requests.request.handler.requestErrorCode", {
-    gradeNames: ["fluid.littleComponent", "autoInit"],
+// Test overriding of "full request handler" in order to demonstrate forwarding failures to express
+kettle.tests.error.handleFullRequest = function (request, fullRequestPromise, next) {
+    fullRequestPromise.then(function () {
+        next();
+    }, function (err) {
+        request.events.onRequestError.fire(err);
+        fluid.log("kettle.tests.error.handleFullRequest forwarding error to express");
+        next(err);
+    });
+};
+
+fluid.defaults("kettle.tests.error.requestErrorCode.handler", {
+    gradeNames: "kettle.request.http",
     invokers: {
-        handle: {
-            funcName: "kettle.tests.triggerOnErrorCode",
-            args: "{requestProxy}.events.onError"
+        handleRequest: {
+            funcName: "kettle.tests.error.requestErrorCode.handleRequest"
         }
     }
 });
 
-kettle.tests.triggerOnErrorCode = function (onErrorEvent) {
-    onErrorEvent.fire({
+kettle.tests.error.requestErrorCode.handleRequest = function (request) {
+    request.events.onError.fire({
         isError: true,
         message: "Unauthorised",
         statusCode: 401
     });
 };
 
+fluid.defaults("kettle.tests.error.requestErrorAsync.handler", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.error.requestErrorAsync.handleRequest"
+        }
+    }
+});
+
+kettle.tests.error.requestErrorAsync.handleRequest = function () {
+    var wrappedFail = kettle.wrapCallback(function () {
+        throw new Error(
+            // not an appropriate failure strategy, but
+            // we need to test that the next stack will be properly contextualised to back out the request
+                "Uncharacterised error which should cause request failure"
+        );
+    });
+    fluid.invokeLater(wrappedFail);
+};
+
+fluid.defaults("kettle.tests.error.plainRequestError.handler", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.error.plainRequestError.handleRequest"
+        }
+    }
+});
+
+kettle.tests.error.plainRequestError.handleRequest = function (request) {
+    var res = request.res;
+    res.type("text/plain");
+    res.status(500).send("Sending plaintext response error");
+};
+
+
 kettle.tests.triggerGlobalErrorSync = function () {
     "Global Error Triggered".triggerError();
 };
 
-
 kettle.tests.triggerGlobalErrorAsync = function () {
     process.nextTick(function () {
-         // Trigger this error asynchronously to avoid infuriating any of the testing frameworks 
+        // Trigger this error asynchronously to avoid infuriating any of the testing frameworks 
         kettle.tests.triggerGlobalErrorSync();
     });
 };
@@ -69,32 +113,17 @@ kettle.tests.awaitGlobalError = function (priority, message) {
 };
 
 fluid.defaults("kettle.tests.logNotifierHolder", {
-    gradeNames: ["fluid.eventedComponent", "autoInit"],
+    gradeNames: ["fluid.component", "fluid.resolveRootSingle"],
+    singleRootType: "kettle.tests.logNotifierHolder",
     events: {
         logNotifier: null
     }
 });
 
-fluid.staticEnvironment.logNotifierHolder = kettle.tests.logNotifierHolder();
+var logNotifierHolder = kettle.tests.logNotifierHolder();
 
 kettle.tests.notifyGlobalError = function () {
-    fluid.staticEnvironment.logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
-};
-
-// This is a clone of kettle.utils.failureHandler - since there seems to be some kind of exception handler on the
-// path up to TCP.onread that is present in a typical kettle request. When we have FLUID-5518 implemented, this
-// duplication can be eliminated
-kettle.tests.failureHandlerLater = function (args, activity) {
-    var messages = ["ASSERTION FAILED: "].concat(args).concat(activity);
-    fluid.log.apply(null, [fluid.logLevel.FATAL].concat(messages));
-    var request = kettle.getCurrentRequest();
-    request.events.onError.fire({
-        isError: true,
-        message: args[0]
-    });
-    fluid.invokeLater(function () {
-        fluid.builtinFail(false, args, activity);
-    });
+    logNotifierHolder.events.logNotifier.fire(fluid.makeArray(arguments));
 };
 
 kettle.tests.assertHttpStatusError = function (statusCode) {
@@ -109,36 +138,26 @@ kettle.tests.testRequestStatusCode = function (request, expectedCode) {
     jqUnit.assertEquals("Expected HTTP status code", expectedCode, request.nativeResponse.statusCode);
 };
 
-kettle.tests.pushInstrumentedErrors = function () {
-    // Beat jqUnit's exception handler so that we can test kettle's instead
-    fluid.pushSoftFailure(kettle.tests.failureHandlerLater);
-    // Beat the existing global exception handler for the duration of these tests
-    fluid.onUncaughtException.addListener(kettle.tests.notifyGlobalError, "fail", null,
-        fluid.handlerPriorities.uncaughtException.fail);
-};
 
-kettle.tests.popInstrumentedErrors = function () {
-    fluid.pushSoftFailure(-1);
-    // restore whatever was the old listener in this namespace, as per FLUID-5506 implementation
-    fluid.onUncaughtException.removeListener("fail");
-};
 
-// Tests four effects:
+// Tests five effects:
 // i) Triggering a global error will definitely cause a logged message via the uncaught exception handler
 // ii) Triggering an error during a request will also cause a logged message
 // iii) Error within request will generate HTTP error status code
 // iv) Ability to trigger custom HTTP response code with error 
+// and
+// v) Triggering an uncaught exception, even asynchronously, will back out the current request (via wrapper)
 
 kettle.tests.error.testDefs = [{
-    name: "Error tests",
+    name: "Error tests I",
     expect: 4,
     config: {
-        configName: "error",
-        configPath: configPath
+        configName: "kettle.tests.error.config",
+        configPath: "%kettle/tests/configs"
     },
     components: {
         eventHolder: {
-            type: "fluid.eventedComponent",
+            type: "fluid.component",
             options: {
                 events: {
                     logNotifier: "{logNotifierHolder}.events.logNotifier"
@@ -156,7 +175,8 @@ kettle.tests.error.testDefs = [{
         }
     },
     sequence: [{ // Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
-        funcName: "kettle.tests.pushInstrumentedErrors"
+        funcName: "kettle.test.pushInstrumentedErrors",
+        args: "kettle.tests.notifyGlobalError"
     }, {
         funcName: "kettle.tests.triggerGlobalErrorAsync",
         args: "{testCaseHolder}"
@@ -169,13 +189,12 @@ kettle.tests.error.testDefs = [{
         event: "{eventHolder}.events.logNotifier",
         listener: "kettle.tests.awaitGlobalError"
     }, { // TODO: Currently this relies on a timing subtlety to evade bug FLUID-5502 in the IoC testing framework - 
-         // we "happen to know" that an event scheduled with process.nextTick (the node impl of fluid.invokeLater) 
-         // will definitely be invoked before one corresponding to actual I/O
+         // we know that our error handler will definitely be invoked before one corresponding to actual I/O
         event: "{httpRequest}.events.onComplete",
         listener: "kettle.tests.testRequestErrorStatus",
         args: ["{httpRequest}"]
     }, {
-        funcName: "kettle.tests.popInstrumentedErrors"
+        funcName: "kettle.test.popInstrumentedErrors"
     }, {
         func: "{httpRequest2}.send"
     }, {
@@ -183,6 +202,63 @@ kettle.tests.error.testDefs = [{
         listener: "kettle.tests.testRequestStatusCode",
         args: ["{httpRequest2}", 401]
     }]
-}];
+}, {
+    name: "Error tests II",
+    expect: 1,
+    config: {
+        configName: "kettle.tests.error.config",
+        configPath: "%kettle/tests/configs"
+    },
+    components: {
+        httpRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/errorAsync"
+            }
+        }
+    },
+    sequence: [{ // Beat jqUnit's failure handler so we can test Kettle's rather than jqUnit's
+        funcName: "kettle.test.pushInstrumentedErrors",
+        args: "kettle.requestUncaughtExceptionHandler"
+    }, {
+        func: "{httpRequest}.send"
+    }, {
+        event: "{httpRequest}.events.onComplete",
+        listener: "kettle.tests.testRequestErrorStatus",
+        args: ["{httpRequest}"]
+    }, {
+        funcName: "kettle.test.popInstrumentedErrors"
+    }]
+}, {
+    name: "Plaintext response error test",
+    expect: 2,
+    config: {
+        configName: "kettle.tests.error.config",
+        configPath: "%kettle/tests/configs"
+    },
+    components: {
+        httpRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/plainRequestError"
+            }
+        }
+    },
+    sequence: [ {
+        func: "{httpRequest}.send"
+    }, {
+        event: "{httpRequest}.events.onComplete",
+        listener: "kettle.test.assertErrorResponse",
+        args: {
+            message: "Verified plaintext error response",
+            plainText: true,
+            errorTexts: "plaintext response error",
+            statusCode: 500,
+            string: "{arguments}.0",
+            request: "{httpRequest}"
+        }
+    }]
+}
+];
 
 kettle.test.bootstrapServer(kettle.tests.error.testDefs);

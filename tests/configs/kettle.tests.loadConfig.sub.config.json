@@ -1,0 +1,6 @@
+{
+    "type": "kettle.tests.loadConfig.sub.config",
+    "options": {
+        "gradeNames": ["fluid.component"]
+    }
+}

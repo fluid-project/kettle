@@ -1,0 +1,29 @@
+{
+    "type": "examples.simpleConfig",
+    "options": {
+        "gradeNames": "fluid.component",
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "port": 8081,
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "getHandler": {
+                                        "type": "examples.simpleConfig.handler",
+                                        "route": "/handlerPath",
+                                        "method": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "require": "./simpleConfig-config-handler.js"
+}

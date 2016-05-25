@@ -2,53 +2,40 @@
  * Kettle Config Loader Tests
  *
  * Copyright 2013 OCAD University
- * Copyright 2012-2014 Raising the Floor - International
+ * Copyright 2012-2015 Raising the Floor - International
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
  *
  * You may obtain a copy of the License at
- * https://github.com/GPII/kettle/LICENSE.txt
+ * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
  
 "use strict";
 
 var fluid = require("infusion"),
-    path = require("path"),
     kettle = require("../kettle.js"), // TODO: New module loader
-    jqUnit = fluid.require("jqUnit"),
-    configPath = path.resolve(__dirname, "./configs");
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 kettle.loadTestingSupport();
 
-fluid.defaults("kettle.tests.configLoader", {
-    gradeNames: ["fluid.test.testEnvironment", "autoInit"],
-    components: {
-        configLoaderTester: {
-            type: "kettle.tests.configLoaderTester"
-        }
-    }
-});
-
 fluid.defaults("kettle.tests.subcomponent1", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     option: "ORIGINAL"
 });
 
 fluid.defaults("kettle.tests.subcomponent2", {
-    gradeNames: ["autoInit", "fluid.modelComponent"]
+    gradeNames: ["fluid.modelComponent"]
 });
 
 fluid.defaults("kettle.tests.subcomponent3", {
-    gradeNames: ["autoInit", "fluid.littleComponent"],
+    gradeNames: ["fluid.component"],
     option: "OVERRIDE"
 });
 
 var expectedDefaults = {
     config1: {
-        gradeNames: ["config1", "fluid.littleComponent", "kettle.config", "config2",
-            "fluid.eventedComponent", "config4", "config3",
-            "fluid.modelComponent", "fluid.commonModelComponent", "autoInit"],
+        gradeNames: ["fluid.modelComponent", "config3", "kettle.config", "config4", "config2", "fluid.component", "config1"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -62,7 +49,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config2: {
-        gradeNames: ["config2", "fluid.eventedComponent", "fluid.littleComponent", "kettle.config", "config4"],
+        gradeNames: ["kettle.config", "config4", "fluid.component", "config2"],
         components: {
             subcomponent1: {
                 type: "kettle.tests.subcomponent1",
@@ -74,7 +61,7 @@ var expectedDefaults = {
         option2: "OPTION2"
     },
     config3: {
-        gradeNames: ["config3", "fluid.modelComponent", "fluid.commonModelComponent", "fluid.littleComponent", "kettle.config"],
+        gradeNames: ["kettle.config", "fluid.component", "fluid.modelComponent","config3"],
         components: {
             subcomponent1: {
                 options: {
@@ -85,7 +72,7 @@ var expectedDefaults = {
         option3: "OPTION3"
     },
     config4: {
-        gradeNames: ["config4", "kettle.config", "fluid.littleComponent"],
+        gradeNames: ["fluid.component", "kettle.config", "config4"],
         components: {
             subcomponent1: {
                 options: {
@@ -95,25 +82,24 @@ var expectedDefaults = {
         }
     },
     config5: { // never becomes a top-level config and so does not acquire the kettle.config grade
-        gradeNames: ["config5", "config6", "fluid.littleComponent"],
+        gradeNames: ["config5", "config6", "fluid.component"],
         option6: "OPTION6"
     },
     config6: {
-        gradeNames: ["config6", "fluid.littleComponent", "kettle.config", "autoInit"],
+        gradeNames: ["kettle.config", "fluid.component", "config6"],
         option6: "OPTION6"
     }
 };
 
 var expectedSubcomponentOptions = {
-    gradeNames: ["kettle.tests.subcomponent3", "fluid.littleComponent",
-        "kettle.tests.subcomponent1", "autoInit"],
+    gradeNames: ["kettle.tests.subcomponent1", "fluid.component", "kettle.tests.subcomponent3"],
     option: "OVERRIDE"
 };
 
 kettle.tests.testConfigToGrade = function (headName, configNames) {
     var componentName = kettle.config.createDefaults({
             configName: configNames[0],
-            configPath: configPath
+            configPath: "%kettle/tests/configs"
         });
     var expectedParents = fluid.copy(configNames);
 
@@ -134,32 +120,27 @@ kettle.tests.testConfigToGrade = function (headName, configNames) {
     });
 };
 
-kettle.tests.testCreateDefaults = function () {
+jqUnit.test("Load config defaults with types", function () {
+    jqUnit.expect(14);
     kettle.tests.testConfigToGrade("config1", ["config1", "config2", "config3", "config4"]);
     var config1 = fluid.invokeGlobalFunction("config1");
     jqUnit.assertLeftHand("Subcomponent options are correct",
         expectedSubcomponentOptions, config1.subcomponent1.options);
-};
-
-kettle.tests.testCreateNoTypeNameDefaults = function () {
-    kettle.tests.testConfigToGrade(null, ["config5", "config6"]);
-};
-
-fluid.defaults("kettle.tests.configLoaderTester", {
-    gradeNames: ["fluid.test.testCaseHolder", "autoInit"],
-    modules: [{
-        name: "Config Loader",
-        tests: [{
-            expect: 11,
-            name: "kettle.config.createDefaults",
-            func: "kettle.tests.testCreateDefaults"
-        }, {
-            expect: 4,
-            name: "kettle.config.createDefaults no typeName",
-            func: "kettle.tests.testCreateNoTypeNameDefaults"
-        }]
-    }]
+    jqUnit.assertValue("Module-based require has executed from config4", kettle.tests.testModule);
+    jqUnit.assertValue("Bare file require has executed from config3", kettle.tests.testBareRequire);
+    jqUnit.assertValue("Module-relative require has executed from config2", kettle.tests.testModuleRelativeRequire);
 });
 
-kettle.test.bootstrap("kettle.tests.configLoader");
+jqUnit.test("Load config defaults without type", function () {
+    jqUnit.expect(4);
+    kettle.tests.testConfigToGrade(null, ["config5", "config6"]);
+});
 
+jqUnit.test("Load config with \"loadConfig\" directive", function () {
+    var that = kettle.config.loadConfig({
+        configName: "kettle.tests.loadConfig.config",
+        configPath: "%kettle/tests/configs"
+    });
+    jqUnit.assertTrue("Subcomponent has sub grade", fluid.componentHasGrade(that.subConfig, "kettle.tests.loadConfig.sub.config"));
+    jqUnit.assertFalse("Top config does not have sub grade", fluid.componentHasGrade(that, "kettle.tests.loadConfig.sub.config"));
+});

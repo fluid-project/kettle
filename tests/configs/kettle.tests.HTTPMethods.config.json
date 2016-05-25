@@ -1,0 +1,38 @@
+{
+    "type": "kettle.tests.HTTPMethods.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "port": 8081,
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "getHandler": {
+                                        "type": "kettle.tests.HTTPMethods.get.handler",
+                                        "route": "/",
+                                        "method": "get"
+                                    },
+                                    "postHandler": {
+                                        "type": "kettle.tests.HTTPMethods.post.handler",
+                                        "route": "/",
+                                        "method": "post"
+                                    },
+                                    "putHandler": {
+                                        "type": "kettle.tests.HTTPMethods.put.handler",
+                                        "route": "/",
+                                        "method": "put"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

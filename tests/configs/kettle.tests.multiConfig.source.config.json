@@ -1,0 +1,28 @@
+{
+    "type": "kettle.tests.multiConfig.source.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "port": 8081,
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "getHandler": {
+                                        "type": "kettle.tests.multiConfig.source.get.handler",
+                                        "route": "/",
+                                        "method": "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}                                    

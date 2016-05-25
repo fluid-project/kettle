@@ -1,0 +1,11 @@
+{
+    "type": "kettle.tests.CORS.noCred.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "distributeOptions": {
+            "record": false,
+            "target": "{that middlewareHolder CORS}.options.credentials"
+        }
+    },
+    "mergeConfigs": ["./kettle.tests.CORS.config.json"]
+}

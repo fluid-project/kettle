@@ -1,0 +1,27 @@
+{
+    "type": "kettle.tests.CORS.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "components": {
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "CORS": {
+                                        "type": "kettle.tests.CORS.handler",
+                                        "route": "/",
+                                        "method": "get, options"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
