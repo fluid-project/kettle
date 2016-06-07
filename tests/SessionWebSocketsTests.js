@@ -9,13 +9,13 @@
  * You may obtain a copy of the License at
  * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
- 
+
 "use strict";
 
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
-    
+
 require("./shared/SessionTestDefs.js");
 
 fluid.defaults("kettle.tests.session.ws.testSocket.handler", {

@@ -14,7 +14,7 @@
 
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
-     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 kettle.loadTestingSupport();
 
@@ -101,7 +101,7 @@ kettle.tests.triggerGlobalErrorSync = function () {
 
 kettle.tests.triggerGlobalErrorAsync = function () {
     process.nextTick(function () {
-        // Trigger this error asynchronously to avoid infuriating any of the testing frameworks 
+        // Trigger this error asynchronously to avoid infuriating any of the testing frameworks
         kettle.tests.triggerGlobalErrorSync();
     });
 };
@@ -144,7 +144,7 @@ kettle.tests.testRequestStatusCode = function (request, expectedCode) {
 // i) Triggering a global error will definitely cause a logged message via the uncaught exception handler
 // ii) Triggering an error during a request will also cause a logged message
 // iii) Error within request will generate HTTP error status code
-// iv) Ability to trigger custom HTTP response code with error 
+// iv) Ability to trigger custom HTTP response code with error
 // and
 // v) Triggering an uncaught exception, even asynchronously, will back out the current request (via wrapper)
 
@@ -188,7 +188,7 @@ kettle.tests.error.testDefs = [{
     }, {
         event: "{eventHolder}.events.logNotifier",
         listener: "kettle.tests.awaitGlobalError"
-    }, { // TODO: Currently this relies on a timing subtlety to evade bug FLUID-5502 in the IoC testing framework - 
+    }, { // TODO: Currently this relies on a timing subtlety to evade bug FLUID-5502 in the IoC testing framework -
          // we know that our error handler will definitely be invoked before one corresponding to actual I/O
         event: "{httpRequest}.events.onComplete",
         listener: "kettle.tests.testRequestErrorStatus",

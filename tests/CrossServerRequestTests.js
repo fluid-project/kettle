@@ -13,9 +13,9 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../kettle.js"),
-     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
- 
+    kettle = require("../kettle.js"),
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
+
 kettle.loadTestingSupport();
 
 fluid.registerNamespace("kettle.tests.dataSource");
@@ -29,7 +29,7 @@ fluid.registerNamespace("kettle.tests.dataSource");
 // in the dataSource implementation in order to recontextualise the new stack frame with an existing
 // Kettle request.
 
-// These tests could be improved further to test the action of the various failure pathways through 
+// These tests could be improved further to test the action of the various failure pathways through
 // the net of promises/dataSources - as well as verifying the proper treatment of the direct payloads
 // themselves
 

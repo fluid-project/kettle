@@ -10,7 +10,7 @@
  * You may obtain a copy of the License at
  * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
- 
+
 "use strict";
 
 var fluid = require("infusion"),
@@ -98,9 +98,9 @@ var expectedSubcomponentOptions = {
 
 kettle.tests.testConfigToGrade = function (headName, configNames) {
     var componentName = kettle.config.createDefaults({
-            configName: configNames[0],
-            configPath: "%kettle/tests/configs"
-        });
+        configName: configNames[0],
+        configPath: "%kettle/tests/configs"
+    });
     var expectedParents = fluid.copy(configNames);
 
     if (headName) {

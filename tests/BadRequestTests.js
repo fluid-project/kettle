@@ -9,7 +9,7 @@
  * You may obtain a copy of the License at
  * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
- 
+
 "use strict";
 
 var fluid = require("infusion"),
@@ -26,7 +26,7 @@ fluid.registerNamespace("kettle.tests.badRequest");
 // jshint ignore:start
 // ignore for unused arguments which must be supplied since app.use ridiculously checks the callee signature
 kettle.tests.badRequest.upgradeError = function (server) {
-    server.expressApp.use(function (err, req, res, next) {
+    server.expressApp.use(function (err, req, res, next) { // eslint-disable-line
         kettle.request.http.errorHandler(res, err);
     });
 };

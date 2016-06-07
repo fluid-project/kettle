@@ -13,10 +13,10 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../kettle.js"),
-     fs = require("fs"),
-     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
-     
+    kettle = require("../kettle.js"),
+    fs = require("fs"),
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
+
 require("./shared/DataSourceTestUtils.js");
 
 kettle.tests.dataSource.ensureWriteableEmpty();
