@@ -32,7 +32,7 @@
         "grunt": "1.0.1",
         "grunt-jsonlint": "1.0.4",
         "grunt-shell": "1.3.0",
-        "node-jqunit": "1.1.3"
+        "node-jqunit": "1.1.4"
     },
     "license": "BSD-3-Clause",
     "keywords": [
