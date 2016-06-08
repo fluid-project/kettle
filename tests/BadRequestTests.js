@@ -23,14 +23,12 @@ require("./shared/HTTPMethodsTestDefs.js");
 fluid.registerNamespace("kettle.tests.badRequest");
 
 // Test the facility to register our own "upgrade error handler" - beat the one within KettleTestUtils
-// jshint ignore:start
 // ignore for unused arguments which must be supplied since app.use ridiculously checks the callee signature
 kettle.tests.badRequest.upgradeError = function (server) {
     server.expressApp.use(function (err, req, res, next) { // eslint-disable-line
         kettle.request.http.errorHandler(res, err);
     });
 };
-// jshint ignore:end
 
 fluid.defaults("kettle.tests.badRequest.testDefTemplate", {
     gradeNames: "fluid.component",

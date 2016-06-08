@@ -13,7 +13,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         eslint: {
-            src: ["./src/**/*.js", "./tests/**/*.js", "./*.js"]
+            src: ["./lib/**/*.js", "./tests/**/*.js", "./*.js"]
         },
         jsonlint: {
             src: ["lib/**/*.json", "tests/**/*.json", "examples/**/*.json"]
