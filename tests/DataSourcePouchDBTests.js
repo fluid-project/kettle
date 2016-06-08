@@ -13,9 +13,9 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = fluid.require("%kettle"),
-     gpii = fluid.registerNamespace("gpii"),
-     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
+    kettle = fluid.require("%kettle"),
+    gpii = fluid.registerNamespace("gpii"),
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 require("gpii-pouchdb");
 

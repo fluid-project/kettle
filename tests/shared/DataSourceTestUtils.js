@@ -13,10 +13,10 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../../kettle.js"),
-     jqUnit = fluid.require("node-jqunit", require, "jqUnit"),
-     fs = require("fs");
- 
+    kettle = require("../../kettle.js"),
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit"),
+    fs = require("fs");
+
 kettle.loadTestingSupport();
 
 fluid.registerNamespace("kettle.tests.dataSource");
@@ -138,7 +138,7 @@ kettle.tests.simpleDSModuleSource = function (options) {
     } else {
         dataSourceArgs.push("{testEnvironment}.events.onResponse.fire");
     }
-    
+
     var dataSourceFunc = "{testEnvironment}.dataSource." + dataSourceMethod;
     var sequence = fluid.makeArray(options.initSequence);
     if (options.testPromiseAPI) {
@@ -152,7 +152,7 @@ kettle.tests.simpleDSModuleSource = function (options) {
             args: dataSourceArgs
         });
     }
-    
+
     sequence.push({
         event: "{testEnvironment}.events." + (options.shouldError ? "onError" : "onResponse"),
         listener: "fluid.identity",

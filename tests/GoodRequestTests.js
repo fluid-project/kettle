@@ -9,7 +9,7 @@
  * You may obtain a copy of the License at
  * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
- 
+
 "use strict";
 
 var fluid = require("infusion"),
@@ -164,5 +164,3 @@ kettle.tests.goodRequest.testDefs = [
 ];
 
 kettle.tests.singleRequest.executeTests(kettle.tests.goodRequest.testDefs, "kettle.tests.goodRequest.testDefTemplate");
-
-

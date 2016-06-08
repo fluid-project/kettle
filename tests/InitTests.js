@@ -10,14 +10,14 @@
  * You may obtain a copy of the License at
  * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
- 
+
 "use strict";
 
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     jqUnit = fluid.require("node-jqunit", null, "jqUnit");
-    
-    
+
+
 fluid.defaults("kettle.tests.init.server", {
     gradeNames: ["kettle.server"],
     members: {
@@ -57,7 +57,7 @@ kettle.tests.init.assertAndCleanup = function (that) {
 
 jqUnit.asyncTest("Kettle server initialisation test", function () {
     jqUnit.expect(1);
-  
+
     kettle.tests.init.server({});
 });
 

@@ -13,12 +13,12 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../kettle.js"),
-     fs = require("fs"),
-     querystring = require("querystring"),
-     http = require("http"),
-     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
-     
+    kettle = require("../kettle.js"),
+    fs = require("fs"),
+    querystring = require("querystring"),
+    http = require("http"),
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
+
 require("./shared/DataSourceTestUtils.js");
 
 kettle.tests.dataSource.ensureWriteableEmpty();
@@ -36,7 +36,7 @@ fluid.defaults("kettle.tests.KETTLE34dataSource2", {
     url: "http://localhost/device",
     port: 998
 });
-    
+
 
 kettle.tests.dataSource.resolutionTests = [ {
     gradeName: "kettle.tests.KETTLE34dataSource",

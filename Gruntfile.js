@@ -8,28 +8,21 @@ Licenses.
 You may obtain a copy of the ECL 2.0 License and BSD License at
 https://github.com/fluid-project/infusion/raw/master/Infusion-LICENSE.txt
 */
-
-module.exports = function(grunt) {
-    "use strict";
+"use strict";
+module.exports = function (grunt) {
 
     grunt.initConfig({
-        jshint: {
-            all: ["lib/**/*.js", "tests/**/*.js", "examples/**/*.js"],
-            buildScripts: ["Gruntfile.js"],
-            options: {
-                jshintrc: true
-            }
+        eslint: {
+            src: ["./lib/**/*.js", "./tests/**/*.js", "./*.js"]
         },
         jsonlint: {
             src: ["lib/**/*.json", "tests/**/*.json", "examples/**/*.json"]
         }
     });
 
-    grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-jsonlint");
     grunt.loadNpmTasks("grunt-shell");
-    grunt.loadNpmTasks("grunt-gpii");
-    
-    grunt.registerTask("lint", "Apply jshint and jsonlint", ["jshint", "jsonlint"]);
+    grunt.loadNpmTasks("fluid-grunt-eslint");
 
+    grunt.registerTask("lint", "Apply jshint and jsonlint", ["eslint", "jsonlint"]);
 };

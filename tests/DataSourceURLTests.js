@@ -1,6 +1,6 @@
 /**
  * Kettle DataSource URL Tests
- * 
+ *
  * Copyright 2016 Raising The Floor - International
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -9,7 +9,7 @@
  * You may obtain a copy of the License at
  * https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
  */
- 
+
 "use strict";
 
 var fluid = require("infusion"),

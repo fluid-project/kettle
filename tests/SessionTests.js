@@ -13,7 +13,7 @@
 "use strict";
 
 var kettle = require("../kettle.js");
-    
+
 require("./shared/SessionTestDefs.js");
 
 kettle.test.bootstrapServer(kettle.tests.session.testDefs);

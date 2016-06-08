@@ -15,7 +15,7 @@
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
-    
+
 kettle.loadTestingSupport();
 
 fluid.defaults("kettle.tests.ws.testSocket.handler", {
@@ -43,7 +43,7 @@ kettle.tests.ws.testSocket.receiveMessage = function (request, data) {
     // value currently to listening to the promise, but it's there as a courtesy
     if (data.index === 1) {
         request.ws.close(); // leave this here for early warning if synchronous close fails in future
-        promise.then(function() {
+        promise.then(function () {
             request.ws.close();
         });
     }

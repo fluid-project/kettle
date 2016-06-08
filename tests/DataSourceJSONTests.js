@@ -13,7 +13,7 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 "use strict";
 
 var fluid = require("infusion"),
-     kettle = require("../kettle.js");
+    kettle = require("../kettle.js");
 
 require("./shared/DataSourceTestUtils.js");
 
