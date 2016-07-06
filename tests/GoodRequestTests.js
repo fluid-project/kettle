@@ -156,11 +156,43 @@ fluid.defaults("kettle.tests.goodRequest.mismatchRoute.config", {
     }
 });
 
+/* KETTLE-45 handler with gradeNames support */
+
+fluid.defaults("kettle.tests.goodRequest.gradeNames.config", {
+    handler: {
+        type: "kettle.tests.goodRequest.gradeNames.handler",
+        gradeNames: "kettle.tests.goodRequest.gradeNames.mixin",
+        method: "get"
+    },
+    name: "Good request: gradeNames for handler",
+    message: "Received response from handler with gradeNames",
+    expected: {message: "Fetched from derived grade"}
+});
+
+fluid.defaults("kettle.tests.goodRequest.gradeNames.handler", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.goodRequest.gradeNames.handleRequest"
+        }
+    }
+});
+
+fluid.defaults("kettle.tests.goodRequest.gradeNames.mixin", {
+    gradeNames: "fluid.component",
+    mixinValue: "Fetched from derived grade"
+});
+
+kettle.tests.goodRequest.gradeNames.handleRequest = function (request) {
+    request.events.onSuccess.fire({message: request.options.mixinValue});
+};
+
 kettle.tests.goodRequest.testDefs = [
     "kettle.tests.goodRequest.emptyParameter.config",
     "kettle.tests.goodRequest.doubleResponse.config",
     "kettle.tests.goodRequest.options.config",
-    "kettle.tests.goodRequest.mismatchRoute.config"
+    "kettle.tests.goodRequest.mismatchRoute.config",
+    "kettle.tests.goodRequest.gradeNames.config"
 ];
 
 kettle.tests.singleRequest.executeTests(kettle.tests.goodRequest.testDefs, "kettle.tests.goodRequest.testDefTemplate");

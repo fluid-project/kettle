@@ -43,13 +43,18 @@ multiple apps are merged together from different sources to produce combined app
         <tr>
             <td><code>type</code></td>
             <td><code>String</code></td>
-            <td>The name of a request handling grade, which must be descended from <code>kettle.request</code>. If you supply the <code>method</code> field, your grade must be descended from <code>kettle.request.http</code></td>
+            <td>The name of a request handling grade, which must be descended from <code>kettle.request</code>. If you supply the <code>method</code> field, your grade must be descended from <code>kettle.request.http</code>.</td>
         </tr>
         <tr>
             <td><code>route</code></td>
             <td><code>String</code></td>
             <td>An express-compatible <a href="http://expressjs.com/guide/routing.html">routing</a> string, expressing the range of HTTP paths to be handled by this handler, together with any named parameters and query parameters
-            that should be captured. The exact syntax for route matching is documented more precisely at <a href="https://github.com/pillarjs/path-to-regexp">pillarjs</a></td>
+            that should be captured. The exact syntax for route matching is documented more precisely at <a href="https://github.com/pillarjs/path-to-regexp">pillarjs</a>.</td>
+        </tr>
+        <tr>
+            <td><code>gradeNames</code> (optional)</td>
+            <td><code>String/Array of String</code></td>
+            <td>One or more grade names which will be mixed in to the constructed handler when it is constructed.</td>
         </tr>
         <tr>
             <td><code>prefix</code> (optional)</td>
@@ -59,14 +64,13 @@ multiple apps are merged together from different sources to produce combined app
             this is the same behaviour as express.js <a href="http://expressjs.com/api.html#app.use">routing system</a>. It is primarily useful when using <a href="#thing">static middleware</a> which will compare the
             <code>req.url</code> value with the filesystem path relative to its mount point.
         </tr>
-        
         <tr>
             <td><code>method</code> (optional)</td>
             <td><code>String</code> value – one of the valid <a href="https://github.com/nodejs/node/blob/master/deps/http_parser/http_parser.h#L88">HTTP methods</a> supported by node.js, expressed in lower case, or else a comma-separated 
             sequence of such values.
             </td>
             <td>The HTTP request type(s) which this handler will match. <code>method</code> is omitted in the 
-            case that the request handling grade is not descended from <code>kettle.request.http</code> – the only currently supported requests of that type are WebSockets requests descended from <code>kettle.request.ws</code> 
+            case that the request handling grade is not descended from <code>kettle.request.http</code> – the only currently supported requests of that type are WebSockets requests descended from <code>kettle.request.ws</code>.
         </tr>
     </tbody>
 </table>
