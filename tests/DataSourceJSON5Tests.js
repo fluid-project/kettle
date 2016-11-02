@@ -1,7 +1,7 @@
 /*
-Kettle Data Source JSON tests
+Kettle Data Source JSON5 tests
 
-Copyright 2012-2015 Raising the Floor - International
+Copyright 2012-2016 Raising the Floor - International
 
 Licensed under the New BSD license. You may not use this file except in
 compliance with this License.
@@ -19,7 +19,7 @@ require("./shared/DataSourceTestUtils.js");
 
 // JSON parsing and diagnostics tests
 
-fluid.defaults("kettle.tests.dataSourceJSONTester", {
+fluid.defaults("kettle.tests.dataSourceJSON5Tester", {
     gradeNames: ["fluid.test.testEnvironment", "kettle.tests.dataSource.onErrorLink"],
     events: {
         onError: null
@@ -28,7 +28,12 @@ fluid.defaults("kettle.tests.dataSourceJSONTester", {
         faultyJSONDataSource: {
             type: "kettle.dataSource.file.moduleTerms",
             options: {
-                path: "%kettle/tests/data/invalid/invalidJSONFile.json"
+                path: "%kettle/tests/data/invalid/invalidJSON5File.json5",
+                components: {
+                    encoding: {
+                        type: "kettle.dataSource.encoding.JSON5"
+                    }
+                }
             }
         },
         testCaseHolder: {
@@ -44,7 +49,7 @@ fluid.defaults("kettle.tests.dataSourceJSONTester", {
                             args: ["{faultyJSONDataSource}"]
                         }, {
                             event: "{testEnvironment}.events.onError",
-                            listener: "kettle.tests.expectJSONDiagnostic"
+                            listener: "kettle.tests.expectJSON5Diagnostic"
                         }
                         ]
                     }]
@@ -59,4 +64,4 @@ kettle.tests.fallibleDataSourceRead = function (dataSource) {
     dataSource.get(); // we expect failure - forwarded to root handler
 };
 
-fluid.test.runTests(["kettle.tests.dataSourceJSONTester"]);
+fluid.test.runTests(["kettle.tests.dataSourceJSON5Tester"]);

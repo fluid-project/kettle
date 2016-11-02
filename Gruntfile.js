@@ -16,7 +16,7 @@ module.exports = function (grunt) {
             src: ["./lib/**/*.js", "./tests/**/*.js", "./*.js"]
         },
         jsonlint: {
-            src: ["lib/**/*.json", "tests/**/*.json", "examples/**/*.json"]
+            src: ["lib/**/*.json", "tests/data/*.json", "examples/**/*.json"]
         }
     });
 

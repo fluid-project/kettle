@@ -21,6 +21,7 @@ var testIncludes = [
     "./KettleUtilsTests.js",
     "./InitTests.js",
     "./DataSourceJSONTests.js",
+    "./DataSourceJSON5Tests.js",
     "./DataSourceFileTests.js",
     "./DataSourceURLTests.js",
     "./DataSourcePouchDBTests.js",
