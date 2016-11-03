@@ -33,18 +33,18 @@ jqUnit.test("kettle JSON parsing error tests", function () {
     }
 });
 
-jqUnit.test("kettle.readFileSync of invalid JSON", function () {
+jqUnit.test("kettle.JSON.readFileSync of invalid JSON", function () {
     jqUnit.expect(2);
-    kettle.readFileSync(__dirname + "/data/invalid/invalidJSONFile.json").then(function () {
+    kettle.JSON.readFileSync(__dirname + "/data/invalid/invalidJSONFile.json").then(function () {
         jqUnit.fail("Invalid file produced no error");
     }, function (err) {
         kettle.tests.expectJSONDiagnostic(err);
     });
 });
 
-jqUnit.test("kettle.readFileSync of valid JSON", function () {
+jqUnit.test("kettle.JSON.readFileSync of valid JSON", function () {
     jqUnit.expect(1);
-    kettle.readFileSync(__dirname + "/data/dataSourceTestFile.json").then(function (json) {
+    kettle.JSON.readFileSync(__dirname + "/data/dataSourceTestFile.json").then(function (json) {
         jqUnit.assertDeepEq("Content of json file is parsed correctly", json, {
             "dataSource": "works"
         });
@@ -53,18 +53,18 @@ jqUnit.test("kettle.readFileSync of valid JSON", function () {
     });
 });
 
-jqUnit.test("kettle.readFileSync of invalid JSON5", function () {
+jqUnit.test("kettle.JSON.readFileSync of invalid JSON5", function () {
     jqUnit.expect(2);
-    kettle.readFileSync(__dirname + "/data/invalid/invalidJSON5File.json5").then(function () {
+    kettle.JSON.readFileSync(__dirname + "/data/invalid/invalidJSON5File.json5").then(function () {
         jqUnit.fail("Invalid file produced no error");
     }, function (err) {
         kettle.tests.expectJSON5Diagnostic(err);
     });
 });
 
-jqUnit.test("kettle.readFileSync of valid JSON5", function () {
+jqUnit.test("kettle.JSON.readFileSync of valid JSON5", function () {
     jqUnit.expect(1);
-    kettle.readFileSync(__dirname + "/data/dataSourceJSON5TestFile.json5").then(function (json) {
+    kettle.JSON.readFileSync(__dirname + "/data/dataSourceJSON5TestFile.json5").then(function (json) {
         jqUnit.assertDeepEq("Content of json5 file is parsed correctly", json, {
             "dataSource": "works"
         });
@@ -73,9 +73,9 @@ jqUnit.test("kettle.readFileSync of valid JSON5", function () {
     });
 });
 
-jqUnit.test("kettle.readFileSync of nonexistent file", function () {
+jqUnit.test("kettle.JSON.readFileSync of nonexistent file", function () {
     jqUnit.expect(1);
-    kettle.readFileSync(__dirname + "/data/nonexistentFile.json").then(function () {
+    kettle.JSON.readFileSync(__dirname + "/data/nonexistentFile.json").then(function () {
         jqUnit.fail("Invalid file produced no error");
     }, function (err) {
         jqUnit.assertTrue("Error listing filename", err.message.indexOf("nonexistentFile.json") >= 0);
