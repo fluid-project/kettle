@@ -189,3 +189,9 @@ kettle.tests.expectJSONDiagnostic = function (error) {
     jqUnit.assertTrue("Got message mentioning filename ", error.message.indexOf("invalidJSONFile") !== -1);
     jqUnit.assertTrue("Got message mentioning line number of error ", error.message.indexOf("59") !== -1);
 };
+
+kettle.tests.expectJSON5Diagnostic = function (error) {
+    fluid.log("Received JSON5 diagnostic error " + JSON.stringify(error, null, 2));
+    jqUnit.assertTrue("Got message mentioning filename ", error.message.indexOf("invalidJSON5File") !== -1);
+    jqUnit.assertTrue("Got message mentioning line number of error ", error.message.indexOf("49") !== -1);
+};

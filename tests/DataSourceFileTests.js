@@ -469,6 +469,54 @@ fluid.defaults("kettle.tests.dataSource.17.CouchDB.file.set.existing.expand", {
     }
 });
 
+fluid.defaults("kettle.tests.dataSource.18.JSON5file.standard", {
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
+    name: "18. Testing JSON5 file datasource with standard response",
+    components: {
+        dataSource: {
+            type: "kettle.dataSource.file.moduleTerms",
+            options: {
+                path: "%kettle/tests/data/dataSourceJSON5TestFile.json5",
+                components: {
+                    encoding: {
+                        type: "kettle.dataSource.encoding.JSON5"
+                    }
+                }
+            }
+        }
+    },
+    invokers: {
+        responseFunc: {
+            funcName: "kettle.tests.dataSource.testResponse",
+            args: [{
+                dataSource: "works"
+            }, "{arguments}.0"]
+        }
+    }
+});
+
+fluid.defaults("kettle.tests.dataSource.19.JSON5file.empty", {
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
+    name: "19. Testing JSON5 file datasource with empty response",
+    components: {
+        dataSource: {
+            type: "kettle.dataSource.file.moduleTerms",
+            options: {
+                path: "%kettle/tests/data/emptyDataSourceTestFile.txt",
+                components: {
+                    encoding: {
+                        type: "kettle.dataSource.encoding.JSON5"
+                    }
+                }
+            }
+        }
+    },
+    invokers: {
+        responseFunc: "kettle.tests.dataSource.testEmptyResponse"
+    }
+});
+
+
 
 kettle.tests.dataSource.standardTests = [
     "kettle.tests.dataSource.1.file.empty",
@@ -487,7 +535,9 @@ kettle.tests.dataSource.standardTests = [
     "kettle.tests.dataSource.14.CouchDB.file.set",
     "kettle.tests.dataSource.15.CouchDB.file.set.existing",
     "kettle.tests.dataSource.16.file.set.expand",
-    "kettle.tests.dataSource.17.CouchDB.file.set.existing.expand"
+    "kettle.tests.dataSource.17.CouchDB.file.set.existing.expand",
+    "kettle.tests.dataSource.18.JSON5file.standard",
+    "kettle.tests.dataSource.19.JSON5file.empty"
 ];
 
 // Convert each of the standard test fixture grades into tests of the equivalent promise-based API

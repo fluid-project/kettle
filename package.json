@@ -23,7 +23,8 @@
         "jsonlint": "1.6.0",
         "resolve": "1.1.6",
         "node-uuid": "1.4.7",
-        "path-to-regexp": "1.5.3"
+        "path-to-regexp": "1.5.3",
+        "json5": "0.5.0"
     },
     "devDependencies": {
         "fluid-grunt-eslint": "18.1.2",

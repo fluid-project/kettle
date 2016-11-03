@@ -1,0 +1,60 @@
+{
+    "preferences": {
+        "contexts": {
+            "gpii-default": {
+                "name": "Default preferences",
+                "preferences": {
+                    "http://registry.gpii.net/common/fontSize": 15,
+                    "http://registry.gpii.net/common/speechRate": 15
+                }
+            },
+            "nighttime-at-home": {
+                "name": "Nighttime at home",
+                "preferences": {
+                    "http://registry.gpii.net/common/fontSize": 18
+                },
+                "metadata": [
+                   {
+                        "type": "required",
+                        "scope": ["http://registry.gpii.net/common/fontSize"],
+                        "value": 100
+                    }
+                ],
+                "conditions": [
+                    {
+                        "type": "http://gpii.net/common/operators/inRange",
+                        "max": 1800,
+                        "min": 600,
+                        "inputPath": "http://registry.gpii.net/conditions/timeOfDay"
+                    }
+                ]
+            }
+        }
+    },
+    "deviceContext": {
+        "OS": {
+            "id": "win32",
+            "version": "5.0.0"
+        },
+        "solutions": [
+            {
+                "id": "com.microsoft.windows.onscreenKeyboard"
+            }, {
+                "id": "com.microsoft.windows.mouseTrailing"
+            }, {
+                "id": "org.nvda-project"
+            }, {
+                "id": "com.freedomScientific.jaws"
+                // <---- missing "}" for making it valid
+        ]
+    },
+    "environmentReporter": {
+        "http://registry.gpii.net/terms/environment/brightness": 60,
+        "http://registry.gpii.net/terms/environment/sound": -6,
+        "http://registry.gpii.net/terms/environment/timeOfDay": "18:29:00",
+        "http://registry.gpii.net/terms/environment/location": {
+            "lat": "43.999N",
+            "long": "74.382W"
+        }
+    }
+}

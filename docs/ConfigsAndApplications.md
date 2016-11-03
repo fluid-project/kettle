@@ -4,10 +4,10 @@ layout: default
 category: Kettle
 ---
 
-The top-level structure of a Kettle application can be described by a "config" file in JSON format. A Kettle "config"
+The top-level structure of a Kettle application can be described by a "config" file in JSON or [JSON5](http://json5.org/) format. A Kettle "config"
 describes the configuration of a number of "Kettle apps" ([grade](http://docs.fluidproject.org/infusion/development/ComponentGrades.html) [`kettle.app`](RequestHandlersAndApps.md#kettle.app)) 
 hosted in a number of "Kettle servers" (grade [`kettle.server`](Servers.md)). 
-The config JSON file represents an Infusion [component tree](http://docs.fluidproject.org/infusion/development/HowToUseInfusionIoC.html). If you aren't familiar
+The config JSON (or JSON5) file represents an Infusion [component tree](http://docs.fluidproject.org/infusion/development/HowToUseInfusionIoC.html). If you aren't familiar
 with the syntax and meaning of component trees, it is a good idea to browse the documentation, tutorials and examples at the 
 Infusion [documentation site](http://docs.fluidproject.org/infusion/development/). Kettle components are currently derived from
 the base grade `fluid.component`, so you can ignore for these purposes the parts of the Infusion documentation relating to model and view components.
@@ -79,7 +79,7 @@ Kettle applications can be started in a variety of ways, both programmatically a
 
 ### Starting a Kettle config programmatically
 
-Kettle includes a driver function, `kettle.config.loadConfig` which will load and run a Kettle application defined as a JSON file in the filesystem. It accepts an `options` structure which includes the
+Kettle includes a driver function, `kettle.config.loadConfig` which will load and run a Kettle application defined as a JSON or JSON5 file in the filesystem. It accepts an `options` structure which includes the
 following fields:
 
 |Member name| Type | Description |

@@ -258,6 +258,7 @@ Kettle features three built-in content encoding grades which can be configured a
 |Grade name| Encoding type | Content-Type header |
 |----------|---------------|----------------|
 |`kettle.dataSource.encoding.JSON`|[JSON](http://json.org)|`application/json`|
+|`kettle.dataSource.encoding.JSON5`|[JSON5](http://json5.org)|`application/json5`|
 |`kettle.dataSource.encoding.formenc`|[form encoding](http://www.w3.org/TR/html401/interact/forms.html#didx-applicationx-www-form-urlencoded)|`application/x-www-form-urlencoded`|
 |`kettle.dataSource.encoding.none`|No encoding|`text/plain`|
 

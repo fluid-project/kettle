@@ -25,7 +25,7 @@ jqUnit.test("kettle JSON parsing error tests", function () {
     }, "non-string");
 
     jqUnit.expect(1);
-    var nonJSON = fs.readFileSync(__dirname + "/data/invalidJSONFile.jsonx", "utf8");
+    var nonJSON = fs.readFileSync(__dirname + "/data/invalid/invalidJSONFile.json", "utf8");
     try {
         kettle.JSON.parse(nonJSON);
     } catch (error) {
@@ -35,10 +35,41 @@ jqUnit.test("kettle JSON parsing error tests", function () {
 
 jqUnit.test("kettle.JSON.readFileSync of invalid JSON", function () {
     jqUnit.expect(2);
-    kettle.JSON.readFileSync(__dirname + "/data/invalidJSONFile.jsonx").then(function () {
+    kettle.JSON.readFileSync(__dirname + "/data/invalid/invalidJSONFile.json").then(function () {
         jqUnit.fail("Invalid file produced no error");
     }, function (err) {
         kettle.tests.expectJSONDiagnostic(err);
+    });
+});
+
+jqUnit.test("kettle.JSON.readFileSync of valid JSON", function () {
+    jqUnit.expect(1);
+    kettle.JSON.readFileSync(__dirname + "/data/dataSourceTestFile.json").then(function (json) {
+        jqUnit.assertDeepEq("Content of json file is parsed correctly", json, {
+            "dataSource": "works"
+        });
+    }, function () {
+        jqUnit.fail("valid file produced an error");
+    });
+});
+
+jqUnit.test("kettle.JSON.readFileSync of invalid JSON5", function () {
+    jqUnit.expect(2);
+    kettle.JSON.readFileSync(__dirname + "/data/invalid/invalidJSON5File.json5").then(function () {
+        jqUnit.fail("Invalid file produced no error");
+    }, function (err) {
+        kettle.tests.expectJSON5Diagnostic(err);
+    });
+});
+
+jqUnit.test("kettle.JSON.readFileSync of valid JSON5", function () {
+    jqUnit.expect(1);
+    kettle.JSON.readFileSync(__dirname + "/data/dataSourceJSON5TestFile.json5").then(function (json) {
+        jqUnit.assertDeepEq("Content of json5 file is parsed correctly", json, {
+            "dataSource": "works"
+        });
+    }, function () {
+        jqUnit.fail("valid file produced an error");
     });
 });
 
