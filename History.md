@@ -1,3 +1,12 @@
+1.2.0 / 2016-11-03
+
+* GPII-2110: Added support for JSON5 files both in DataSources and configs 
+
+1.1.1 / 2016-11-01
+==================
+
+* KETTLE-48: Updated to latest gpii-express to fix tests under npm 3
+
 1.1.0 / 2016-07-15
 ==================
 
