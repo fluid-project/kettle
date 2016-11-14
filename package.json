@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Declarative IoC-based framework for HTTP and WebSockets servers on node.js based on express and ws",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "author": {
         "name": "The Fluid Project"
     },
@@ -28,10 +28,12 @@
     },
     "devDependencies": {
         "fluid-grunt-eslint": "18.1.2",
+        "eslint-config-fluid": "1.0.0",
         "gpii-express": "git://github.com/GPII/gpii-express#58a2f3fc1699a4e14735673d3c43edde7b705666",
         "gpii-pouchdb": "git://github.com/GPII/gpii-pouchdb#a6a3322fdf059b8a1109f0763454b3f7d8839105",
         "grunt": "1.0.1",
         "grunt-jsonlint": "1.0.4",
+        "fluid-grunt-json5lint": "1.0.0",
         "grunt-shell": "1.3.0",
         "node-jqunit": "1.1.4"
     },

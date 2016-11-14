@@ -1,4 +1,10 @@
+1.2.1 / 2016-11-14
+==================
+
+* GPII-2110: Added JSON5 linting task, moved JS linting to eslint-config-fluid shared rules
+
 1.2.0 / 2016-11-03
+==================
 
 * GPII-2110: Added support for JSON5 files both in DataSources and configs 
 
