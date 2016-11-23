@@ -1,3 +1,8 @@
+1.2.2 / 2016-11-23
+==================
+
+* Removed unused dependency node-uuid following deprecation warning
+
 1.2.1 / 2016-11-14
 ==================
 
