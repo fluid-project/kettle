@@ -45,10 +45,12 @@ fluid.defaults("kettle.tests.dataSource.pouchDB.write.environment", {
     }
 });
 
-kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directModel, dataSourceModel) {
+kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directModel, dataSourceModel, assertFunc) {
+    assertFunc = assertFunc ? assertFunc : "assertDeepEq";
+
     var reread = dataSource.get(directModel);
     reread.then(function (response) {
-        jqUnit.assertDeepEq("Reread expected response from dataSource", dataSourceModel, response);
+        jqUnit[assertFunc]("Reread expected response from dataSource", dataSourceModel, response);
         that.events.onVerify.fire();
     }, function (error) {
         jqUnit.fail("Failed to reread dataSource response: " + error);
@@ -179,7 +181,6 @@ fluid.defaults("kettle.tests.dataSource.16.CouchDB.URL.set.specialChars", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                gradeNames: "kettle.dataSource.CouchDB",
                 url: "http://localhost:6789/testFile/nonexistent_id_for_specialChar",
                 writable: true
             }
@@ -188,7 +189,7 @@ fluid.defaults("kettle.tests.dataSource.16.CouchDB.URL.set.specialChars", {
     invokers: {
         responseFunc: {
             funcName: "kettle.tests.dataSource.testURLSetResponse",
-            args: ["{testEnvironment}", "{testEnvironment}.dataSource", "{testEnvironment}.options.directModel", "{testEnvironment}.options.dataSourceModel"]
+            args: ["{testEnvironment}", "{testEnvironment}.dataSource", "{testEnvironment}.options.directModel", "{testEnvironment}.options.dataSourceModel", "assertLeftHand"]
         }
     }
 });
