@@ -45,12 +45,10 @@ fluid.defaults("kettle.tests.dataSource.pouchDB.write.environment", {
     }
 });
 
-kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directModel, dataSourceModel, assertFunc) {
-    assertFunc = assertFunc ? assertFunc : "assertDeepEq";
-
+kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directModel, dataSourceModel) {
     var reread = dataSource.get(directModel);
     reread.then(function (response) {
-        jqUnit[assertFunc]("Reread expected response from dataSource", dataSourceModel, response);
+        jqUnit.assertDeepEq("Reread expected response from dataSource", dataSourceModel, response);
         that.events.onVerify.fire();
     }, function (error) {
         jqUnit.fail("Failed to reread dataSource response: " + error);
@@ -170,35 +168,10 @@ fluid.defaults("kettle.tests.dataSource.15.CouchDB.URL.set.existing", {
     }
 });
 
-fluid.defaults("kettle.tests.dataSource.16.CouchDB.URL.set.specialChars", {
-    gradeNames: "kettle.tests.dataSource.pouchDB.write.environment",
-    name: "14. Testing CouchDB URL datasource with HTTP - set with data containing special characters",
-    dataSourceMethod: "set",
-    dataSourceModel: {
-        test: "Gerät"
-    },
-    components: {
-        dataSource: {
-            type: "kettle.dataSource.URL",
-            options: {
-                url: "http://localhost:6789/testFile/nonexistent_id_for_specialChar",
-                writable: true
-            }
-        }
-    },
-    invokers: {
-        responseFunc: {
-            funcName: "kettle.tests.dataSource.testURLSetResponse",
-            args: ["{testEnvironment}", "{testEnvironment}.dataSource", "{testEnvironment}.options.directModel", "{testEnvironment}.options.dataSourceModel", "assertLeftHand"]
-        }
-    }
-});
-
 fluid.test.runTests([
     "kettle.tests.dataSource.3.CouchDB.URL.standard",
     "kettle.tests.dataSource.5.CouchDB.URL.missing",
     "kettle.tests.dataSource.5a.CouchDB.URL.missing",
     "kettle.tests.dataSource.14.CouchDB.URL.set",
-    "kettle.tests.dataSource.15.CouchDB.URL.set.existing",
-    "kettle.tests.dataSource.16.CouchDB.URL.set.specialChars"
+    "kettle.tests.dataSource.15.CouchDB.URL.set.existing"
 ]);
