@@ -141,11 +141,46 @@ fluid.defaults("kettle.tests.dataSouce.URL.notFound", {
     }
 });
 
+fluid.defaults("kettle.tests.dataSource.URL.set.specialChars", {
+    gradeNames: ["kettle.tests.singleRequest.config", "kettle.tests.simpleDataSourceTest"],
+    name: "HTTPS dataSource set with special chars test",
+    expect: 1, // for assertion inside HTTPMethods put handler
+    distributeOptions: {
+        handlerType: {
+            target: "{that kettle.app}.options.requestHandlers.testHandler.type",
+            record: "kettle.tests.HTTPMethods.put.handler"
+        },
+        handlerMethod: {
+            target: "{that kettle.app}.options.requestHandlers.testHandler.method",
+            record: "put"
+        }
+    },
+    dataSourceMethod: "set",
+    dataSourceModel: {
+        test: "Gerät"
+    },
+    components: {
+        dataSource: {
+            type: "kettle.dataSource.URL",
+            options: {
+                url: "http://localhost:8081/",
+                writable: true
+            }
+        }
+    },
+    invokers: {
+        responseFunc: {
+            funcName: "jqUnit.assertDeepEq",
+            args: ["The data with special chars is successfully received", "{that}.options.dataSourceModel", "{arguments}.0"]
+        }
+    }
+});
 
 fluid.test.runTests([
 // Attempt to test HTTPS datasource - server currently just hangs without passing on request
     "kettle.tests.dataSource.https",
     "kettle.tests.dataSource.URL.hangup",
     "kettle.tests.dataSouce.CouchDB.hangup",
-    "kettle.tests.dataSouce.URL.notFound"
+    "kettle.tests.dataSouce.URL.notFound",
+    "kettle.tests.dataSource.URL.set.specialChars"
 ]);

@@ -50,9 +50,6 @@ fluid.defaults("kettle.tests.dataSource.onErrorLink", {
 
 fluid.defaults("kettle.tests.dataSourceTestCaseHolder", {
     gradeNames: ["fluid.test.testCaseHolder"],
-    mergePolicy: {
-        initSequence: "noexpand"
-    },
     moduleSource: {
         funcName: "kettle.tests.simpleDSModuleSource",
         args: "{testEnvironment}.options"
@@ -72,6 +69,9 @@ kettle.tests.dataSource.defaultErrorFunc = function (shouldError, data) {
 // Base grade for each individual DataSource test fixture: Top-level component holding dataSource, test environment and standard events
 fluid.defaults("kettle.tests.simpleDataSourceTest", {
     gradeNames: ["fluid.test.testEnvironment", "kettle.tests.dataSource.onErrorLink"],
+    mergePolicy: {
+        initSequence: "noexpand"
+    },
     shouldError: false,
     events: {
         onResponse: null,
