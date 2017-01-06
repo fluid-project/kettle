@@ -1,3 +1,8 @@
+1.3.0 / 2017-01-05
+==================
+
+* KETTLE-51: Fixed faulty Content-Length header that did not account for length of UTF-8 encoded bytes
+
 1.2.2 / 2016-11-23
 ==================
 
