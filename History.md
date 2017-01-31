@@ -1,7 +1,12 @@
+1.3.2 / 2017-01-31
+==================
+
+* Updated to quieter version of Infusion and logged created defaults at lower priority
+
 1.3.1 / 2017-01-27
 ==================
 
-* Updated all outdated dpendencies (including to an infusion 3.0.0-dev release)
+* Updated all outdated dependencies (including to an infusion 3.0.0-dev release)
 
 1.3.0 / 2017-01-05
 ==================
