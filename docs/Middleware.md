@@ -120,6 +120,13 @@ fluid.defaults("kettle.middleware.json", {
 Consult the Infusion documentation on the [compact format for expanders](http://docs.fluidproject.org/infusion/development/ExpansionOfComponentOptions.html#compact-format-for-expanders) if you
 are unfamiliar with this syntax for designating elements in component options which arise from function calls.
 
+If your middleware may act asynchronously by performing some raw I/O, you must use the grade `kettle.plainAsyncMiddleware`
+instead. This is to ensure that the Kettle [request component](RequestHandlersAndApps.md#request-components)
+is unmarked during the period that the system is not acting on behalf of the currently incoming request. If the code
+for the middleware is under your control, it is recommended that wherever possible you use [dataSources][DataSources.md]
+for I/O since their callbacks automatically perform the necessary
+[request marking](DataSources.md#callback-wrapping-in-dataSources).
+
 ### Built-in standard middleware bundled with Kettle
 
 Here we describe the built-in middleware supplied with Kettle, which is mostly sourced from standard middleware in the [express](http://expressjs.com/) and [pillarjs](https://github.com/pillarjs)

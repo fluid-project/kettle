@@ -51,6 +51,13 @@ kettle.tests["static"].testDefs = [{
                 method: "GET"
             }
         },
+        packageRequest2: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/infusion/package.json",
+                method: "GET"
+            }
+        },
         missingRequest: {
             type: "kettle.test.request.http",
             options: {
@@ -61,6 +68,8 @@ kettle.tests["static"].testDefs = [{
     },
     sequence: [{
         func: "{packageRequest}.send"
+    }, { // Send 2nd request back-to-back to test KETTLE-57
+        func: "{packageRequest2}.send"
     }, {
         event: "{packageRequest}.events.onComplete",
         listener: "kettle.test.assertJSONResponse",
@@ -70,7 +79,10 @@ kettle.tests["static"].testDefs = [{
             request: "{packageRequest}",
             expected: infusionPackage
         }
-    }, {
+    },
+    // We don't listen for packageRequest2 onComplete since we can't predict its sequence relative to packageRequest and
+    // the IoC Testing Framework doesn't make it easy to express "don't care non-determinism"
+    {
         func: "{missingRequest}.send"
     }, {
         event: "{missingRequest}.events.onComplete",
