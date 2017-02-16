@@ -125,7 +125,7 @@ instead. This is to ensure that the Kettle [request component](RequestHandlersAn
 is unmarked during the period that the system is not acting on behalf of the currently incoming request. If the code
 for the middleware is under your control, it is recommended that wherever possible you use [dataSources][DataSources.md]
 for I/O since their callbacks automatically perform the necessary
-[request marking](DataSources.md#callback-wrapping-in-dataSources).
+[request marking](DataSources.md#callback-wrapping-in-datasources).
 
 ### Built-in standard middleware bundled with Kettle
 

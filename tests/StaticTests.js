@@ -13,7 +13,8 @@
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("../kettle.js");
+    kettle = require("../kettle.js"),
+    jqUnit = fluid.registerNamespace("jqUnit");
 
 kettle.loadTestingSupport();
 
@@ -28,17 +29,23 @@ fluid.defaults("kettle.tests.static.handler", {
     },
     invokers: {
         handleRequest: {
-            funcName: "kettle.request.notFoundHandler"
+            funcName: "kettle.request.verifyingNotFoundHandler"
         }
     }
 });
+
+kettle.request.verifyingNotFoundHandler = function (request) {
+    var markedRequest = kettle.getCurrentRequest(request);
+    jqUnit.assertEquals("Marked request should be active request", request, markedRequest);
+    kettle.request.notFoundHandler(request);
+};
 
 var infusionPackage = fluid.require("%infusion/package.json");
 
 //------------- Test defs for GET, POST, PUT ---------------
 kettle.tests["static"].testDefs = [{
     name: "HTTPMethods GET test",
-    expect: 5,
+    expect: 6,
     config: {
         configName: "kettle.tests.static.config",
         configPath: "%kettle/tests/configs"
