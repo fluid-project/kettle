@@ -23,29 +23,44 @@ fluid.registerNamespace("kettle.tests.static");
 fluid.defaults("kettle.tests.static.handler", {
     gradeNames: "kettle.request.http",
     requestMiddleware: {
+        "verifying": {
+            middleware: "{server}.verifyingUnmarked",
+            priority: "before:static"
+        },
         "static": {
             middleware: "{server}.infusionStatic"
         }
     },
     invokers: {
         handleRequest: {
-            funcName: "kettle.request.verifyingNotFoundHandler"
+            funcName: "kettle.tests.verifyingNotFoundHandler"
         }
     }
 });
 
-kettle.request.verifyingNotFoundHandler = function (request) {
-    var markedRequest = kettle.getCurrentRequest(request);
+kettle.tests.verifyingNotFoundHandler = function (request) {
+    var markedRequest = kettle.getCurrentRequest();
     jqUnit.assertEquals("Marked request should be active request", request, markedRequest);
     kettle.request.notFoundHandler(request);
 };
+
+kettle.tests.verifyingUnmarkedMiddleware = function (req, res, next) {
+    var markedRequest = kettle.getCurrentRequest();
+    jqUnit.assertUndefined("No request should be marked during action of async middleware", markedRequest);
+    fluid.invokeLater(next);
+};
+
+fluid.defaults("kettle.tests.middleware.verifyingUnmarked", {
+    gradeNames: ["kettle.plainAsyncMiddleware"],
+    middleware: kettle.tests.verifyingUnmarkedMiddleware
+});
 
 var infusionPackage = fluid.require("%infusion/package.json");
 
 //------------- Test defs for GET, POST, PUT ---------------
 kettle.tests["static"].testDefs = [{
     name: "HTTPMethods GET test",
-    expect: 6,
+    expect: 9,
     config: {
         configName: "kettle.tests.static.config",
         configPath: "%kettle/tests/configs"
