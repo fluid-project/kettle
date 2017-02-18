@@ -13,7 +13,8 @@
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("../kettle.js");
+    kettle = require("../kettle.js"),
+    jqUnit = fluid.registerNamespace("jqUnit");
 
 kettle.loadTestingSupport();
 
@@ -22,15 +23,36 @@ fluid.registerNamespace("kettle.tests.static");
 fluid.defaults("kettle.tests.static.handler", {
     gradeNames: "kettle.request.http",
     requestMiddleware: {
+        "verifying": {
+            middleware: "{server}.verifyingUnmarked",
+            priority: "before:static"
+        },
         "static": {
             middleware: "{server}.infusionStatic"
         }
     },
     invokers: {
         handleRequest: {
-            funcName: "kettle.request.notFoundHandler"
+            funcName: "kettle.tests.verifyingNotFoundHandler"
         }
     }
+});
+
+kettle.tests.verifyingNotFoundHandler = function (request) {
+    var markedRequest = kettle.getCurrentRequest();
+    jqUnit.assertEquals("Marked request should be active request", request, markedRequest);
+    kettle.request.notFoundHandler(request);
+};
+
+kettle.tests.verifyingUnmarkedMiddleware = function (req, res, next) {
+    var markedRequest = kettle.getCurrentRequest();
+    jqUnit.assertUndefined("No request should be marked during action of async middleware", markedRequest);
+    fluid.invokeLater(next);
+};
+
+fluid.defaults("kettle.tests.middleware.verifyingUnmarked", {
+    gradeNames: ["kettle.plainAsyncMiddleware"],
+    middleware: kettle.tests.verifyingUnmarkedMiddleware
 });
 
 var infusionPackage = fluid.require("%infusion/package.json");
@@ -38,13 +60,20 @@ var infusionPackage = fluid.require("%infusion/package.json");
 //------------- Test defs for GET, POST, PUT ---------------
 kettle.tests["static"].testDefs = [{
     name: "HTTPMethods GET test",
-    expect: 5,
+    expect: 9,
     config: {
         configName: "kettle.tests.static.config",
         configPath: "%kettle/tests/configs"
     },
     components: {
         packageRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/infusion/package.json",
+                method: "GET"
+            }
+        },
+        packageRequest2: {
             type: "kettle.test.request.http",
             options: {
                 path: "/infusion/package.json",
@@ -61,6 +90,8 @@ kettle.tests["static"].testDefs = [{
     },
     sequence: [{
         func: "{packageRequest}.send"
+    }, { // Send 2nd request back-to-back to test KETTLE-57
+        func: "{packageRequest2}.send"
     }, {
         event: "{packageRequest}.events.onComplete",
         listener: "kettle.test.assertJSONResponse",
@@ -70,7 +101,10 @@ kettle.tests["static"].testDefs = [{
             request: "{packageRequest}",
             expected: infusionPackage
         }
-    }, {
+    },
+    // We don't listen for packageRequest2 onComplete since we can't predict its sequence relative to packageRequest and
+    // the IoC Testing Framework doesn't make it easy to express "don't care non-determinism"
+    {
         func: "{missingRequest}.send"
     }, {
         event: "{missingRequest}.events.onComplete",
