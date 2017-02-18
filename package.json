@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Declarative IoC-based framework for HTTP and WebSockets servers on node.js based on express and ws",
-    "version": "1.3.2",
+    "version": "1.4.0",
     "author": {
         "name": "The Fluid Project"
     },
@@ -13,13 +13,13 @@
     },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
-        "express": "4.14.0",
-        "body-parser": "1.16.0",
+        "express": "4.14.1",
+        "body-parser": "1.16.1",
         "cookie-parser": "1.4.3",
-        "express-session": "1.15.0",
+        "express-session": "1.15.1",
         "serve-static": "1.11.2",
-        "ws": "1.1.1",
-        "infusion": "3.0.0-dev.20170131T153243Z.6aab53a",
+        "ws": "2.0.3",
+        "infusion": "3.0.0-dev.20170214T161720Z.6126724",
         "jsonlint": "1.6.2",
         "fluid-resolve": "1.2.0",
         "path-to-regexp": "1.7.0",
@@ -54,6 +54,6 @@
     },
     "main": "./kettle.js",
     "engines": {
-        "node": ">=4.2.1"
+        "node": ">=4.5.0"
     }
 }

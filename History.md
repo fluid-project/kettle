@@ -1,3 +1,10 @@
+1.4.0 / 2017-02-18
+==================
+
+* KETTLE-57: Fix for failure to properly mark request during action of asynchronous middleware (static serving
+middleware was broken prior to this release)
+* Updated to latest dependencies (including ws 2.x)
+
 1.3.2 / 2017-01-31
 ==================
 
