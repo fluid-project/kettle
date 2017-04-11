@@ -1,8 +1,0 @@
-{
-    "type": "config1",
-    "options": {
-        "gradeNames": ["fluid.component"],
-        "option1": "OPTION1"
-    },
-    "mergeConfigs": ["%kettle/tests/configs/config3.json", "./config2.json"]
-}

@@ -1,0 +1,44 @@
+/** This is a config file in the JSON5 format, illustrating how
+  * it is possible to include comments and unquoted keys.
+  * The purpose of this config is to test facilities of the "static middleware" including interpolation of
+  * module-relative paths such as %infusion
+  */ 
+
+{
+    type: "kettle.tests.static.config",
+    options: {
+        gradeNames: ["fluid.component"],
+        components: {
+            server: {
+                type: "kettle.server",
+                options: {
+                    port: 8081,
+                    components: {
+                        infusionStatic: {
+                            type: "kettle.middleware.static",
+                            options: {
+                                root: "%infusion/"
+                            }
+                        },
+                        verifyingUnmarked: {
+                            type: "kettle.tests.middleware.verifyingUnmarked"
+                        },
+                        app: {
+                            type: "kettle.app",
+                            options: {
+                                requestHandlers: {
+                                    staticHandler: {
+                                        type: "kettle.tests.static.handler",
+                                        prefix: "/infusion",
+                                        route: "/*",
+                                        method: "get"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
