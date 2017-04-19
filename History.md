@@ -1,3 +1,8 @@
+1.4.1 / 2017-04-119
+==================
+
+* Updated to dev release of Infusion for fix of self-deduping at root - FLUID-6140
+
 1.4.0 / 2017-02-18
 ==================
 
