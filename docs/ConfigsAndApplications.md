@@ -149,7 +149,7 @@ minimal application will serve as a general template – the full definition of 
             <td>A filename (or array of these) of other config files which are to be included into this application. These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a>
             such as <code>%kettle</code> or else will be interpreted as 
             paths relative to this config's location in the filesystem. The filenames may either end with a <code>.json</code> or a <code>.json5</code> extension representing configuration files in those formats, or the extension may be
-            omitted in which case both of those extensions will be tried as possibilities. Each filename listed here will be loaded and resolved as a grade and then merged with the 
+            omitted in which case both of those extensions (in the order <code>.json</code>, <code>.json5</code>) will be tried as possibilities. Each config file will be loaded and resolved as a grade and then merged with the
             structure of this config (via an algorithm similar to <a href="https://api.jquery.com/jquery.extend/">jQuery.extend</a> – note that because of a current Infusion framework bug <a href="https://issues.fluidproject.org/browse/FLUID-5614">FLUID-5614</a>, 
             all of the semantics of nested <a href="http://docs.fluidproject.org/infusion/development/OptionsMerging.html">options merging</a> will
             not be respected and the merging will occur in a simple-minded way below top level)</td>
