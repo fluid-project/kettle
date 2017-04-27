@@ -104,7 +104,8 @@ For example, from Kettle's top-level directory you can run
 
 The `configPath` argument is required - its meaning is as given in the `configPath` option to `kettle.config.loadConfig` call described in the previous section.
 
-The `configName` argument is optional. If this value is not supplied at the command line, it will be read from the environment variable ``NODE_ENV``. The meaning is as given in the `configName` option to `kettle.config.loadConfig` described in the previous section.
+The `configName` argument is optional. If this value is not supplied at the command line, it will be read from the environment variable ``NODE_ENV``. 
+The meaning is as given in the `configName` option to `kettle.config.loadConfig` described in the previous section.
 
 For example, you can start the sample app from the [previous section](#a-simple-kettle-application) by running
 ```
@@ -147,7 +148,8 @@ minimal application will serve as a general template – the full definition of 
             <td><code>String/Array of String</code></td>
             <td>A filename (or array of these) of other config files which are to be included into this application. These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a>
             such as <code>%kettle</code> or else will be interpreted as 
-            paths relative to this config's location in the filesystem. Each filename listed here will be loaded and resolved as a grade and then merged with the 
+            paths relative to this config's location in the filesystem. The filenames may either end with a <code>.json</code> or a <code>.json5</code> extension representing configuration files in those formats, or the extension may be
+            omitted in which case both of those extensions (in the order <code>.json</code>, <code>.json5</code>) will be tried as possibilities. Each config file will be loaded and resolved as a grade and then merged with the
             structure of this config (via an algorithm similar to <a href="https://api.jquery.com/jquery.extend/">jQuery.extend</a> – note that because of a current Infusion framework bug <a href="https://issues.fluidproject.org/browse/FLUID-5614">FLUID-5614</a>, 
             all of the semantics of nested <a href="http://docs.fluidproject.org/infusion/development/OptionsMerging.html">options merging</a> will
             not be respected and the merging will occur in a simple-minded way below top level)</td>
@@ -157,7 +159,7 @@ minimal application will serve as a general template – the full definition of 
             <td><code>String/Array of String</code></td>
             <td>A filename (or array of these) of other config files which will be loaded before this config is interpreted. These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a>
             such as <code>%kettle</code> or else will be interpreted as 
-            paths relative to this config's location in the filesystem. Each filename listed here will be loaded and resolved as a grade. The workflow is similar to that with <code>mergeConfigs</code>, only the grades represented in <code>loadConfigs</code>
+            paths relative to this config's location in the filesystem. As with <code>mergeConfigs</code>, the filenames may be specified with <code>.json</code>, <code>.json5</code> or no extension. Each filename listed here will be loaded and resolved as a grade. The workflow is similar to that with <code>mergeConfigs</code>, only the grades represented in <code>loadConfigs</code>
             will not be automatically merged with the current config as parent grades. Instead, the user is free to refer to them as required - for example as the <code>type</code> or <code>gradeNames</code> of a <a href="http://docs.fluidproject.org/infusion/development/SubcomponentDeclaration.html">subcomponent</a></td>
         </tr>
         <tr>

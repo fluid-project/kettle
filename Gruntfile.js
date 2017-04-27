@@ -16,10 +16,10 @@ module.exports = function (grunt) {
             src: ["./lib/**/*.js", "./tests/**/*.js", "./*.js"]
         },
         jsonlint: {
-            src: ["lib/**/*.json", "tests/data/*.json", "examples/**/*.json", "./*.json"]
+            src: ["lib/**/*.json", "tests/data/*.json", "tests/configs/*.json", "examples/**/*.json", "./*.json"]
         },
         json5lint: {
-            src: ["lib/**/*.json5", "tests/data/*.json5", "examples/**/*.json5"]
+            src: ["lib/**/*.json5", "tests/data/*.json5", "tests/configs/*.json5", "examples/**/*.json5"]
         }
     });
 
