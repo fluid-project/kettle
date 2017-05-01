@@ -131,7 +131,7 @@ fluid.defaults("kettle.tests.dataSouce.URL.notFound", {
     gradeNames: "kettle.tests.dataSource.URL.hangup",
     name: "z. Testing CouchDB dataSource with server hangup",
     expected: {
-        message: "Cannot GET /notFound\n while executing HTTP GET on url http://localhost:8081/notFound",
+        message: "Cannot GET /notFound while executing HTTP GET on url http://localhost:8081/notFound",
         isError: true,
         statusCode: 404
     },

@@ -1,4 +1,11 @@
-1.4.1 / 2017-04-119
+1.5.0 / 2017-05-01
+==================
+
+* KETTLE-58: Update to "root-safe" self-deduping Infusion with FLUID-6149
+* KETTLE-37: Completed support for JSON5-formatted config files
+* Updated all outdated npm dependencies (including to express 4.15.2)
+
+1.4.1 / 2017-04-19
 ==================
 
 * Updated to dev release of Infusion for fix of self-deduping at root - FLUID-6140

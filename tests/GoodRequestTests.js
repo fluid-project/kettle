@@ -47,6 +47,7 @@ fluid.defaults("kettle.tests.goodRequest.testDefTemplate", {
                 plainText: "{testCaseHolder}.options.plainText",
                 statusCode: "{testCaseHolder}.options.expectedStatusCode",
                 expected: "{testCaseHolder}.options.expected",
+                expectedSubstring: "{testCaseHolder}.options.expectedSubstring",
                 string: "{arguments}.0",
                 request: "{testRequest}"
             }
@@ -148,7 +149,7 @@ fluid.defaults("kettle.tests.goodRequest.mismatchRoute.config", {
     name: "Good request: mismatched route",
     message: "Received response from unhandled request with mismatched route",
     plainText: true,
-    expected: "Cannot GET /route\n",
+    expectedSubstring: "Cannot GET /route",
     expectedStatusCode: 404,
     distributeOptions: {
         target: "{that testRequest}.options.path",
