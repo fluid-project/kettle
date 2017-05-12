@@ -23,6 +23,7 @@ require("./lib/dataSource-file.js");
 require("./lib/dataSource-url.js");
 require("./lib/KettleApp.js");
 require("./lib/KettleConfigLoader.js");
+require("./lib/KettleResolvers.js");
 require("./lib/KettleMiddleware.js");
 require("./lib/KettleMultiConfig.js");
 require("./lib/KettleRouter.js");

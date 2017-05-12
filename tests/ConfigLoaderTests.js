@@ -14,7 +14,7 @@
 "use strict";
 
 var fluid = require("infusion"),
-    kettle = require("../kettle.js"), // TODO: New module loader
+    kettle = fluid.require("%kettle"),
     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 kettle.loadTestingSupport();
