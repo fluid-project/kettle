@@ -12,6 +12,11 @@ with the syntax and meaning of component trees, it is a good idea to browse the 
 Infusion [documentation site](http://docs.fluidproject.org/infusion/development/). Kettle components are currently derived from
 the base grade `fluid.component`, so you can ignore for these purposes the parts of the Infusion documentation relating to model and view components.
 
+Note that Kettle configs can represent any Infusion applications; they are not
+restricted to representing just Kettle applications. Their structure is
+freeform, other than the top level derived from `fluid.component`, and they may
+be used to encode any Infusion application as a component tree.
+
 ## A simple Kettle application
 
 In this section, we will construct a simple Kettle application within JavaScript code, to produce a self-contained example. You can find and try out this
@@ -73,9 +78,11 @@ You can try out these samples in [examples/simpleConfig](../examples/simpleConfi
 load a common module, `simpleConfig-client.js` which tests the server by firing an HTTP request to it and logging the payload – this uses one of the HTTP client drivers taken from Kettle's
 [testing](KettleTestingFramework.md) definitions. Later on, we will see how to issue formal test fixtures against this application by using the [Kettle testing framework](KettleTestingFramework.md).
 
-## Starting a Kettle application
+## Starting an application encoded by a Kettle config
 
-Kettle applications can be started in a variety of ways, both programmatically and from the command line - as well as easily embedded into other applications, be they Infusion component trees or raw Express apps.
+An application encoded as a Kettle config can be started in a variety of ways, 
+both programmatically and from the command line - as well as being easily embedded
+into other applications, whether they are Infusion component trees or raw Express apps.
 
 ### Starting a Kettle config programmatically
 
@@ -113,7 +120,56 @@ For example, you can start the sample app from the [previous section](#a-simple-
 ```
 from the root directory of a Kettle checkout.
 
-## Structure of a Kettle config
+## Referring to external data via resolvers
+
+Kettle configs may refer to external data, for example encoded in environment
+variables, files, or other sources. This is achieved via Infusion's 
+[expander](http://docs.fluidproject.org/infusion/development/ExpansionOfComponentOptions.html#expanders) syntax
+within the config, together with some standard built-in global functions 
+representing _resolvers_.
+
+Here is an example of a little config which accepts a `url` property from an 
+environment variable named `KETTLE_ENV_TEST`, via Infusion's [compact syntax](http://docs.fluidproject.org/infusion/development/ExpansionOfComponentOptions.html#compact-format-for-expanders):
+
+```
+{
+    "type": "fluid.component",
+    "options": {
+        "url": "@expand:kettle.resolvers.env(KETTLE_ENV_TEST)",
+    }
+}
+```
+
+If you need the ability for the target configuration to retain its default
+value in the case that the resolver value is missing, you should use 
+Infusion's [options distributions](http://docs.fluidproject.org/infusion/development/IoCSS.html)
+to target the resolved value rather than writing it at top level within the config.
+
+### kettle.resolvers.env
+
+`kettle.resolvers.env` is a global function which allows the resolution of 
+environment variables. It accepts one argument, which is the name of the
+environment variable to be resolved. If the environment variable is not defined,
+the function returns `undefined`.
+
+### kettle.resolvers.file
+
+`kettle.resolvers.file` is a global function which allows the resolution of
+material held in text files. It accepts one argument, which is the name of the
+file to be loaded. The filename may contain <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a> such as <code>%kettle</code> to indicate a path relative to a module registered with Infusion.
+
+The file must contain text in the UTF-8 encoding. The contents of the file will be
+loaded via node's `fs.loadFileSync` API and returned as a string.
+
+### kettle.resolvers.args
+
+`kettle.resolvers.args` is a global function which allows the resolution of
+the command-line arguments that the current node application was started with.
+It accepts zero or one arguments. If supplied no arguments, it will return the
+full value of node's `process.argv` argument array. If supplied one argument,
+it will return the value of using this to index into `process.argv`.
+
+## Structure of a Kettle application's config
 
 In the previous section, we saw a [simple example](../examples/simpleConfig/examples.simpleConfig.json) of a JSON-formatted Kettle config, which declaratively encodes a Kettle application structure.
 In this section we describe the top-level members of this structure, and in the next secion we'll look at the containment structure in terms of [grades](http://docs.fluidproject.org/infusion/development/ComponentGrades.html).
@@ -123,7 +179,7 @@ minimal application will serve as a general template – the full definition of 
 <table>
     <thead>
         <tr>
-            <th colspan="3">Top-level members of a Kettle "config" configuration file</th>
+            <th colspan="3">Top-level members of a Kettle application's "config" configuration file</th>
         </tr>
         <tr>
             <th>Member</th>
@@ -175,7 +231,7 @@ minimal application will serve as a general template – the full definition of 
 
 ## Containment structure of a Kettle application
 
-The overall structure of a Kettle application (a "config") shows a 4-level pattern:
+The overall structure of a Kettle application within its config shows a 4-level pattern:
 
 * At top level, the application container – this has the simple grade `fluid.component` and does not carry any functionality – it is simply used for grouping the definitions at the next level
     * At 2nd level, one or more Kettle servers – these have the grade [`kettle.server`](Servers.md) – in the case there is just one server it is conventionally named `server`
