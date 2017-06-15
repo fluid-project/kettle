@@ -12,7 +12,8 @@ with the syntax and meaning of component trees, it is a good idea to browse the 
 Infusion [documentation site](http://docs.fluidproject.org/infusion/development/). Kettle components are currently derived from
 the base grade `fluid.component`, so you can ignore for these purposes the parts of the Infusion documentation relating to model and view components.
 
-Note that Kettle configs need not code for Kettle applications. Their structure is
+Note that Kettle configs can represent any Infusion applications; they are not
+restricted to representing just Kettle applications. Their structure is
 freeform, other than the top level derived from `fluid.component`, and they may
 be used to encode any Infusion application as a component tree.
 
@@ -80,7 +81,8 @@ load a common module, `simpleConfig-client.js` which tests the server by firing 
 ## Starting an application encoded by a Kettle config
 
 An application encoded as a Kettle config can be started in a variety of ways, 
-both programmatically and from the command line - as well as easily embedded into other applications, be they Infusion component trees or raw Express apps.
+both programmatically and from the command line - as well as being easily embedded
+into other applications, whether they are Infusion component trees or raw Express apps.
 
 ### Starting a Kettle config programmatically
 
