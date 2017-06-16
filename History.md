@@ -1,3 +1,8 @@
+1.6.0 / 2017-06-16
+==================
+
+* KETTLE-59: Implemented "resolvers" to pull environmental values into configs
+
 1.5.0 / 2017-05-01
 ==================
 
