@@ -1,0 +1,11 @@
+{
+    "options": {
+        "distributeOptions": {
+            "envOverride": {
+                "record": "@expand:kettle.resolvers.args(1)",
+                "target": "{that}.options.option6"
+            }
+        }
+    },
+    "mergeConfigs": ["./config6.json5"]
+}

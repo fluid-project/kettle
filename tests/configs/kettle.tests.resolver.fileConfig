@@ -1,0 +1,11 @@
+{
+    "options": {
+        "distributeOptions": {
+            "fileOverride": {
+                "record": "@expand:kettle.resolvers.file(%kettle/tests/data/secret.txt)",
+                "target": "{that}.options.option6"
+            }
+        }
+    },
+    "mergeConfigs": ["./config6.json5"]
+}
