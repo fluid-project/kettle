@@ -1,0 +1,10 @@
+{
+    "options": {
+        "distributeOptions": {
+            "envOverride": {
+                "record": "@expand:kettle.resolvers.env(KETTLE_ENV_TEST, OPTION6)",
+                "target": "{that}.options.option6"
+            }
+        }
+    }
+}

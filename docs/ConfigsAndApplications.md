@@ -148,9 +148,10 @@ to target the resolved value rather than writing it at top level within the conf
 ### kettle.resolvers.env
 
 `kettle.resolvers.env` is a global function which allows the resolution of 
-environment variables. It accepts one argument, which is the name of the
-environment variable to be resolved. If the environment variable is not defined,
-the function returns `undefined`.
+environment variables. It accepts two arguments, which are the name of the
+environment variable to be resolved and an optional value to be returned in case
+the variable cannot be found. If the environment variable is not defined and
+a default value was not informed, the function returns `undefined`.
 
 ### kettle.resolvers.file
 

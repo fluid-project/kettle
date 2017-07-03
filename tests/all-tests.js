@@ -20,6 +20,7 @@ kettle.loadTestingSupport();
 var testIncludes = [
     "./KettleUtilsTests.js",
     "./InitTests.js",
+    "./ResolverTests.js",
     "./DataSourceJSONTests.js",
     "./DataSourceJSON5Tests.js",
     "./DataSourceFileTests.js",
