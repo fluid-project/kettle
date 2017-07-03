@@ -43,6 +43,12 @@ jqUnit.test("Test absent environment substitution", function () {
         that.options.option6);
 });
 
+jqUnit.test("Test absent environment substitution with default value", function () {
+    var that = kettle.tests.loadConfigTest("kettle.tests.resolver.missingEnvConfigDefault");
+    jqUnit.assertEquals("Environment value is resolved", "OPTION6",
+        that.options.option6);
+});
+
 jqUnit.test("Test present file substitution", function () {
     var that = kettle.tests.loadConfigTest("kettle.tests.resolver.fileConfig");
     jqUnit.assertEquals("Environment value is resolved", "This is a secret secret",
