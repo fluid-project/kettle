@@ -1,3 +1,8 @@
+1.6.1 / 2017-07-13
+==================
+
+* GPII-2483: Reverted to Fluid community edition of "resolve" in order to resolve UNC path issues on Windows
+
 1.6.0 / 2017-06-16
 ==================
 

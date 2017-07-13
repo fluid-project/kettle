@@ -29,6 +29,7 @@ var testIncludes = [
     "./CrossServerRequestTests.js",
     "./HTTPMethodsTests.js",
     "./CORSTests.js",
+    "./ResolverTests.js",
     "./SessionTests.js",
     "./ConfigLoaderTests.js",
     "./WebSocketsTests.js",
