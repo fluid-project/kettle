@@ -1,3 +1,8 @@
+1.6.4 / 2017-07-24
+==================
+
+* GPII-2483: Updated dependencies to allow operation from bare drive letter on Windows
+
 1.6.2 / 2017-07-14
 ==================
 

@@ -28,8 +28,8 @@
     "devDependencies": {
         "fluid-grunt-eslint": "18.1.2",
         "eslint-config-fluid": "1.1.0",
-        "gpii-express": "1.0.8",
-        "gpii-pouchdb": "1.0.4",
+        "gpii-express": "1.0.9",
+        "gpii-pouchdb": "1.0.5",
         "grunt": "1.0.1",
         "grunt-jsonlint": "1.1.0",
         "fluid-grunt-json5lint": "1.0.0",
