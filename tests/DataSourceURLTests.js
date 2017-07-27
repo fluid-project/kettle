@@ -14,7 +14,8 @@
 
 var fluid = require("infusion"),
     fs = require("fs"),
-    kettle = fluid.require("%kettle");
+    kettle = fluid.require("%kettle"),
+    jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 kettle.loadTestingSupport();
 
@@ -175,6 +176,20 @@ fluid.defaults("kettle.tests.dataSource.URL.set.specialChars", {
         }
     }
 });
+
+jqUnit.test("GPII-2147: Testing that localhost is properly replaced by 127.0.0.1 in prepareRequestOptions", function () {
+    var permittedOptions = kettle.dataSource.URL.requestOptions;
+    var userStaticOptions = {
+        protocol: "http:",
+        host: "localhost",
+        hostname: "localhost",
+        path: "/preferences/sammy"
+    };
+    var returned = kettle.dataSource.URL.prepareRequestOptions({}, undefined, {}, kettle.dataSource.URL.requestOptions, {}, userStaticOptions, undefined);
+    jqUnit.assertEquals("host is 127.0.0.1", returned.host, "127.0.0.1");
+    jqUnit.assertEquals("hostname is 127.0.0.1", returned.hostname, "127.0.0.1");
+});
+
 
 fluid.test.runTests([
 // Attempt to test HTTPS datasource - server currently just hangs without passing on request
