@@ -178,7 +178,6 @@ fluid.defaults("kettle.tests.dataSource.URL.set.specialChars", {
 });
 
 jqUnit.test("GPII-2147: Testing that localhost is properly replaced by 127.0.0.1 in prepareRequestOptions", function () {
-    var permittedOptions = kettle.dataSource.URL.requestOptions;
     var userStaticOptions = {
         protocol: "http:",
         host: "localhost",
