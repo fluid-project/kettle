@@ -1,3 +1,9 @@
+1.7.0 / 2017-08-31
+==================
+
+* GPII-2147: Encode localhost to 127.0.0.1 allowing offline use on Windows
+* Updated dependencies to latest versions, with exception of path-to-regexp 2.0.0 which breaks compatibility with /* path
+
 1.6.4 / 2017-07-24
 ==================
 

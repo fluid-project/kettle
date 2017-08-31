@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Declarative IoC-based framework for HTTP and WebSockets servers on node.js based on express and ws",
-    "version": "1.6.4",
+    "version": "1.7.0",
     "author": {
         "name": "The Fluid Project"
     },
@@ -13,13 +13,13 @@
     },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
-        "express": "4.15.3",
+        "express": "4.15.4",
         "body-parser": "1.17.2",
         "cookie-parser": "1.4.3",
-        "express-session": "1.15.4",
+        "express-session": "1.15.5",
         "serve-static": "1.12.3",
-        "ws": "3.0.0",
-        "infusion": "3.0.0-dev.20170724T165035Z.eee50c1",
+        "ws": "3.1.0",
+        "infusion": "3.0.0-dev.20170830T182157Z.392b2f8",
         "jsonlint": "1.6.2",
         "fluid-resolve": "1.3.0",
         "path-to-regexp": "1.7.0",
@@ -29,12 +29,12 @@
         "fluid-grunt-eslint": "18.1.2",
         "eslint-config-fluid": "1.1.0",
         "gpii-express": "1.0.9",
-        "gpii-pouchdb": "1.0.5",
+        "gpii-pouchdb": "1.0.7",
         "grunt": "1.0.1",
         "grunt-jsonlint": "1.1.0",
         "fluid-grunt-json5lint": "1.0.0",
         "grunt-shell": "2.1.0",
-        "node-jqunit": "1.1.6"
+        "node-jqunit": "1.1.7"
     },
     "license": "BSD-3-Clause",
     "keywords": [
