@@ -33,7 +33,7 @@ fluid.defaults("kettle.tests.KETTLE34dataSource", {
 
 fluid.defaults("kettle.tests.KETTLE34dataSource2", {
     gradeNames: "kettle.dataSource.URL",
-    url: "http://localhost/device",
+    url: "http://127.0.0.1/device",
     port: 998
 });
 
@@ -69,7 +69,7 @@ kettle.tests.dataSource.resolutionTests = [ {
         protocol: "http:",
         port: 998,
         path: "/device",
-        host: "localhost"
+        host: "127.0.0.1"
     }
 }
 ];
