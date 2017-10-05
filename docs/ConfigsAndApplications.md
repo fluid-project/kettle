@@ -3,12 +3,13 @@ title: Kettle Configs and Applications
 layout: default
 category: Kettle
 ---
+# Kettle Configs and Applications
 
 The top-level structure of a Kettle application can be described by a "config" file in JSON or [JSON5](http://json5.org/) format. A Kettle "config"
-describes the configuration of a number of "Kettle apps" ([grade](http://docs.fluidproject.org/infusion/development/ComponentGrades.html) [`kettle.app`](RequestHandlersAndApps.md#kettle.app)) 
-hosted in a number of "Kettle servers" (grade [`kettle.server`](Servers.md)). 
+describes the configuration of a number of "Kettle apps" ([grade](http://docs.fluidproject.org/infusion/development/ComponentGrades.html) [`kettle.app`](RequestHandlersAndApps.md#kettle.app))
+hosted in a number of "Kettle servers" (grade [`kettle.server`](Servers.md)).
 The config JSON (or JSON5) file represents an Infusion [component tree](http://docs.fluidproject.org/infusion/development/HowToUseInfusionIoC.html). If you aren't familiar
-with the syntax and meaning of component trees, it is a good idea to browse the documentation, tutorials and examples at the 
+with the syntax and meaning of component trees, it is a good idea to browse the documentation, tutorials and examples at the
 Infusion [documentation site](http://docs.fluidproject.org/infusion/development/). Kettle components are currently derived from
 the base grade `fluid.component`, so you can ignore for these purposes the parts of the Infusion documentation relating to model and view components.
 
@@ -20,10 +21,9 @@ be used to encode any Infusion application as a component tree.
 ## A simple Kettle application
 
 In this section, we will construct a simple Kettle application within JavaScript code, to produce a self-contained example. You can find and try out this
-same application represented in two forms in the [examples/simpleConfig](../examples/simpleConfig) directory. 
+same application represented in two forms in the [examples/simpleConfig](../examples/simpleConfig) directory.
 
 ```javascript
-
 fluid.defaults("examples.simpleConfig", {
     gradeNames: "fluid.component",
     components: {
@@ -67,9 +67,9 @@ examples.simpleConfig.handleRequest = function (request) {
 examples.simpleConfig();
 ```
 
-The JSON "config" form of the application itself is held at [examples/simpleConfig/examples.simpleConfig.json](../examples/simpleConfig/examples.simpleConfig.json), 
+The JSON "config" form of the application itself is held at [examples/simpleConfig/examples.simpleConfig.json](../examples/simpleConfig/examples.simpleConfig.json),
 which encodes the same information as in the first `fluid.defaults` call above. The definitions for request handlers such as `examples.simpleConfig.handler` and
-`examples.simpleConfig.handleRequest`, which in our sample are held in [examples/simpleConfig/simpleConfig-config-handler.js](../examples/simpleConfig/simpleConfig-config-handler.js), 
+`examples.simpleConfig.handleRequest`, which in our sample are held in [examples/simpleConfig/simpleConfig-config-handler.js](../examples/simpleConfig/simpleConfig-config-handler.js),
 always need to be supplied in standard `.js` files required by the application – although future versions of Kettle
 may allow the defaults for the handler grade to be encoded in JSON. Consult the Infusion framework documentation on [grades](http://docs.fluidproject.org/infusion/development/ComponentGrades.html) if
 you are not familiar with this kind of configuration.
@@ -80,7 +80,7 @@ load a common module, `simpleConfig-client.js` which tests the server by firing 
 
 ## Starting an application encoded by a Kettle config
 
-An application encoded as a Kettle config can be started in a variety of ways, 
+An application encoded as a Kettle config can be started in a variety of ways,
 both programmatically and from the command line - as well as being easily embedded
 into other applications, whether they are Infusion component trees or raw Express apps.
 
@@ -105,33 +105,35 @@ embed it in a wider application as a subcomponent.
 Kettle includes a top-level driver file named `init.js` which will accept values from the command line and the environment variable ``NODE_ENV`` in order to determine which application config to start.
 For example, from Kettle's top-level directory you can run
 
-```
+```shell
     node init.js <configPath> [<configName>]
 ````
 
 The `configPath` argument is required - its meaning is as given in the `configPath` option to `kettle.config.loadConfig` call described in the previous section.
 
-The `configName` argument is optional. If this value is not supplied at the command line, it will be read from the environment variable ``NODE_ENV``. 
+The `configName` argument is optional. If this value is not supplied at the command line, it will be read from the environment variable ``NODE_ENV``.
 The meaning is as given in the `configName` option to `kettle.config.loadConfig` described in the previous section.
 
 For example, you can start the sample app from the [previous section](#a-simple-kettle-application) by running
-```
+
+```shell
    node init.js examples/simpleConfig examples.simpleConfig
 ```
+
 from the root directory of a Kettle checkout.
 
 ## Referring to external data via resolvers
 
 Kettle configs may refer to external data, for example encoded in environment
-variables, files, or other sources. This is achieved via Infusion's 
+variables, files, or other sources. This is achieved via Infusion's
 [expander](http://docs.fluidproject.org/infusion/development/ExpansionOfComponentOptions.html#expanders) syntax
-within the config, together with some standard built-in global functions 
+within the config, together with some standard built-in global functions
 representing _resolvers_.
 
-Here is an example of a little config which accepts a `url` property from an 
+Here is an example of a little config which accepts a `url` property from an
 environment variable named `KETTLE_ENV_TEST`, via Infusion's [compact syntax](http://docs.fluidproject.org/infusion/development/ExpansionOfComponentOptions.html#compact-format-for-expanders):
 
-```
+```javascript
 {
     "type": "fluid.component",
     "options": {
@@ -141,13 +143,13 @@ environment variable named `KETTLE_ENV_TEST`, via Infusion's [compact syntax](ht
 ```
 
 If you need the ability for the target configuration to retain its default
-value in the case that the resolver value is missing, you should use 
+value in the case that the resolver value is missing, you should use
 Infusion's [options distributions](http://docs.fluidproject.org/infusion/development/IoCSS.html)
 to target the resolved value rather than writing it at top level within the config.
 
 ### kettle.resolvers.env
 
-`kettle.resolvers.env` is a global function which allows the resolution of 
+`kettle.resolvers.env` is a global function which allows the resolution of
 environment variables. It accepts one argument, which is the name of the
 environment variable to be resolved. If the environment variable is not defined,
 the function returns `undefined`.
@@ -203,10 +205,10 @@ minimal application will serve as a general template – the full definition of 
             <td><code>mergeConfigs</code> (optional)</td>
             <td><code>String/Array of String</code></td>
             <td>A filename (or array of these) of other config files which are to be included into this application. These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a>
-            such as <code>%kettle</code> or else will be interpreted as 
+            such as <code>%kettle</code> or else will be interpreted as
             paths relative to this config's location in the filesystem. The filenames may either end with a <code>.json</code> or a <code>.json5</code> extension representing configuration files in those formats, or the extension may be
             omitted in which case both of those extensions (in the order <code>.json</code>, <code>.json5</code>) will be tried as possibilities. Each config file will be loaded and resolved as a grade and then merged with the
-            structure of this config (via an algorithm similar to <a href="https://api.jquery.com/jquery.extend/">jQuery.extend</a> – note that because of a current Infusion framework bug <a href="https://issues.fluidproject.org/browse/FLUID-5614">FLUID-5614</a>, 
+            structure of this config (via an algorithm similar to <a href="https://api.jquery.com/jquery.extend/">jQuery.extend</a> – note that because of a current Infusion framework bug <a href="https://issues.fluidproject.org/browse/FLUID-5614">FLUID-5614</a>,
             all of the semantics of nested <a href="http://docs.fluidproject.org/infusion/development/OptionsMerging.html">options merging</a> will
             not be respected and the merging will occur in a simple-minded way below top level)</td>
         </tr>
@@ -214,7 +216,7 @@ minimal application will serve as a general template – the full definition of 
             <td><code>loadConfigs</code> (optional)</td>
             <td><code>String/Array of String</code></td>
             <td>A filename (or array of these) of other config files which will be loaded before this config is interpreted. These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a>
-            such as <code>%kettle</code> or else will be interpreted as 
+            such as <code>%kettle</code> or else will be interpreted as
             paths relative to this config's location in the filesystem. As with <code>mergeConfigs</code>, the filenames may be specified with <code>.json</code>, <code>.json5</code> or no extension. Each filename listed here will be loaded and resolved as a grade. The workflow is similar to that with <code>mergeConfigs</code>, only the grades represented in <code>loadConfigs</code>
             will not be automatically merged with the current config as parent grades. Instead, the user is free to refer to them as required - for example as the <code>type</code> or <code>gradeNames</code> of a <a href="http://docs.fluidproject.org/infusion/development/SubcomponentDeclaration.html">subcomponent</a></td>
         </tr>
@@ -222,28 +224,27 @@ minimal application will serve as a general template – the full definition of 
             <td><code>require</code> (optional)</td>
             <td><code>String/Array of String</code></td>
             <td>A <a href="https://nodejs.org/api/modules.html">module identifier</a> (or array of these) that will be loaded when this config is loaded. These modules will be loaded as if by the standard node.js API
-            <a href="https://nodejs.org/api/modules.html"><code>require</code></a> operating from the config's directory (the <a href="https://nodejs.org/api/modules.html#modules_loading_from_the_global_folders">global folder rules</a> will be ignored). 
+            <a href="https://nodejs.org/api/modules.html"><code>require</code></a> operating from the config's directory (the <a href="https://nodejs.org/api/modules.html#modules_loading_from_the_global_folders">global folder rules</a> will be ignored).
             These names may begin with a <a href="http://docs.fluidproject.org/infusion/development/NodeAPI.html#node-js-module-apis">module-relative path</a> such as <code>%kettle</code> to indicate a path relative to a module registered with Infusion.</td>
         </tr>
     </tbody>
 </table>
-
 
 ## Containment structure of a Kettle application
 
 The overall structure of a Kettle application within its config shows a 4-level pattern:
 
 * At top level, the application container – this has the simple grade `fluid.component` and does not carry any functionality – it is simply used for grouping the definitions at the next level
-    * At 2nd level, one or more Kettle servers – these have the grade [`kettle.server`](Servers.md) – in the case there is just one server it is conventionally named `server`
-        * At 3rd level, one more Kettle apps – these have the grade [`kettle.app`](RequestHandlersAndApps.md#kettle.app) – this is the level at which independently mountable segments of applications are grouped (an app is a grouping of handlers)
-            * At 4th level, one or more Kettle request handlers – these have the grade [`kettle.request`](RequestHandlersAndApps.md#kettle.request) – each of these handles one endpoint (HTTP or WebSockets) routed by URL and request method
-            
+  * At 2nd level, one or more Kettle servers – these have the grade [`kettle.server`](Servers.md) – in the case there is just one server it is conventionally named `server`
+    * At 3rd level, one more Kettle apps – these have the grade [`kettle.app`](RequestHandlersAndApps.md#kettle.app) – this is the level at which independently mountable segments of applications are grouped (an app is a grouping of handlers)
+      * At 4th level, one or more Kettle request handlers – these have the grade [`kettle.request`](RequestHandlersAndApps.md#kettle.request) – each of these handles one endpoint (HTTP or WebSockets) routed by URL and request method
+
 This expression is much more verbose in simple cases than the traditional raw use of express apps, but in larger and more complex applications this verbosity is amortised, with the ability to easily
 customise and reassort groups of handlers and servers from application to application.
 
-Note that the containment relationships between the top 3 levels need not be direct – servers may be nested any number of levels below the config root, and apps may be nested any number of 
+Note that the containment relationships between the top 3 levels need not be direct – servers may be nested any number of levels below the config root, and apps may be nested any number of
 levels below a server. However, request handlers must be defined as direct children of their parent apps, in the options section named `requestHandlers`.
 
 ## Further reading
 
-Go on to [Kettle servers](Servers.md) to learn about the 2nd level of containment, and [Kettle request handlers and apps](RequestHandlersAndApps.md) to learn about levels 3 and 4. 
+Go on to [Kettle servers](Servers.md) to learn about the 2nd level of containment, and [Kettle request handlers and apps](RequestHandlersAndApps.md) to learn about levels 3 and 4.

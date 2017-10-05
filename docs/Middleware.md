@@ -3,20 +3,19 @@ title: Defining and Working With Middleware
 layout: default
 category: Kettle
 ---
+# Working with middleware
 
-### Working with middleware
-
-The most crucial structuring device in the expressjs (or wider pillarjs) community is known as ***[middleware](http://expressjs.com/guide/using-middleware.html)***. 
+The most crucial structuring device in the expressjs (or wider pillarjs) community is known as ***[middleware](http://expressjs.com/guide/using-middleware.html)***.
 In its most basic form, a piece of middleware is simply a function with the following signature:
 
     middleware(req, res, next)
-    
+
 The elements `req` and `res` have been described in the section on [request components](RequestHandlersAndApps.md#members-defined-by-the-kettle-framework-at-top-level-on-a-request-component). The element `next` is a callback provided
-by the framework to be invoked when the middleware has completed its task. This could be seen as a form of [continuation passing style](https://en.wikipedia.org/wiki/Continuation-passing_style) with 0 arguments – 
+by the framework to be invoked when the middleware has completed its task. This could be seen as a form of [continuation passing style](https://en.wikipedia.org/wiki/Continuation-passing_style) with 0 arguments –
 although only in terms of control flow since in general middleware has its effect as a result of side-effects on the request and response. In express, middleware are typically accumulated in arrays or groups of arrays
 by directives such as `app.use`. If a piece of middleware completes without error, it will invoke the `next` callback with no argument, which will signal that control should pass to the next middleware in the
 current sequence, or back to the framework if the sequence is at an end. Providing an argument to the callback `next` is intended to signal an error
-and the framework will then abort the middleware chain and propagate the argument, conventionally named `err`, to an error handler. This creates an analogy with executing 
+and the framework will then abort the middleware chain and propagate the argument, conventionally named `err`, to an error handler. This creates an analogy with executing
 [promise sequences](http://stackoverflow.com/questions/24586110/resolve-promises-one-after-another-i-e-in-sequence) which we will return to when we construct [middleware components](#defining-and-registering-middleware-components).
 
 In Kettle, middleware can be scheduled more flexibly than by simply being accumulated in arrays – the priority of a piece of middleware can be freely adjusted by assigning it a [Priority](http://docs.fluidproject.org/infusion/development/Priorities.html)
@@ -34,7 +33,7 @@ will execute the following in sequence:
 
 If any of the middleware in this sequence signals an error, the entire sequence will be aborted and an error returned to the client.
 
-### Structure of entries in a `middlewareSequence`
+## Structure of entries in a `middlewareSequence`
 
 A `middlewareSequence` is a free hash of keys, considered as **namespaces** for the purpose of resolving [Priorities](http://docs.fluidproject.org/infusion/development/Priorities.html) onto
 records of type `middlewareEntry`:
@@ -74,9 +73,9 @@ records of type `middlewareEntry`:
     </tbody>
 </table>
 
-### Defining and registering middleware components
+## Defining and registering middleware components
 
-A piece of Kettle middleware is derived from grade `kettle.middleware`. This is a very simple grade which defines a single invoker named `handle` which accepts one argument, a `kettle.request`, and returns a 
+A piece of Kettle middleware is derived from grade `kettle.middleware`. This is a very simple grade which defines a single invoker named `handle` which accepts one argument, a `kettle.request`, and returns a
 promise representing the completion of the middleware. Conveniently a `fluid.promise` implementation is available in the framework, but you can return any variety of `thenable` that you please. Here is a skeleton,
 manually implemented middleware component:
 
@@ -127,7 +126,7 @@ for the middleware is under your control, it is recommended that wherever possib
 for I/O since their callbacks automatically perform the necessary
 [request marking](DataSources.md#callback-wrapping-in-datasources).
 
-### Built-in standard middleware bundled with Kettle
+## Built-in standard middleware bundled with Kettle
 
 Here we describe the built-in middleware supplied with Kettle, which is mostly sourced from standard middleware in the [express](http://expressjs.com/) and [pillarjs](https://github.com/pillarjs)
 communities. You can consult the straightforward implementations in [KettleMiddleware.js](https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js) for suggestions for how
@@ -160,7 +159,7 @@ to implement your own.
     <td><code>secret</code> and <code>middlewareOptions</code>, forwarded to the two arguments of <a href="https://github.com/expressjs/cookie-parser#cookieparsersecret-options"><code>cookieParser(secret, options)</code></a></td>
     <td>none</td>
 </tr>
-<tr> 
+<tr>
     <td><code>kettle.middleware.session</code></td>
     <td><a href="https://github.com/expressjs/session">expressjs/session</a></td>
     <td>Stores and retrieves <code>req.session</code> from various backends</td>
@@ -178,7 +177,7 @@ to implement your own.
     <td><code>kettle.middleware.CORS</code></td>
     <td><a href="https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js">Kettle built-in</a></td>
     <td>Adds <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a> headers to outgoing HTTP request to enable cross-domain access</td>
-    <td><code>allowMethods {String}</code> (default <code>"GET"</code>), </br><code>origin {String}</code> (default <code>*</code>), </br> <code>credentials {Boolean}</code> (default <code>true</code>) </br>- 
+    <td><code>allowMethods {String}</code> (default <code>"GET"</code>), </br><code>origin {String}</code> (default <code>*</code>), </br> <code>credentials {Boolean}</code> (default <code>true</code>) </br>-
         see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#The_HTTP_response_headers">CORS response headers</a></td>
     <td><code>{middlewareHolder}.CORS</code></td>
 </tr>
@@ -194,10 +193,10 @@ to implement your own.
 
 </div>
 
-Middleware which it makes sense to share configuration application-wide is stored in a standard holder of grade `kettle.standardMiddleware` which is descended from the grade `kettle.middlewareHolder` – the 
+Middleware which it makes sense to share configuration application-wide is stored in a standard holder of grade `kettle.standardMiddleware` which is descended from the grade `kettle.middlewareHolder` – the
 context reference `{middlewareHolder}` is recommended for referring to this if required – e.g. `{middlewareHolder}.session`.
 
-#### Using the static middleware
+### Using the static middleware
 
 Here is an example of mounting a section of a module's filesystem path at a particular URL. In this case, we want to mount the `src` directory of our Infusion module at the global path `/infusion/`, a common
 enough requirement. Note that this is done by registering a *handler* just as with any other Kettle request handler, even though in this case the useful request handling function is actually achieved
@@ -205,7 +204,7 @@ by the middleware. The only function of the request handler is to serve the 404 
 named `kettle.request.notFoundHandler`. Note that the request handler must declare explicitly that it will handle all URLs under its prefix path by declaring a route of `/*` – this is different to the express
 model of routing and middleware handling. Kettle will not dispatch a request to a handler unless its route matches all of the incoming URL.
 
-Note that our static middleware can refer symbolically to the path of any module loaded using Infusion's module system 
+Note that our static middleware can refer symbolically to the path of any module loaded using Infusion's module system
 [`fluid.module.register`](http://docs.fluidproject.org/infusion/development/NodeAPI.html#fluid-module-register-name-basedir-modulerequire-) by means of interpolated terms such as `%infusion`.
 
 Our config:
