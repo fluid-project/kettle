@@ -3,7 +3,9 @@ title: Defining and Working With Middleware
 layout: default
 category: Kettle
 ---
-# Working with middleware
+# Defining and Working With Middleware
+
+## Working with middleware
 
 The most crucial structuring device in the expressjs (or wider pillarjs) community is known as ***[middleware](http://expressjs.com/guide/using-middleware.html)***.
 In its most basic form, a piece of middleware is simply a function with the following signature:
@@ -33,7 +35,7 @@ will execute the following in sequence:
 
 If any of the middleware in this sequence signals an error, the entire sequence will be aborted and an error returned to the client.
 
-## Structure of entries in a `middlewareSequence`
+### Structure of entries in a `middlewareSequence`
 
 A `middlewareSequence` is a free hash of keys, considered as **namespaces** for the purpose of resolving [Priorities](http://docs.fluidproject.org/infusion/development/Priorities.html) onto
 records of type `middlewareEntry`:
@@ -73,7 +75,7 @@ records of type `middlewareEntry`:
     </tbody>
 </table>
 
-## Defining and registering middleware components
+### Defining and registering middleware components
 
 A piece of Kettle middleware is derived from grade `kettle.middleware`. This is a very simple grade which defines a single invoker named `handle` which accepts one argument, a `kettle.request`, and returns a
 promise representing the completion of the middleware. Conveniently a `fluid.promise` implementation is available in the framework, but you can return any variety of `thenable` that you please. Here is a skeleton,
@@ -126,7 +128,7 @@ for the middleware is under your control, it is recommended that wherever possib
 for I/O since their callbacks automatically perform the necessary
 [request marking](DataSources.md#callback-wrapping-in-datasources).
 
-## Built-in standard middleware bundled with Kettle
+### Built-in standard middleware bundled with Kettle
 
 Here we describe the built-in middleware supplied with Kettle, which is mostly sourced from standard middleware in the [express](http://expressjs.com/) and [pillarjs](https://github.com/pillarjs)
 communities. You can consult the straightforward implementations in [KettleMiddleware.js](https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js) for suggestions for how
@@ -196,7 +198,7 @@ to implement your own.
 Middleware which it makes sense to share configuration application-wide is stored in a standard holder of grade `kettle.standardMiddleware` which is descended from the grade `kettle.middlewareHolder` – the
 context reference `{middlewareHolder}` is recommended for referring to this if required – e.g. `{middlewareHolder}.session`.
 
-### Using the static middleware
+#### Using the static middleware
 
 Here is an example of mounting a section of a module's filesystem path at a particular URL. In this case, we want to mount the `src` directory of our Infusion module at the global path `/infusion/`, a common
 enough requirement. Note that this is done by registering a *handler* just as with any other Kettle request handler, even though in this case the useful request handling function is actually achieved
