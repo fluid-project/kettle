@@ -1,6 +1,6 @@
 /**
  * Kettle Sample app - simpleConfig using code
- * 
+ *
  * Copyright 2015 Raising the Floor (International)
  *
  * Licensed under the New BSD license. You may not use this file except in
@@ -14,7 +14,7 @@
 
 var fluid = require("infusion"),
     examples = fluid.registerNamespace("examples");
-    
+
 require("../../kettle.js");
 
 /* Server definitions - define a Kettle "config" and request handler in an app */

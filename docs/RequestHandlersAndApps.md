@@ -3,9 +3,10 @@ title: Kettle Request Handlers and the kettle.app grade
 layout: default
 category: Kettle
 ---
+# Kettle Request Handlers and the `kettle.app` grade
 
-A [`kettle.server'](Servers.md) comprises one or more `kettle.app` units, each of which comprises an independently mountable application unit. Within a [`kettle.app`](#kettle.app), each
-type of request handled by the application is defined using a [`kettle.request`](#how-to-implement-a-request-handler) component. 
+A [`kettle.server`](Servers.md) comprises one or more `kettle.app` units, each of which comprises an independently mountable application unit. Within a [`kettle.app`](#kettle.app), each
+type of request handled by the application is defined using a [`kettle.request`](#how-to-implement-a-request-handler) component.
 
 <a id="kettle.app"></a>
 
@@ -14,7 +15,8 @@ type of request handled by the application is defined using a [`kettle.request`]
 Request handlers are registered in the `requestHandlers` section of the options of a `kettle.app` – see the [sample app](ConfigsAndApplications.md#a-simple-kettle-application) for positioning of this component in the
 containment structure. This consists of a free hash of `handlerName` strings to `handlerRecord` structures.
 
-###Structure of the `requestHandlers` option of a `kettle.app`
+### Structure of the `requestHandlers` option of a `kettle.app`
+
 ```javascript
 {
 <handlerName> : <handlerRecord>,
@@ -23,7 +25,7 @@ containment structure. This consists of a free hash of `handlerName` strings to 
 }
 ```
 
-Note that the `handlerName`s are simply free strings and have no function other than to uniquely name the handler in the context of its app. These strings exist to allow easy alignment when 
+Note that the `handlerName`s are simply free strings and have no function other than to uniquely name the handler in the context of its app. These strings exist to allow easy alignment when
 multiple apps are merged together from different sources to produce combined apps.
 
 ### Structure of the `handlerRecord` structure
@@ -59,17 +61,17 @@ multiple apps are merged together from different sources to produce combined app
         <tr>
             <td><code>prefix</code> (optional)</td>
             <td><code>String</code></td>
-            <td>A routing prefix to be prepended to this handler's <code>route</code>. The prefix plus the route expression must match the incoming request in order for this handler to be activated – 
-            but if it is, it will only see the portion of the URL matched by <code>route</code> in the member <code>request.req.url</code>. The entire incoming URL will remain visible in <code>request.req.originalUrl</code> – 
+            <td>A routing prefix to be prepended to this handler's <code>route</code>. The prefix plus the route expression must match the incoming request in order for this handler to be activated –
+            but if it is, it will only see the portion of the URL matched by <code>route</code> in the member <code>request.req.url</code>. The entire incoming URL will remain visible in <code>request.req.originalUrl</code> –
             this is the same behaviour as express.js <a href="http://expressjs.com/api.html#app.use">routing system</a>. It is primarily useful when using <a href="#thing">static middleware</a> which will compare the
             <code>req.url</code> value with the filesystem path relative to its mount point.
         </tr>
         <tr>
             <td><code>method</code> (optional)</td>
-            <td><code>String</code> value – one of the valid <a href="https://github.com/nodejs/node/blob/master/deps/http_parser/http_parser.h#L88">HTTP methods</a> supported by node.js, expressed in lower case, or else a comma-separated 
+            <td><code>String</code> value – one of the valid <a href="https://github.com/nodejs/node/blob/master/deps/http_parser/http_parser.h#L88">HTTP methods</a> supported by node.js, expressed in lower case, or else a comma-separated
             sequence of such values.
             </td>
-            <td>The HTTP request type(s) which this handler will match. <code>method</code> is omitted in the 
+            <td>The HTTP request type(s) which this handler will match. <code>method</code> is omitted in the
             case that the request handling grade is not descended from <code>kettle.request.http</code> – the only currently supported requests of that type are WebSockets requests descended from <code>kettle.request.ws</code>.
         </tr>
     </tbody>
@@ -78,12 +80,12 @@ multiple apps are merged together from different sources to produce combined app
 ### How to implement a request handler
 
 A handler for a particular request must have a [grade](http://docs.fluidproject.org/infusion/development/ComponentGrades.html) registered with Infusion whose name
-matches the `type` field in the `handlerRecord` structure just described. The parent grades of this grade must be consistent with the the request you expect to handle – 
+matches the `type` field in the `handlerRecord` structure just described. The parent grades of this grade must be consistent with the the request you expect to handle –
 descended from `kettle.request.http` in the case of an HTTP request, or `kettle.request.ws` in the case of a WebSockets request. In addition, the grade must define
 (at minimum) an [invoker](http://docs.fluidproject.org/infusion/development/Invokers.html) named `handleRequest`. This invoker will be called by Kettle when your route
 is matched, and be supplied a single argument holding the ***request object***, an object whose grade is your request handler's grade, which the framework has
 constructed to handle the request.
- 
+
 We duplicate the definitions from the [sample application](ConfigsAndApplications.md#a-simple-kettle-application) in order to show a minimal request handler grade and request handler function:
 
 ```javascript
@@ -149,9 +151,9 @@ base grade `kettle.request` and so are also available for WebSockets components 
         <tr>
             <td><code>events.onError</code></td>
             <td><a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html"><code>Event</code></a></td>
-            <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which should be fired if the request is to send an error response. 
+            <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which should be fired if the request is to send an error response.
             For a request of type <code>kettle.request.http</code>, the argument to the event must be an <code>Object</code> with at least
-            a field <code>message</code> of type <code>String</code> holding the error message to be returned to the client. The argument can also include a member <code>statusCode</code> of type <code>Number</code> holding the HTTP status code to accompany the error – 
+            a field <code>message</code> of type <code>String</code> holding the error message to be returned to the client. The argument can also include a member <code>statusCode</code> of type <code>Number</code> holding the HTTP status code to accompany the error –
             if this is not supplied, it will default to 500.
             </td>
         </tr>
@@ -160,14 +162,14 @@ base grade `kettle.request` and so are also available for WebSockets components 
             <td><code>Promise</code></td>
             <td>This promise is a proxy for the two events <code>onSuccess</code> and <code>onError</code>, packaged as a <a href="https://www.promisejs.org/">Promise</a>. This promise exposes methods <code>resolve</code> and <code>reject</code>
             which forward their arguments to <code>onSuccess</code> and <code>onError</code> respectively. In addition, the promise exposes a <code>then</code> method which accepts two callbacks which can be used to listen to these event firings
-            respectively. Note that this promise is not compliant with any particular specification for promises, including ES6, A+, etc. – in the language of those specifications, it is simply a <code>thenable</code> which also includes 
+            respectively. Note that this promise is not compliant with any particular specification for promises, including ES6, A+, etc. – in the language of those specifications, it is simply a <code>thenable</code> which also includes
             the standard resolution methods <code>resolve</code> and <code>reject</code>. Implementation at <a href="https://github.com/fluid-project/infusion/blob/master/src/framework/core/js/FluidPromises.js#L21">FluidPromises.js</a>.
             </td>
         </tr>
     </tbody>
 </table>
 
-Note that, conversely with the `req` property of the Kettle request component, the Kettle request component itself will be marked onto the node.js request object so that it can easily 
+Note that, conversely with the `req` property of the Kettle request component, the Kettle request component itself will be marked onto the node.js request object so that it can easily
 be retrieved from standard middleware, etc. – it will be available as `req.fluidRequest` where `req` is the
 request object described in the table above. More details follow on middleware in the section [working with middleware](Middleware.md#working-with-middleware).
 
@@ -197,9 +199,9 @@ The request component for a WebSockets request, derived from the grade `kettle.r
         <tr>
             <td><code>events.onBindWs</code></td>
             <td><a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html"><code>Event</code></a></td>
-            <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which is fired by the framework when the original HTTP connection has completed the 
+            <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which is fired by the framework when the original HTTP connection has completed the
             <a href="https://en.wikipedia.org/wiki/WebSocket#Protocol_handshake">handshake and upgrade sequence</a> and the <a href="https://github.com/websockets/ws/blob/master/doc/ws.md#class-wswebsocket"><code>ws.WebSocket</code></a>
-            object has been allocated. Any listener registered to this event will receive two arguments - firstly, the <code>kettle.request.ws</code> component itself, and secondly 
+            object has been allocated. Any listener registered to this event will receive two arguments - firstly, the <code>kettle.request.ws</code> component itself, and secondly
             the <a href="https://github.com/websockets/ws/blob/master/doc/ws.md#class-wswebsocket"><code>ws.WebSocket</code></a> object.
             </td>
         </tr>
@@ -218,7 +220,7 @@ The request component for a WebSockets request, derived from the grade `kettle.r
         <tr>
             <td><code>sendTypedMessage</code></td>
             <td><code>Function(type: String, payload: Object)</code></a></td>
-            <td>Operates a simple "typed message" system which will fire a payload to <code>sendMessage</code> consisting of <code>{type: type, payload: payload}</code>. This method is only useful together with the 
+            <td>Operates a simple "typed message" system which will fire a payload to <code>sendMessage</code> consisting of <code>{type: type, payload: payload}</code>. This method is only useful together with the
             <code>sendMessageJSON: true</code> option (its default value).</td>
         </tr>
         <tr>
@@ -232,8 +234,8 @@ The request component for a WebSockets request, derived from the grade `kettle.r
             <td><code>events.onSendMessage</code></td>
             <td><a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html"><code>Event</code></a></td>
             <td>A standard <a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html">Infusion Event</a> which operates the workflow started by the <code>sendMessage</code> method.
-            This is a <a href="./DataSources.md#transforming-promise-chains">transforming promise chain</a> event for which each listener has 
-            the chance to transform the payload before it is sent to the next. More information is available for the 
+            This is a <a href="./DataSources.md#transforming-promise-chains">transforming promise chain</a> event for which each listener has
+            the chance to transform the payload before it is sent to the next. More information is available for the
             <a href="http://docs.fluidproject.org/infusion/development/PromisesAPI.html#fluid-promise-firetransformevent-event-payload-options-"><code>fireTransformEvent</code></a> function from Infusion's Promises API</td>
         </tr>
         <tr>

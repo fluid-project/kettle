@@ -3,27 +3,28 @@ title: The Kettle Testing Framework
 layout: default
 category: Kettle
 ---
+# The Kettle Testing Framework
 
 The Kettle testing framework, which can be used for issuing test fixtures against arbitrary HTTP and WebSockets servers, does not depend on
 the rest of Kettle, but is bundled along with it. To get access to the testing framework, after
 
     var kettle = require("kettle");
-    
+
 then issue
 
     kettle.loadTestingSupport();
-    
+
 Note that any users of the Kettle Testing Framework need to list the [node-jqunit](https://www.npmjs.com/package/node-jqunit) module in the `devDependencies` section of their own `package.json`.
-    
-The Kettle testing framework flattens out what would be complex callback or promise-laden code into a declarative array of JSON records, each encoding 
-a successive stage in the HTTP or WebSockets conversation. The Kettle testing framework makes use of 
+
+The Kettle testing framework flattens out what would be complex callback or promise-laden code into a declarative array of JSON records, each encoding
+a successive stage in the HTTP or WebSockets conversation. The Kettle testing framework makes use of
 Infusion's [IoC Testing Framework](http://docs.fluidproject.org/infusion/development/IoCTestingFramework.html) to encode the test fixtures – you should be familiar with this framework
 as well as with the use of Infusion IoC in general before using it.
 
 The standard use of the Kettle testing framework involves assembling arrays with alternating active and passive elements using the methods of the
-testing request fixture components `kettle.test.request.http` and `kettle.test.request.ws`. The active records will use the `send` method of `kettle.test.request.http` 
+testing request fixture components `kettle.test.request.http` and `kettle.test.request.ws`. The active records will use the `send` method of `kettle.test.request.http`
 (or one of the event firing methods of `kettle.test.request.ws`) to send a request to the server under test, and the passive records will contain a `listener` element
-in order to listen to the response from the server and verify that it has a particular form. 
+in order to listen to the response from the server and verify that it has a particular form.
 
 ## A simple Kettle testing framework example
 
@@ -32,7 +33,7 @@ testing the simple example application which we developed in the section describ
 
 ```javascript
 kettle.loadTestingSupport();
- 
+
 fluid.registerNamespace("examples.tests.simpleConfig");
 
 examples.tests.simpleConfig.testDefs = [{
@@ -73,7 +74,7 @@ kettle.test.bootstrapServer(examples.tests.simpleConfig.testDefs);
 You can run a live version of this sample by running
 
     node testSimpleConfig.js
-    
+
 from the [examples/testingSimpleConfig](../examples/testingSimpleConfig) directory of this project.
 
 This sample sets up JSON configuration to load the `examples.simpleConfig` application from this module's `examples` directory, and then
@@ -91,7 +92,6 @@ reference `%kettle` in order to resolve a file path relative to the base directo
 
 To get a sense of the capabilities of a `kettle.test.request.http`, you should browse node.js's documentation for its [`http.request`](https://nodejs.org/api/http.html#http_http_request_options_callback),
 for which this component is a wrapper. A `kettle.test.request.http` component accepts a number of options configuring its function:
-
 
 <table>
     <thead>
@@ -134,7 +134,7 @@ for which this component is a wrapper. A `kettle.test.request.http` component ac
     </tbody>
 </table>
 
-In addition, the `kettle.test.request.http` component will accept any options accepted by node's native [`http.request`](https://nodejs.org/api/http.html#http_http_request_options_callback) constructor – 
+In addition, the `kettle.test.request.http` component will accept any options accepted by node's native [`http.request`](https://nodejs.org/api/http.html#http_http_request_options_callback) constructor –
 supported in addition to the above are `host`, `hostname`, `family`, `localAddress`, `socketPath`, `auth` and `agent`. All of these options will be overriden by options of the same names supplied as the <code>directOptions</code>
 argument to the component's `send` method, described in the following section:
 
@@ -164,7 +164,7 @@ The primarily useful method on `kettle.test.request.http` is `send`. It accepts 
             <td><code>directOptions</code></td>
             <td><code>Object</code> (optional)</td>
             <td>A set of extra options governing processing of this request. This will be merged with options taken from the component options supplied to the `kettle.test.request.http` component in order
-            to arrive at a merged set of per-request options. All of the options described in the previous table are supported here. In particular, entries in <code>headers</code> will be filled in by the implementation – 
+            to arrive at a merged set of per-request options. All of the options described in the previous table are supported here. In particular, entries in <code>headers</code> will be filled in by the implementation –
             the header <code>Content-Length</code> will be populated automatically based on the supplied <code>model</code> to the <code>send</code> method,
             and the header <code>Content-Type</code> will default to <code>application/json</code> if no value is supplied</td>
         </tr>
@@ -174,7 +174,7 @@ The primarily useful method on `kettle.test.request.http` is `send`. It accepts 
 ### Listening for a response from `kettle.test.request.http` – the `onComplete` event
 
 The response to a `send` request will be notified to listeners of the component's `onComplete` event. Note that since a given `kettle.test.request.http` request component
-can be used to send at most ***one*** request, there can be no confusion about which response is associated which which request. The `onComplete` event fires with the signature `(data, that, parsedData)`, 
+can be used to send at most ***one*** request, there can be no confusion about which response is associated which which request. The `onComplete` event fires with the signature `(data, that, parsedData)`,
 which are described in the following table:
 
 <table>
@@ -197,7 +197,7 @@ which are described in the following table:
         <tr>
             <td><code>that</code></td>
             <td><code>Component</code></td>
-            <td>The <code>kettle.test.request.http</code> component itself. <it><strong>Note</strong></it>: By the time this event fires, this component will have a member <code>nativeResponse</code> assigned, of type 
+            <td>The <code>kettle.test.request.http</code> component itself. <it><strong>Note</strong></it>: By the time this event fires, this component will have a member <code>nativeResponse</code> assigned, of type
             <a href="https://nodejs.org/api/http.html#http_http_incomingmessage">http.IncomingMessage</a> – this object can be used to read off various standard pieces of the response to node.js's <code>http.ClientRequest</code>,
             including the HTTP <code>statusCode</code>, headers, etc.</td>
         </tr>
@@ -304,7 +304,7 @@ will reject requests without a particular piece of populated session data, befor
 
 ### Issuing WebSockets testing fixtures with `kettle.test.request.ws`
 
-A sibling grade of `kettle.test.request.http` is `kettle.test.request.ws` which will allow the testing of WebSockets endpoints in an analogous way. You should browse the `ws` project's documentation for 
+A sibling grade of `kettle.test.request.http` is `kettle.test.request.ws` which will allow the testing of WebSockets endpoints in an analogous way. You should browse the `ws` project's documentation for
 [ws.WebSocket](https://github.com/websockets/ws/blob/master/doc/ws.md#new-wswebsocketaddress-protocols-options) for which `kettle.test.request.ws` is a wrapper. As with `kettle.test.request.http`, messages are sent
 using an invoker named `send`, with the difference that method may be invoked any number of times. The options for `kettle.test.request.ws` are as follows:
 
@@ -358,7 +358,7 @@ using an invoker named `send`, with the difference that method may be invoked an
     </tbody>
 </table>
 
-In addition to the above options, any option may be supplied that is supported by the `options` argument of [ws.WebSocket](https://github.com/websockets/ws/blob/master/doc/ws.md#new-wswebsocketaddress-protocols-options). 
+In addition to the above options, any option may be supplied that is supported by the `options` argument of [ws.WebSocket](https://github.com/websockets/ws/blob/master/doc/ws.md#new-wswebsocketaddress-protocols-options).
 These include, in addition to the above, `protocol`, `agent`, `protocolVersion`, `hostname`.
 
 ### Events attached to a `kettle.test.request.ws`
@@ -387,7 +387,7 @@ The following events may be listened to on a `kettle.test.request.ws` component:
             <td><code>onError</code></td>
             <td><code>(error: Object, that: Component, res: <a href="https://nodejs.org/api/http.html#http_http_incomingmessage">http.IncomingMessage</a>)</td>
             <td>Fired either if an error occurs during the HTTP upgrade process, or if an <code>error</code> event is fired from the <code>ws.WebSocket</code> object once the socket is established. For an error during
-            handshake, the <code>error</code> argument will be an object with <code>isError: true</code> and a <code>statusCode</code> field taken from the HTTP statusCode. For an <code>error</code> event, the 
+            handshake, the <code>error</code> argument will be an object with <code>isError: true</code> and a <code>statusCode</code> field taken from the HTTP statusCode. For an <code>error</code> event, the
             error will be the original error payload.</td>
         </tr>
         <tr>
@@ -406,7 +406,7 @@ the `onConnect` event documented in the above table will be fired on the compone
 
 ### Sending a message using the `send` method of `kettle.test.request.ws`
 
-The signature of `kettle.test.request.ws` `send` is the same as that for `kettle.test.request.http`, with a very similar meaning: 
+The signature of `kettle.test.request.ws` `send` is the same as that for `kettle.test.request.http`, with a very similar meaning:
 
 The primarily useful method on `kettle.test.request.ws` is `send`. It accepts two arguments, `(model, directOptions)` :
 

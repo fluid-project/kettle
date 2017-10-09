@@ -3,6 +3,7 @@ title: Kettle Servers
 layout: default
 category: Kettle
 ---
+# Kettle Servers
 
 Kettle includes two builtin grades, [`kettle.server`](#kettle.server) for defining a plain HTTP server, and a derived grade [`kettle.server.ws`](#kettle.server.ws) for defining a server
 capable of handling WebSockets endpoints. The former wraps the standard facilities of node.js for constructing an [`http.Server`](https://nodejs.org/api/http.html#http_class_http_server), and
@@ -79,7 +80,7 @@ are numerous other parts of its lifecycle which can be customised, but these are
             <td><a href="http://docs.fluidproject.org/infusion/development/InfusionEventSystem.html"><code>Event</code></a></td>
             <td>This event is useful for authors trying to integrate with 3rd-party express applications. This is a useful lifecycle point, before Kettle registers its own route handlers to the express application,
             for an external integrator to register their own route handlers first, e.g. using <code>app.get</code> etc.. Fired with one argument, the server component itself – typically only <code>that.expressApp</code> will be of interest to the listener</code></td>
-        </tr>      
+        </tr>
     </tbody>
 </table>
 

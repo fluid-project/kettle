@@ -20,6 +20,18 @@ module.exports = function (grunt) {
         },
         json5lint: {
             src: ["lib/**/*.json5", "tests/data/*.json5", "tests/configs/*.json5", "examples/**/*.json5"]
+        },
+        markdownlint: {
+            full: {
+                options: {
+                    config: {
+                        "no-inline-html": false,
+                        "line-length": false,
+                        "ol-prefix": { style: "ordered" }
+                    }
+                },
+                src: ["./*.md", "docs/**/*.md", "examples/**/*.md"]
+            }
         }
     });
 
@@ -27,6 +39,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("fluid-grunt-json5lint");
     grunt.loadNpmTasks("grunt-shell");
     grunt.loadNpmTasks("fluid-grunt-eslint");
+    grunt.loadNpmTasks("grunt-markdownlint");
 
-    grunt.registerTask("lint", "Apply jshint, jsonlint and json5lint", ["eslint", "jsonlint", "json5lint"]);
+    grunt.registerTask("lint", "Apply eslint, jsonlint, json5lint, and markdownlint", ["eslint", "jsonlint", "json5lint", "markdownlint"]);
 };
