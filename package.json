@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Declarative IoC-based framework for HTTP and WebSockets servers on node.js based on express and ws",
-    "version": "1.7.0",
+    "version": "1.7.1",
     "author": {
         "name": "The Fluid Project"
     },
@@ -13,29 +13,29 @@
     },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
-        "express": "4.15.4",
-        "body-parser": "1.17.2",
+        "express": "4.16.2",
+        "body-parser": "1.18.2",
         "cookie-parser": "1.4.3",
-        "express-session": "1.15.5",
-        "serve-static": "1.12.3",
-        "ws": "3.1.0",
-        "infusion": "3.0.0-dev.20170830T182157Z.392b2f8",
+        "express-session": "1.15.6",
+        "serve-static": "1.13.1",
+        "ws": "3.3.1",
+        "infusion": "3.0.0-dev.20171117T095227Z.67ff934",
         "jsonlint": "1.6.2",
         "fluid-resolve": "1.3.0",
         "path-to-regexp": "1.7.0",
         "json5": "0.5.1"
     },
     "devDependencies": {
-        "eslint-config-fluid": "1.1.0",
+        "eslint-config-fluid": "1.2.0",
         "fluid-grunt-eslint": "18.1.2",
         "fluid-grunt-json5lint": "1.0.0",
-        "gpii-express": "1.0.9",
+        "gpii-express": "1.0.11",
         "gpii-pouchdb": "1.0.7",
         "grunt": "1.0.1",
         "grunt-jsonlint": "1.1.0",
-        "grunt-markdownlint": "1.0.42",
+        "grunt-markdownlint": "1.0.43",
         "grunt-shell": "2.1.0",
-        "node-jqunit": "1.1.7"
+        "node-jqunit": "1.1.8"
     },
     "license": "BSD-3-Clause",
     "keywords": [

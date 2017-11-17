@@ -1,6 +1,12 @@
 Version History
 ==================
 
+1.7.1 / 2017-11-17
+------------------
+
+* FLUID-6225: Update to latest versions of Infusion and node-jqUnit (which have been tested separately) to avoid self-deduping race with uncaught exception handler
+* KETTLE-65: Update dependencies to latest versions to address security vulnerabilities
+
 1.7.0 / 2017-08-31
 ------------------
 
