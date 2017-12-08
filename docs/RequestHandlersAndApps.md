@@ -295,6 +295,7 @@ fluid.defaults("examples.webSocketsConfig", {
         server: {
             type: "kettle.server",
             options: {
+                gradeNames: ["kettle.server.ws"],
                 port: 8081,
                 components: {
                     app: {
