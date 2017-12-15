@@ -25,6 +25,19 @@
                                 }
                             }
                         },
+                        infusionMulterFields: {
+                            type: "kettle.middleware.multer",
+                            options: {
+                                multerConfig: {
+                                    acceptFuncName: "fields",
+                                    acceptFuncArgs: [[
+                                        {name: "textFiles", maxCount: 2},
+                                        {name: "binaryFile", maxCount: 1},
+                                        {name: "projectName", maxCount: 1}
+                                    ]]
+                                }
+                            }
+                        },
                         app: {
                             type: "kettle.app",
                             options: {
@@ -37,6 +50,11 @@
                                     multerArrayHandler: {
                                         type: "kettle.tests.multer.handler.array",
                                         route: "/multer-array",
+                                        method: "post"
+                                    },
+                                    multerFieldsHandler: {
+                                        type: "kettle.tests.multer.handler.fields",
+                                        route: "/multer-fields",
                                         method: "post"
                                     }
                                 }

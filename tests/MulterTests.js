@@ -58,9 +58,27 @@ kettle.tests.multerHandlerArray = function (request) {
     request.events.onSuccess.fire(request.req.files);
 };
 
+fluid.defaults("kettle.tests.multer.handler.fields", {
+    gradeNames: "kettle.request.http",
+    requestMiddleware: {
+        "multerFields": {
+            middleware: "{server}.infusionMulterFields"
+        }
+    },
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.multerHandlerField"
+        }
+    }
+});
+
+kettle.tests.multerHandlerField = function (request) {
+    request.events.onSuccess.fire({body: request.req.body, files: request.req.files});
+};
+
 kettle.tests["multer"].testDefs = [{
     name: "Multer tests",
-    expect: 6,
+    expect: 20,
     config: {
         configName: "kettle.tests.multer.config",
         configPath: "%kettle/tests/configs"
@@ -73,7 +91,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "file": "./LICENSE.txt"
+                        "file": "./tests/data/multer/test.txt"
                     }
                 }
             }
@@ -85,7 +103,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "files": ["./README.md", "./LICENSE.txt"]
+                        "files": ["./tests/data/multer/test.txt", "./tests/data/multer/test.md"]
                     }
                 }
             }
@@ -97,7 +115,23 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "files": ["./README.md", "./LICENSE.txt", "./History.md"]
+                        "files": ["./tests/data/multer/test.txt", "./tests/data/multer/test.md", "./tests/data/multer/test.png"]
+                    }
+                }
+            }
+        },
+        fieldFileUpload: {
+            type: "kettle.test.request.formData",
+            options: {
+                path: "/multer-fields",
+                method: "POST",
+                formData: {
+                    files: {
+                        "textFiles": ["./tests/data/multer/test.txt", "./tests/data/multer/test.md"],
+                        "binaryFile": "./tests/data/multer/test.png"
+                    },
+                    fields: {
+                        "projectName": "kettle"
                     }
                 }
             }
@@ -118,27 +152,99 @@ kettle.tests["multer"].testDefs = [{
     },{
         event: "{arrayFileUploadTooMany}.events.onComplete",
         listener: "kettle.test.testMulterArrayTooMany"
+    }, {
+        func: "{fieldFileUpload}.send"
+    }, {
+        event: "{fieldFileUpload}.events.onComplete",
+        listener: "kettle.test.testMulterFields"
     }]
 }];
 
+kettle.test.testMulterSingleSpec = {
+    fieldname: "file",
+    originalname: "test.txt",
+    mimetype: "text/plain"
+};
+
+kettle.test.testMulterArraySpec = [
+    {
+        fieldname: "files",
+        originalname: "test.txt",
+        mimetype: "text/plain"
+    },
+    {
+        fieldname: "files",
+        originalname: "test.md",
+        mimetype: "text/markdown"
+    }
+];
+
+kettle.test.testMulterFieldSpec = {
+    textFiles: [
+        {
+            fieldname: "textFiles",
+            originalname: "test.txt",
+            mimetype: "text/plain"
+        },
+        {
+            fieldname: "textFiles",
+            originalname: "test.md",
+            mimetype: "text/markdown"
+        }
+    ],
+    binaryFile: [
+        {
+            fieldname: "binaryFile",
+            originalname: "test.png",
+            mimetype: "image/png"
+        }
+    ]
+};
+
+kettle.test.multerSingleFileTester = function (fileInfo, singleSpec) {
+    fluid.each(singleSpec, function (specValue, specKey) {
+        var message = fluid.stringTemplate("Expected value at %specKey of %specValue is present", {specKey: specKey, specValue: specValue});
+        jqUnit.assertEquals(message, specValue, fileInfo[specKey]);
+    });
+};
+
+kettle.test.multerArrayTester = function (filesInfo, arraySpec) {
+    fluid.each(arraySpec, function (arraySpecItem, arraySpecItemIdx) {
+        kettle.test.multerSingleFileTester(filesInfo[arraySpecItemIdx], arraySpecItem);
+    });
+};
+
+kettle.test.multerFieldsTester = function (filesInfo, fieldsSpec) {
+    fluid.each(fieldsSpec, function (fieldsSpecItem, fieldsSpecItemKey) {
+        kettle.test.multerArrayTester(filesInfo[fieldsSpecItemKey], fieldsSpecItem);
+    });
+};
+
 kettle.test.testMulterSingle = function (fileInfo, that) {
     var parsedFileInfo = JSON.parse(fileInfo);
-    jqUnit.assertEquals("file name is expected", "LICENSE.txt", parsedFileInfo.originalname);
+    kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterSingleSpec);
 };
 
 kettle.test.testMulterArray = function (filesInfo, that) {
     var parsedFilesInfo = JSON.parse(filesInfo);
-    var expectedFileNames = ["README.md", "LICENSE.txt"]; jqUnit.assertEquals("files length is expected", 2, parsedFilesInfo.length);
-    fluid.each(parsedFilesInfo, function (fileInfo, idx) {
-        jqUnit.assertEquals("file name is expected", expectedFileNames[idx], fileInfo.originalname);
-    });
-
+    kettle.test.multerArrayTester(parsedFilesInfo, kettle.test.testMulterArraySpec);
 };
 
 kettle.test.testMulterArrayTooMany = function (filesInfo) {
     var parsedFilesInfo = JSON.parse(filesInfo);
     jqUnit.assertTrue("Trying to upload more files than the maxcount throws an error", parsedFilesInfo.isError);
     jqUnit.assertEquals("Error code is expected multer LIMIT_UNEXPECTED_FILE code", "LIMIT_UNEXPECTED_FILE", parsedFilesInfo.code)
+};
+
+kettle.test.testMulterFields = function (req, that) {
+    var parsedReq = JSON.parse(req);
+
+    var parsedBody = parsedReq.body;
+    console.log(parsedBody);
+
+    var parsedFilesInfo = parsedReq.files;
+    kettle.test.multerFieldsTester(parsedFilesInfo, kettle.test.testMulterFieldSpec);
+
 };
 
 kettle.test.bootstrapServer(kettle.tests["multer"].testDefs);
