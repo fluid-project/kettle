@@ -36,7 +36,8 @@
         "grunt-jsonlint": "1.1.0",
         "grunt-markdownlint": "1.0.43",
         "grunt-shell": "2.1.0",
-        "node-jqunit": "1.1.8"
+        "node-jqunit": "1.1.8",
+        "form-data": "2.3.1"
     },
     "license": "BSD-3-Clause",
     "keywords": [

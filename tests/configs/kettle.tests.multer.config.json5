@@ -1,0 +1,36 @@
+/** This is a config file in the JSON5 format, illustrating how
+  * it is possible to include comments and unquoted keys.
+  * The purpose of this config is to test facilities of the "multer middleware"
+  */
+
+{
+    type: "kettle.tests.multer.config",
+    options: {
+        gradeNames: ["fluid.component"],
+        components: {
+            server: {
+                type: "kettle.server",
+                options: {
+                    port: 8081,
+                    components: {
+                        infusionMulter: {
+                            type: "kettle.middleware.multer",
+                        },
+                        app: {
+                            type: "kettle.app",
+                            options: {
+                                requestHandlers: {
+                                    multerHandler: {
+                                        type: "kettle.tests.multer.handler",
+                                        route: "/multer/:id",
+                                        method: "post"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

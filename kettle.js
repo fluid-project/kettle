@@ -25,6 +25,7 @@ require("./lib/KettleApp.js");
 require("./lib/KettleConfigLoader.js");
 require("./lib/KettleResolvers.js");
 require("./lib/KettleMiddleware.js");
+require("./lib/KettleMiddleware-Multer.js");
 require("./lib/KettleMultiConfig.js");
 require("./lib/KettleRouter.js");
 require("./lib/KettleRequest.js");
