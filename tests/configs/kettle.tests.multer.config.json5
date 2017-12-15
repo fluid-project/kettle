@@ -13,16 +13,30 @@
                 options: {
                     port: 8081,
                     components: {
-                        infusionMulter: {
+                        infusionMulterSingle: {
+                            type: "kettle.middleware.multer"
+                        },
+                        infusionMulterArray: {
                             type: "kettle.middleware.multer",
+                            options: {
+                                multerConfig: {
+                                    acceptFuncName: "array",
+                                    acceptFuncArgs: ["files", 2]
+                                }
+                            }
                         },
                         app: {
                             type: "kettle.app",
                             options: {
                                 requestHandlers: {
-                                    multerHandler: {
-                                        type: "kettle.tests.multer.handler",
-                                        route: "/multer/:id",
+                                    multerSingleHandler: {
+                                        type: "kettle.tests.multer.handler.single",
+                                        route: "/multer-single",
+                                        method: "post"
+                                    },
+                                    multerArrayHandler: {
+                                        type: "kettle.tests.multer.handler.array",
+                                        route: "/multer-array",
                                         method: "post"
                                     }
                                 }
