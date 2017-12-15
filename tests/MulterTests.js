@@ -78,7 +78,7 @@ kettle.tests.multerHandlerField = function (request) {
 
 kettle.tests["multer"].testDefs = [{
     name: "Multer tests",
-    expect: 20,
+    expect: 21,
     config: {
         configName: "kettle.tests.multer.config",
         configPath: "%kettle/tests/configs"
@@ -180,25 +180,30 @@ kettle.test.testMulterArraySpec = [
 ];
 
 kettle.test.testMulterFieldSpec = {
-    textFiles: [
-        {
-            fieldname: "textFiles",
-            originalname: "test.txt",
-            mimetype: "text/plain"
-        },
-        {
-            fieldname: "textFiles",
-            originalname: "test.md",
-            mimetype: "text/markdown"
-        }
-    ],
-    binaryFile: [
-        {
-            fieldname: "binaryFile",
-            originalname: "test.png",
-            mimetype: "image/png"
-        }
-    ]
+    body: {
+        projectName: "kettle"
+    },
+    files: {
+        textFiles: [
+            {
+                fieldname: "textFiles",
+                originalname: "test.txt",
+                mimetype: "text/plain"
+            },
+            {
+                fieldname: "textFiles",
+                originalname: "test.md",
+                mimetype: "text/markdown"
+            }
+        ],
+        binaryFile: [
+            {
+                fieldname: "binaryFile",
+                originalname: "test.png",
+                mimetype: "image/png"
+            }
+        ]
+    }
 };
 
 kettle.test.multerSingleFileTester = function (fileInfo, singleSpec) {
@@ -214,8 +219,9 @@ kettle.test.multerArrayTester = function (filesInfo, arraySpec) {
     });
 };
 
-kettle.test.multerFieldsTester = function (filesInfo, fieldsSpec) {
-    fluid.each(fieldsSpec, function (fieldsSpecItem, fieldsSpecItemKey) {
+kettle.test.multerFieldsTester = function (body, filesInfo, fieldsSpec) {
+    jqUnit.assertDeepEq("Body of spec and body of multer request are identical", fieldsSpec.body, body);
+    fluid.each(fieldsSpec.files, function (fieldsSpecItem, fieldsSpecItemKey) {
         kettle.test.multerArrayTester(filesInfo[fieldsSpecItemKey], fieldsSpecItem);
     });
 };
@@ -243,7 +249,7 @@ kettle.test.testMulterFields = function (req, that) {
     console.log(parsedBody);
 
     var parsedFilesInfo = parsedReq.files;
-    kettle.test.multerFieldsTester(parsedFilesInfo, kettle.test.testMulterFieldSpec);
+    kettle.test.multerFieldsTester(parsedBody, parsedFilesInfo, kettle.test.testMulterFieldSpec);
 
 };
 
