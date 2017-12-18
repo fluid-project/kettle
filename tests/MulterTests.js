@@ -76,9 +76,31 @@ kettle.tests.multerHandlerField = function (request) {
     request.events.onSuccess.fire({body: request.req.body, files: request.req.files});
 };
 
+
+fluid.defaults("kettle.tests.multer.handler.imageOnly", {
+    gradeNames: "kettle.request.http",
+    requestMiddleware: {
+        "multerImageOnly": {
+            middleware: "{server}.infusionMulterImageOnly"
+        }
+    },
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.multerHandlerSingle"
+        }
+    }
+});
+
+// Filter function
+kettle.tests.multer.imageOnlyFilter = function (req, file, cb) {
+    var acceptedMimeTypes = ["image/png", "image/jpg", "image/gif"];
+    var isImage = fluid.contains(acceptedMimeTypes, file.mimetype);
+    cb(null, isImage);
+};
+
 kettle.tests["multer"].testDefs = [{
     name: "Multer tests",
-    expect: 21,
+    expect: 25,
     config: {
         configName: "kettle.tests.multer.config",
         configPath: "%kettle/tests/configs"
@@ -135,6 +157,30 @@ kettle.tests["multer"].testDefs = [{
                     }
                 }
             }
+        },
+        imageOnlySuccessfulUpload: {
+            type: "kettle.test.request.formData",
+            options: {
+                path: "/multer-image-only",
+                method: "POST",
+                formData: {
+                    files: {
+                        "image": "./tests/data/multer/test.png"
+                    }
+                }
+            }
+        },
+        imageOnlyFailedUpload: {
+            type: "kettle.test.request.formData",
+            options: {
+                path: "/multer-image-only",
+                method: "POST",
+                formData: {
+                    files: {
+                        "image": "./tests/data/multer/test.txt"
+                    }
+                }
+            }
         }
     },
     sequence: [{
@@ -157,6 +203,16 @@ kettle.tests["multer"].testDefs = [{
     }, {
         event: "{fieldFileUpload}.events.onComplete",
         listener: "kettle.test.testMulterFields"
+    }, {
+        func: "{imageOnlySuccessfulUpload}.send"
+    }, {
+        event: "{imageOnlySuccessfulUpload}.events.onComplete",
+        listener: "kettle.test.testMulterImageOnlyFilterSuccess"
+    }, {
+        func: "{imageOnlyFailedUpload}.send"
+    }, {
+        event: "{imageOnlyFailedUpload}.events.onComplete",
+        listener: "kettle.test.testMulterImageOnlyFilterFailed"
     }]
 }];
 
@@ -164,6 +220,12 @@ kettle.test.testMulterSingleSpec = {
     fieldname: "file",
     originalname: "test.txt",
     mimetype: "text/plain"
+};
+
+kettle.test.testMulterImageOnlyFilterSuccessSpec = {
+    fieldname: "image",
+    originalname: "test.png",
+    mimetype: "image/png"
 };
 
 kettle.test.testMulterArraySpec = [
@@ -244,13 +306,20 @@ kettle.test.testMulterArrayTooMany = function (filesInfo) {
 
 kettle.test.testMulterFields = function (req, that) {
     var parsedReq = JSON.parse(req);
-
     var parsedBody = parsedReq.body;
-    console.log(parsedBody);
-
     var parsedFilesInfo = parsedReq.files;
     kettle.test.multerFieldsTester(parsedBody, parsedFilesInfo, kettle.test.testMulterFieldSpec);
 
+};
+
+
+kettle.test.testMulterImageOnlyFilterSuccess = function (fileInfo) {
+    var parsedFileInfo = JSON.parse(fileInfo);
+    kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterImageOnlyFilterSuccessSpec);
+};
+
+kettle.test.testMulterImageOnlyFilterFailed = function (fileInfo) {
+    jqUnit.assertUndefined("File object is undefined - non-image upload was rejected by filter", fileInfo);
 };
 
 kettle.test.bootstrapServer(kettle.tests["multer"].testDefs);

@@ -38,6 +38,15 @@
                                 }
                             }
                         },
+                        infusionMulterImageOnly: {
+                            type: "kettle.middleware.multer",
+                            options: {
+                                multerConfig: {
+                                    acceptFuncArgs: ["image"],
+                                    fileFilterFuncName: "kettle.tests.multer.imageOnlyFilter"                                   
+                                }
+                            }
+                        },
                         app: {
                             type: "kettle.app",
                             options: {
@@ -55,6 +64,11 @@
                                     multerFieldsHandler: {
                                         type: "kettle.tests.multer.handler.fields",
                                         route: "/multer-fields",
+                                        method: "post"
+                                    },
+                                    multerImagesOnlyHandler: {
+                                        type: "kettle.tests.multer.handler.imageOnly",
+                                        route: "/multer-image-only",
                                         method: "post"
                                     }
                                 }
