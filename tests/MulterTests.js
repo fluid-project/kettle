@@ -1,7 +1,7 @@
 /**
- * Kettle HTTP Methods Tests
+ * Kettle Multer Middleware Tests
  *
- * Copyright 2014-2015 Raising The Floor - International
+ * Copyright 2017 OCAD University
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -222,12 +222,6 @@ kettle.test.testMulterSingleSpec = {
     mimetype: "text/plain"
 };
 
-kettle.test.testMulterImageOnlyFilterSuccessSpec = {
-    fieldname: "image",
-    originalname: "test.png",
-    mimetype: "image/png"
-};
-
 kettle.test.testMulterArraySpec = [
     {
         fieldname: "files",
@@ -268,6 +262,12 @@ kettle.test.testMulterFieldSpec = {
     }
 };
 
+kettle.test.testMulterImageOnlyFilterSuccessSpec = {
+    fieldname: "image",
+    originalname: "test.png",
+    mimetype: "image/png"
+};
+
 kettle.test.multerSingleFileTester = function (fileInfo, singleSpec) {
     fluid.each(singleSpec, function (specValue, specKey) {
         var message = fluid.stringTemplate("Expected value at %specKey of %specValue is present", {specKey: specKey, specValue: specValue});
@@ -288,12 +288,12 @@ kettle.test.multerFieldsTester = function (body, filesInfo, fieldsSpec) {
     });
 };
 
-kettle.test.testMulterSingle = function (fileInfo, that) {
+kettle.test.testMulterSingle = function (fileInfo) {
     var parsedFileInfo = JSON.parse(fileInfo);
     kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterSingleSpec);
 };
 
-kettle.test.testMulterArray = function (filesInfo, that) {
+kettle.test.testMulterArray = function (filesInfo) {
     var parsedFilesInfo = JSON.parse(filesInfo);
     kettle.test.multerArrayTester(parsedFilesInfo, kettle.test.testMulterArraySpec);
 };
@@ -304,7 +304,7 @@ kettle.test.testMulterArrayTooMany = function (filesInfo) {
     jqUnit.assertEquals("Error code is expected multer LIMIT_UNEXPECTED_FILE code", "LIMIT_UNEXPECTED_FILE", parsedFilesInfo.code)
 };
 
-kettle.test.testMulterFields = function (req, that) {
+kettle.test.testMulterFields = function (req) {
     var parsedReq = JSON.parse(req);
     var parsedBody = parsedReq.body;
     var parsedFilesInfo = parsedReq.files;
@@ -312,14 +312,13 @@ kettle.test.testMulterFields = function (req, that) {
 
 };
 
-
 kettle.test.testMulterImageOnlyFilterSuccess = function (fileInfo) {
     var parsedFileInfo = JSON.parse(fileInfo);
     kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterImageOnlyFilterSuccessSpec);
 };
 
 kettle.test.testMulterImageOnlyFilterFailed = function (fileInfo) {
-    jqUnit.assertUndefined("File object is undefined - non-image upload was rejected by filter", fileInfo);
+    jqUnit.assertEquals("File info is empty - non-image upload was rejected by filter", "", fileInfo);
 };
 
 kettle.test.bootstrapServer(kettle.tests["multer"].testDefs);
