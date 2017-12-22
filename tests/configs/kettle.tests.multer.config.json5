@@ -20,8 +20,8 @@
                             type: "kettle.middleware.multer",
                             options: {
                                 invokers: {
-                                    "getAccept": {
-                                        "funcName": "kettle.middleware.multer.getAcceptFunc",
+                                    "getFileStrategy": {
+                                        "funcName": "kettle.middleware.multer.getFileStrategy",
                                         "args": ["{that}", "array", ["files", 2]]
                                     }
                                 }
@@ -31,8 +31,8 @@
                             type: "kettle.middleware.multer",
                             options: {
                                 invokers: {
-                                    "getAccept": {
-                                        "funcName": "kettle.middleware.multer.getAcceptFunc",
+                                    "getFileStrategy": {
+                                        "funcName": "kettle.middleware.multer.getFileStrategy",
                                         "args": ["{that}", "fields", [
                                             {name: "textFiles", maxCount: 2},
                                             {name: "binaryFile", maxCount: 1},
@@ -45,14 +45,13 @@
                         infusionMulterImageOnly: {
                             type: "kettle.middleware.multer",
                             options: {
-                                multerConfig: {
-
-                                    fileFilterFuncName: "kettle.tests.multer.imageOnlyFilter"
-                                },
                                 invokers: {
-                                    "getAccept": {
-                                        "funcName": "kettle.middleware.multer.getAcceptFunc",
+                                    "getFileStrategy": {
+                                        "funcName": "kettle.middleware.multer.getFileStrategy",
                                         "args": ["{that}", "single", "image"]
+                                    },
+                                    "getFileFilter": {
+                                        "funcName": "kettle.tests.multer.imageOnlyFilter"
                                     }
                                 }
                             }
