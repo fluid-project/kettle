@@ -19,22 +19,26 @@
                         infusionMulterArray: {
                             type: "kettle.middleware.multer",
                             options: {
-                                multerConfig: {
-                                    acceptFuncName: "array",
-                                    acceptFuncArgs: ["files", 2]
+                                invokers: {
+                                    "getAccept": {
+                                        "funcName": "kettle.middleware.multer.getAcceptFunc",
+                                        "args": ["{that}", "array", ["files", 2]]
+                                    }
                                 }
                             }
                         },
                         infusionMulterFields: {
                             type: "kettle.middleware.multer",
                             options: {
-                                multerConfig: {
-                                    acceptFuncName: "fields",
-                                    acceptFuncArgs: [[
-                                        {name: "textFiles", maxCount: 2},
-                                        {name: "binaryFile", maxCount: 1},
-                                        {name: "projectName", maxCount: 1}
-                                    ]]
+                                invokers: {
+                                    "getAccept": {
+                                        "funcName": "kettle.middleware.multer.getAcceptFunc",
+                                        "args": ["{that}", "fields", [
+                                            {name: "textFiles", maxCount: 2},
+                                            {name: "binaryFile", maxCount: 1},
+                                            {name: "projectName", maxCount: 1}
+                                        ]]
+                                    }
                                 }
                             }
                         },
@@ -42,8 +46,14 @@
                             type: "kettle.middleware.multer",
                             options: {
                                 multerConfig: {
-                                    acceptFuncArgs: ["image"],
-                                    fileFilterFuncName: "kettle.tests.multer.imageOnlyFilter"                                   
+
+                                    fileFilterFuncName: "kettle.tests.multer.imageOnlyFilter"
+                                },
+                                invokers: {
+                                    "getAccept": {
+                                        "funcName": "kettle.middleware.multer.getAcceptFunc",
+                                        "args": ["{that}", "single", "image"]
+                                    }
                                 }
                             }
                         },
