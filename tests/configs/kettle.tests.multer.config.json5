@@ -51,7 +51,8 @@
                                         "args": ["{that}", "single", "image"]
                                     },
                                     "getFileFilter": {
-                                        "funcName": "kettle.tests.multer.getImageOnlyFilter"
+                                        "funcName": "kettle.middleware.multer.getMimeTypeFileFilter",
+                                        "args": [["image/png", "image/jpg", "image/gif"]]
                                     }
                                 }
                             }

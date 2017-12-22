@@ -91,15 +91,6 @@ fluid.defaults("kettle.tests.multer.handler.imageOnly", {
     }
 });
 
-// Filter function
-kettle.tests.multer.getImageOnlyFilter = function () {
-    return function (req, file, cb) {
-        var acceptedMimeTypes = ["image/png", "image/jpg", "image/gif"];
-        var isImage = fluid.contains(acceptedMimeTypes, file.mimetype);
-        cb(null, isImage);
-    }
-};
-
 kettle.tests["multer"].testDefs = [{
     name: "Multer tests",
     expect: 25,
