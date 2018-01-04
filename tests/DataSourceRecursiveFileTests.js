@@ -33,7 +33,7 @@ fluid.defaults("kettle.tests.dataSource.1.recursiveFile", {
     name: "Testing recursive file datasource with result in root folder",
     components: {
         dataSource: {
-            type: "kettle.dataSource.recursiveFile.moduleTerms",
+            type: "kettle.dataSource.recursiveFile",
             options: {
                 filename: "dataSourceTestFile.json"
             }
@@ -54,7 +54,7 @@ fluid.defaults("kettle.tests.dataSource.2.recursiveFile", {
     name: "Testing recursive file datasource with result in root folder and no '/' at the end of path",
     components: {
         dataSource: {
-            type: "kettle.dataSource.recursiveFile.moduleTerms",
+            type: "kettle.dataSource.recursiveFile",
             options: {
                 filename: "dataSourceTestFile.json"
             }
@@ -75,7 +75,7 @@ fluid.defaults("kettle.tests.dataSource.3.recursiveFile", {
     name: "Testing recursive file datasource with result inside subfolder",
     components: {
         dataSource: {
-            type: "kettle.dataSource.recursiveFile.moduleTerms",
+            type: "kettle.dataSource.recursiveFile",
             options: {
                 filename: "nestedFile.json"
             }
@@ -96,7 +96,7 @@ fluid.defaults("kettle.tests.dataSource.4.recursiveFile", {
     name: "Testing recursive file datasource with result inside nested subfolder",
     components: {
         dataSource: {
-            type: "kettle.dataSource.recursiveFile.moduleTerms",
+            type: "kettle.dataSource.recursiveFile",
             options: {
                 filename: "doubleNestedFile.json"
             }
@@ -118,7 +118,7 @@ fluid.defaults("kettle.tests.dataSource.5.recursiveFile", {
     shouldError: true,
     components: {
         dataSource: {
-            type: "kettle.dataSource.recursiveFile.moduleTerms",
+            type: "kettle.dataSource.recursiveFile",
             options: {
                 filename: "Idontexist.json"
             }
@@ -142,7 +142,7 @@ fluid.defaults("kettle.tests.dataSource.6.recursiveFile", {
     shouldError: true,
     components: {
         dataSource: {
-            type: "kettle.dataSource.recursiveFile.moduleTerms",
+            type: "kettle.dataSource.recursiveFile",
             options: {
                 filename: "nested"
             }
@@ -165,7 +165,7 @@ fluid.defaults("kettle.tests.dataSource.7.recursiveFile", {
     name: "Recursive file datasource: multiple hits of the same file... Same file is always read",
     components: {
         dataSource: {
-            type: "kettle.dataSource.recursiveFile.moduleTerms",
+            type: "kettle.dataSource.recursiveFile",
             options: {
                 filename: "commonFileName.json"
             }
