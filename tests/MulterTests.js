@@ -91,9 +91,23 @@ fluid.defaults("kettle.tests.multer.handler.imageOnly", {
     }
 });
 
+fluid.defaults("kettle.tests.multer.handler.diskStorage", {
+    gradeNames: "kettle.request.http",
+    requestMiddleware: {
+        "multerDiskStorage": {
+            middleware: "{server}.infusionMulterDiskStorage"
+        }
+    },
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.multerHandlerSingle"
+        }
+    }
+});
+
 kettle.tests["multer"].testDefs = [{
     name: "Multer tests",
-    expect: 25,
+    expect: 28,
     config: {
         configName: "kettle.tests.multer.config",
         configPath: "%kettle/tests/configs"
@@ -174,6 +188,18 @@ kettle.tests["multer"].testDefs = [{
                     }
                 }
             }
+        },
+        diskStorageUpload: {
+            type: "kettle.test.request.formData",
+            options: {
+                path: "/multer-disk-storage",
+                method: "POST",
+                formData: {
+                    files: {
+                        "file": "./tests/data/multer/test.png"
+                    }
+                }
+            }
         }
     },
     sequence: [{
@@ -206,6 +232,11 @@ kettle.tests["multer"].testDefs = [{
     }, {
         event: "{imageOnlyFailedUpload}.events.onComplete",
         listener: "kettle.test.testMulterImageOnlyFilterFailed"
+    }, {
+        func: "{diskStorageUpload}.send"
+    }, {
+        event: "{diskStorageUpload}.events.onComplete",
+        listener: "kettle.test.testMulterDiskStorage"
     }]
 }];
 
@@ -261,6 +292,12 @@ kettle.test.testMulterImageOnlyFilterSuccessSpec = {
     mimetype: "image/png"
 };
 
+kettle.test.testMulterDiskStorageSpec = {
+    fieldname: "file",
+    originalname: "test.png",
+    mimetype: "image/png"
+};
+
 kettle.test.multerSingleFileTester = function (fileInfo, singleSpec) {
     fluid.each(singleSpec, function (specValue, specKey) {
         var message = fluid.stringTemplate("Expected value at %specKey of %specValue is present", {specKey: specKey, specValue: specValue});
@@ -312,6 +349,12 @@ kettle.test.testMulterImageOnlyFilterSuccess = function (fileInfo) {
 
 kettle.test.testMulterImageOnlyFilterFailed = function (fileInfo) {
     jqUnit.assertEquals("File info is empty - non-image upload was rejected by filter", "", fileInfo);
+};
+
+kettle.test.testMulterDiskStorage = function (fileInfo) {
+    console.log("kettle.test.testMulterDiskStorage");
+    var parsedFileInfo = JSON.parse(fileInfo);
+    kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterDiskStorageSpec);
 };
 
 kettle.test.bootstrapServer(kettle.tests["multer"].testDefs);

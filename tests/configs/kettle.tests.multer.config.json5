@@ -57,6 +57,16 @@
                                 }
                             }
                         },
+                        infusionMulterDiskStorage: {
+                            type: "kettle.middleware.multer",
+                            options: {
+                                invokers: {
+                                    "getStorage": {
+                                        "func": "{that}.getDiskStorage"
+                                    }
+                                }
+                            }
+                        },
                         app: {
                             type: "kettle.app",
                             options: {
@@ -79,6 +89,11 @@
                                     multerImagesOnlyHandler: {
                                         type: "kettle.tests.multer.handler.imageOnly",
                                         route: "/multer-image-only",
+                                        method: "post"
+                                    },
+                                    multerDiskStorageHandler: {
+                                        type: "kettle.tests.multer.handler.diskStorage",
+                                        route: "/multer-disk-storage",
                                         method: "post"
                                     }
                                 }
