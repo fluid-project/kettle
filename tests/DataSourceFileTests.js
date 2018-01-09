@@ -19,7 +19,7 @@ var fluid = require("infusion"),
 
 require("./shared/DataSourceTestUtils.js");
 
-kettle.tests.dataSource.ensureWriteableEmpty();
+kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
 
 kettle.tests.dataSource.testFileSetResponse = function (dataSource, directModel, expected) {
     var fileName = kettle.dataSource.URL.resolveUrl(dataSource.options.path, dataSource.options.termMap, directModel, true),

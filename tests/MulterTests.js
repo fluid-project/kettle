@@ -16,6 +16,8 @@ var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     jqUnit = fluid.registerNamespace("jqUnit");
 
+require("./shared/DataSourceTestUtils.js");    
+
 kettle.loadTestingSupport();
 
 fluid.registerNamespace("kettle.tests.multer");

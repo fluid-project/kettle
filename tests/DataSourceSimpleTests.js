@@ -21,7 +21,7 @@ var fluid = require("infusion"),
 
 require("./shared/DataSourceTestUtils.js");
 
-kettle.tests.dataSource.ensureWriteableEmpty();
+kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
 
 fluid.defaults("kettle.tests.KETTLE34dataSource", {
     gradeNames: "kettle.dataSource.URL",
