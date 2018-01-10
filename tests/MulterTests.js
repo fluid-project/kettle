@@ -14,6 +14,7 @@
 
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
+    fs = require("fs"),
     jqUnit = fluid.registerNamespace("jqUnit");
 
 require("./shared/DataSourceTestUtils.js");
@@ -23,6 +24,12 @@ kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/uploads");
 kettle.loadTestingSupport();
 
 fluid.registerNamespace("kettle.tests.multer");
+
+kettle.tests.multer.testFilePaths = {
+    testPngPath: fluid.module.resolvePath("%kettle/tests/data/multer/test.png"),
+    testTxtPath: fluid.module.resolvePath("%kettle/tests/data/multer/test.txt"),
+    testMdPath: fluid.module.resolvePath("%kettle/tests/data/multer/test.md")
+};
 
 fluid.defaults("kettle.tests.multer.handler.single", {
     gradeNames: "kettle.request.http",
@@ -80,7 +87,6 @@ kettle.tests.multerHandlerField = function (request) {
     request.events.onSuccess.fire({body: request.req.body, files: request.req.files});
 };
 
-
 fluid.defaults("kettle.tests.multer.handler.imageOnly", {
     gradeNames: "kettle.request.http",
     requestMiddleware: {
@@ -111,7 +117,7 @@ fluid.defaults("kettle.tests.multer.handler.diskStorage", {
 
 kettle.tests["multer"].testDefs = [{
     name: "Multer tests",
-    expect: 28,
+    expect: 29,
     config: {
         configName: "kettle.tests.multer.config",
         configPath: "%kettle/tests/configs"
@@ -124,7 +130,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "file": "./tests/data/multer/test.txt"
+                        "file": kettle.tests.multer.testFilePaths.testTxtPath
                     }
                 }
             }
@@ -136,7 +142,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "files": ["./tests/data/multer/test.txt", "./tests/data/multer/test.md"]
+                        "files": [kettle.tests.multer.testFilePaths.testTxtPath, kettle.tests.multer.testFilePaths.testMdPath]
                     }
                 }
             }
@@ -148,7 +154,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "files": ["./tests/data/multer/test.txt", "./tests/data/multer/test.md", "./tests/data/multer/test.png"]
+                        "files": [kettle.tests.multer.testFilePaths.testTxtPath, kettle.tests.multer.testFilePaths.testMdPath, kettle.tests.multer.testFilePaths.testPngPath]
                     }
                 }
             }
@@ -160,8 +166,8 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "textFiles": ["./tests/data/multer/test.txt", "./tests/data/multer/test.md"],
-                        "binaryFile": "./tests/data/multer/test.png"
+                        "textFiles": [kettle.tests.multer.testFilePaths.testTxtPath, kettle.tests.multer.testFilePaths.testMdPath],
+                        "binaryFile": kettle.tests.multer.testFilePaths.testPngPath
                     },
                     fields: {
                         "projectName": "kettle"
@@ -176,7 +182,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "image": "./tests/data/multer/test.png"
+                        "image": kettle.tests.multer.testFilePaths.testPngPath
                     }
                 }
             }
@@ -188,7 +194,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "image": "./tests/data/multer/test.txt"
+                        "image": kettle.tests.multer.testFilePaths.testTxtPath
                     }
                 }
             }
@@ -200,7 +206,7 @@ kettle.tests["multer"].testDefs = [{
                 method: "POST",
                 formData: {
                     files: {
-                        "file": "./tests/data/multer/test.png"
+                        "file": kettle.tests.multer.testFilePaths.testPngPath
                     }
                 }
             }
@@ -358,6 +364,9 @@ kettle.test.testMulterImageOnlyFilterFailed = function (fileInfo) {
 kettle.test.testMulterDiskStorage = function (fileInfo) {
     var parsedFileInfo = JSON.parse(fileInfo);
     kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterDiskStorageSpec);
+    var filePath = fluid.module.resolvePath("%kettle/tests/data/uploads/test.png");
+    var fileExists = fs.existsSync(filePath);
+    jqUnit.assertTrue("File test.png exists", fileExists);
 };
 
 kettle.test.bootstrapServer(kettle.tests["multer"].testDefs);
