@@ -3,4 +3,3 @@ npm-debug.log
 yarn.lock
 
 /node_modules
-/tests/data/uploads

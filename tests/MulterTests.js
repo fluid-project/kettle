@@ -16,7 +16,9 @@ var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     jqUnit = fluid.registerNamespace("jqUnit");
 
-require("./shared/DataSourceTestUtils.js");    
+require("./shared/DataSourceTestUtils.js");
+
+kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/uploads");
 
 kettle.loadTestingSupport();
 
@@ -354,7 +356,6 @@ kettle.test.testMulterImageOnlyFilterFailed = function (fileInfo) {
 };
 
 kettle.test.testMulterDiskStorage = function (fileInfo) {
-    console.log("kettle.test.testMulterDiskStorage");
     var parsedFileInfo = JSON.parse(fileInfo);
     kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterDiskStorageSpec);
 };
