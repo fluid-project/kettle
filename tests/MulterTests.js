@@ -251,21 +251,27 @@ kettle.tests["multer"].testDefs = [{
 }];
 
 kettle.test.testMulterSingleSpec = {
-    fieldname: "file",
-    originalname: "test.txt",
-    mimetype: "text/plain"
+    fileInfo: {
+        fieldname: "file",
+        originalname: "test.txt",
+        mimetype: "text/plain"
+    }
 };
 
 kettle.test.testMulterArraySpec = [
     {
-        fieldname: "files",
-        originalname: "test.txt",
-        mimetype: "text/plain"
+        fileInfo: {
+            fieldname: "files",
+            originalname: "test.txt",
+            mimetype: "text/plain"
+        }
     },
     {
-        fieldname: "files",
-        originalname: "test.md",
-        mimetype: "text/markdown"
+        fileInfo: {
+            fieldname: "files",
+            originalname: "test.md",
+            mimetype: "text/markdown"
+        }
     }
 ];
 
@@ -276,43 +282,59 @@ kettle.test.testMulterFieldSpec = {
     files: {
         textFiles: [
             {
-                fieldname: "textFiles",
-                originalname: "test.txt",
-                mimetype: "text/plain"
+                fileInfo: {
+                    fieldname: "textFiles",
+                    originalname: "test.txt",
+                    mimetype: "text/plain"
+                }
             },
             {
-                fieldname: "textFiles",
-                originalname: "test.md",
-                mimetype: "text/markdown"
+                fileInfo: {
+                    fieldname: "textFiles",
+                    originalname: "test.md",
+                    mimetype: "text/markdown"
+                }
             }
         ],
         binaryFile: [
             {
-                fieldname: "binaryFile",
-                originalname: "test.png",
-                mimetype: "image/png"
+                fileInfo: {
+                    fieldname: "binaryFile",
+                    originalname: "test.png",
+                    mimetype: "image/png"
+                }
             }
         ]
     }
 };
 
 kettle.test.testMulterImageOnlyFilterSuccessSpec = {
-    fieldname: "image",
-    originalname: "test.png",
-    mimetype: "image/png"
+    fileInfo: {
+        fieldname: "image",
+        originalname: "test.png",
+        mimetype: "image/png"
+    }
 };
 
 kettle.test.testMulterDiskStorageSpec = {
-    fieldname: "file",
-    originalname: "test.png",
-    mimetype: "image/png"
+    fileInfo: {
+        fieldname: "file",
+        originalname: "test.png",
+        mimetype: "image/png"
+    },
+    presentAtFilePath: "%kettle/tests/data/uploads/test.png"
 };
 
 kettle.test.multerSingleFileTester = function (fileInfo, singleSpec) {
-    fluid.each(singleSpec, function (specValue, specKey) {
+    fluid.each(singleSpec.fileInfo, function (specValue, specKey) {
         var message = fluid.stringTemplate("Expected value at %specKey of %specValue is present", {specKey: specKey, specValue: specValue});
         jqUnit.assertEquals(message, specValue, fileInfo[specKey]);
     });
+    if(singleSpec.presentAtFilePath) {
+        var filePath = fluid.module.resolvePath(singleSpec.presentAtFilePath);
+        var fileExists = fs.existsSync(filePath);
+        jqUnit.assertTrue("File exists at " + singleSpec.presentAtFilePath, fileExists);
+    }
 };
 
 kettle.test.multerArrayTester = function (filesInfo, arraySpec) {
@@ -364,9 +386,6 @@ kettle.test.testMulterImageOnlyFilterFailed = function (fileInfo) {
 kettle.test.testMulterDiskStorage = function (fileInfo) {
     var parsedFileInfo = JSON.parse(fileInfo);
     kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterDiskStorageSpec);
-    var filePath = fluid.module.resolvePath("%kettle/tests/data/uploads/test.png");
-    var fileExists = fs.existsSync(filePath);
-    jqUnit.assertTrue("File test.png exists", fileExists);
 };
 
 kettle.test.bootstrapServer(kettle.tests["multer"].testDefs);
