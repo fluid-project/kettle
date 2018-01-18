@@ -1,7 +1,7 @@
 /**
  * Kettle Multer Middleware Tests
  *
- * Copyright 2017 OCAD University
+ * Copyright 2017-2018 OCAD University
  *
  * Licensed under the New BSD license. You may not use this file except in
  * compliance with this License.
@@ -83,7 +83,7 @@ fluid.defaults("kettle.tests.multer.handler.fields", {
     }
 });
 
-// Sends info about both the body and the uploaded files 
+// Sends info about both the body and the uploaded files
 kettle.tests.multerHandlerField = function (request) {
     request.events.onSuccess.fire({body: request.req.body, files: request.req.files});
 };

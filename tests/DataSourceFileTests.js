@@ -1,6 +1,7 @@
 /*!
 Kettle Data Source Tests
 
+Copyright 2017-2018 OCAD University
 Copyright 2012-2015 Raising the Floor - International
 
 Licensed under the New BSD license. You may not use this file except in
