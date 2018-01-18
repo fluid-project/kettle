@@ -45,7 +45,7 @@ fluid.defaults("kettle.tests.multer.handler.single", {
     }
 });
 
-// Sends the info about the uploaded file
+// Sends info about the uploaded file
 kettle.tests.multerHandlerSingle = function (request) {
     request.events.onSuccess.fire(request.req.file);
 };
@@ -64,7 +64,7 @@ fluid.defaults("kettle.tests.multer.handler.array", {
     }
 });
 
-// Sends the info about the uploaded files
+// Sends info about the uploaded array of files
 kettle.tests.multerHandlerArray = function (request) {
     request.events.onSuccess.fire(request.req.files);
 };
@@ -83,6 +83,7 @@ fluid.defaults("kettle.tests.multer.handler.fields", {
     }
 });
 
+// Sends info about both the body and the uploaded files 
 kettle.tests.multerHandlerField = function (request) {
     request.events.onSuccess.fire({body: request.req.body, files: request.req.files});
 };
