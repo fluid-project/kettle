@@ -116,7 +116,7 @@ fluid.defaults("kettle.tests.multer.handler.diskStorage", {
     }
 });
 
-kettle.tests["multer"].testDefs = [{
+kettle.tests.multer.testDefs = [{
     name: "Multer tests",
     expect: 29,
     config: {
@@ -331,7 +331,7 @@ kettle.test.multerSingleFileTester = function (fileInfo, singleSpec) {
         var message = fluid.stringTemplate("Expected value at %specKey of %specValue is present", {specKey: specKey, specValue: specValue});
         jqUnit.assertEquals(message, specValue, fileInfo[specKey]);
     });
-    if(singleSpec.presentAtFilePath) {
+    if (singleSpec.presentAtFilePath) {
         var filePath = fluid.module.resolvePath(singleSpec.presentAtFilePath);
         var fileExists = fs.existsSync(filePath);
         jqUnit.assertTrue("File exists at " + singleSpec.presentAtFilePath, fileExists);
@@ -364,7 +364,7 @@ kettle.test.testMulterArray = function (filesInfo) {
 kettle.test.testMulterArrayTooMany = function (filesInfo) {
     var parsedFilesInfo = JSON.parse(filesInfo);
     jqUnit.assertTrue("Trying to upload more files than the maxcount throws an error", parsedFilesInfo.isError);
-    jqUnit.assertEquals("Error code is expected multer LIMIT_UNEXPECTED_FILE code", "LIMIT_UNEXPECTED_FILE", parsedFilesInfo.code)
+    jqUnit.assertEquals("Error code is expected multer LIMIT_UNEXPECTED_FILE code", "LIMIT_UNEXPECTED_FILE", parsedFilesInfo.code);
 };
 
 kettle.test.testMulterFields = function (req) {
@@ -389,4 +389,4 @@ kettle.test.testMulterDiskStorage = function (fileInfo) {
     kettle.test.multerSingleFileTester(parsedFileInfo, kettle.test.testMulterDiskStorageSpec);
 };
 
-kettle.test.bootstrapServer(kettle.tests["multer"].testDefs);
+kettle.test.bootstrapServer(kettle.tests.multer.testDefs);
