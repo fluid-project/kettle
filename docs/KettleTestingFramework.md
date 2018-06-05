@@ -438,8 +438,8 @@ The primarily useful method on `kettle.test.request.ws` is `send`. It accepts tw
 
 ### Issuing session-aware WebSockets requests
 
-Analogous with `kettle.test.request.http.cookie`, there is a session-aware variant of the request grade `kettle.test.request.ws`, named `kettle.test.request.ws.cookie`. Its behaviour is identical
-with that of `kettle.test.request.http.cookie`, in particular being able to share access to the same `kettle.test.cookieJar` component to enable a mixed series of HTTP and WebSockets requests
+Analogous with `kettle.test.request.httpCookie`, there is a session-aware variant of the request grade `kettle.test.request.ws`, named `kettle.test.request.wsCookie`. Its behaviour is identical
+with that of `kettle.test.request.httpCookie`, in particular being able to share access to the same `kettle.test.cookieJar` component to enable a mixed series of HTTP and WebSockets requests
 to be contextualised by the same session cookies.
 
 ## Framework tests
