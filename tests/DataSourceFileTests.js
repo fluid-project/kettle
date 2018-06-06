@@ -15,15 +15,17 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 var fluid = require("infusion"),
     kettle = require("../kettle.js"),
     fs = require("fs"),
+    JSON5 = require("json5"),
     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 require("./shared/DataSourceTestUtils.js");
 
 kettle.tests.dataSource.ensureWriteableEmpty();
 
-kettle.tests.dataSource.testFileSetResponse = function (dataSource, directModel, expected) {
+kettle.tests.dataSource.testFileSetResponse = function (dataSource, directModel, expected, encoding) {
     var fileName = kettle.dataSource.URL.resolveUrl(dataSource.options.path, dataSource.options.termMap, directModel, true),
-        data = JSON.parse(fs.readFileSync(fileName, "utf8"));
+        encoder = encoding === "JSON5" ? JSON5 : JSON,
+        data = encoder.parse(fs.readFileSync(fileName, "utf8"));
     jqUnit.assertDeepEq("Response is correct", expected, data);
     fs.unlink(fileName);
 };
@@ -326,6 +328,37 @@ fluid.defaults("kettle.tests.dataSource.13.file.set", {
     }
 });
 
+fluid.defaults("kettle.tests.dataSource.13a.file.JSON5.set", {
+    gradeNames: ["kettle.tests.simpleDataSourceTest"],
+    name: "13a. Testing file datasource with filesystem - set with JSON5 encoding",
+    dataSourceMethod: "set",
+    dataSourceModel: {
+        test: Infinity
+    },
+    components: {
+        dataSource: {
+            type: "kettle.dataSource.file.moduleTerms",
+            options: {
+                path: "%kettle/tests/data/writeable/test.json5",
+                writable: true,
+                components: {
+                    encoding: {
+                        type: "kettle.dataSource.encoding.JSON5"
+                    }
+                }
+            }
+        }
+    },
+    invokers: {
+        responseFunc: {
+            funcName: "kettle.tests.dataSource.testFileSetResponse",
+            args: ["{testEnvironment}.dataSource", null, {
+                test: Infinity
+            }, "JSON5"]
+        }
+    }
+});
+
 fluid.defaults("kettle.tests.dataSource.14.CouchDB.file.set", {
     gradeNames: ["kettle.tests.simpleDataSourceTest"],
     name: "14. Testing CouchDB datasource with filesystem - set",
@@ -532,6 +565,7 @@ kettle.tests.dataSource.standardTests = [
     "kettle.tests.dataSource.11.CouchDB.file.expand.static",
     "kettle.tests.dataSource.12.CouchDB.file.expand.dynamic",
     "kettle.tests.dataSource.13.file.set",
+    "kettle.tests.dataSource.13a.file.JSON5.set",
     "kettle.tests.dataSource.14.CouchDB.file.set",
     "kettle.tests.dataSource.15.CouchDB.file.set.existing",
     "kettle.tests.dataSource.16.file.set.expand",
