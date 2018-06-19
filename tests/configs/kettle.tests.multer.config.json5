@@ -50,9 +50,13 @@
                                         "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
                                         "args": ["{that}", "single", "image"]
                                     },
-                                    "getFileFilter": {
-                                        "funcName": "kettle.middleware.multer.getMimeTypeFileFilter",
-                                        "args": [["image/png", "image/jpg", "image/gif"]]
+                                    "fileFilter": {
+                                        "func": {
+                                            expander: {
+                                                "funcName": "kettle.middleware.multer.createMimeTypeFileFilterFunction",
+                                                "args": [["image/png", "image/jpg", "image/gif"]]
+                                            }
+                                        }
                                     }
                                 }
                             }
