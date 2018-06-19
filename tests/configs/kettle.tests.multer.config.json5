@@ -64,10 +64,8 @@
                         infusionMulterDiskStorage: {
                             type: "kettle.middleware.multer",
                             options: {
-                                invokers: {
-                                    "getStorage": {
-                                        "func": "{that}.getDiskStorage"
-                                    }
+                                members: {
+                                    storage: "{that}.diskStorage"
                                 }
                             }
                         },
