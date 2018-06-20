@@ -25,11 +25,7 @@ fluid.registerNamespace("kettle.tests.dataSource");
 // empties a directory, used by the dataSource and multer tests when testing
 // file system writes / uploads
 // directoryPath: a path statement to a directory, resolved by fluid.module.resolvePath
-// TODO: this has replaced the concrete
-// ensureWriteableEmpty function and that function's use in various
-// dataSource tests has been replaced by uses of ensureDirectoryEmpty
-// I'm not sure if ensureWriteableEmpty should be kept for backwards
-// compatibility - it seemed unlikely to be used out of Kettle's own tests
+
 kettle.tests.dataSource.ensureDirectoryEmpty = function (directoryPath) {
     var directory = fluid.module.resolvePath(directoryPath);
     kettle.test.deleteFolderRecursive(directory);
