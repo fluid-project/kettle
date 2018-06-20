@@ -553,6 +553,8 @@ kettle.tests.dataSource.promisifiedTests = fluid.transform(kettle.tests.dataSour
 
 var tests = kettle.tests.dataSource.standardTests.concat(kettle.tests.dataSource.promisifiedTests);
 
-jqUnit.onAllTestsDone.addListener(kettle.tests.dataSource.ensureWriteableEmpty);
+jqUnit.onAllTestsDone.addListener(function () {
+    kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
+});
 
 fluid.test.runTests(tests);

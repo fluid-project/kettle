@@ -252,4 +252,6 @@ jqUnit.test("Attached URLResolver tests", function () {
     kettle.tests.testUrlResolver("kettle.tests.dataSource.unescapedUrl");
 });
 
-jqUnit.onAllTestsDone.addListener(kettle.tests.dataSource.ensureWriteableEmpty);
+jqUnit.onAllTestsDone.addListener(function () {
+    kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
+});
