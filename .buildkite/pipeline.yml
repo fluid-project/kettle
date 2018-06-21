@@ -1,0 +1,9 @@
+env:
+  BUILDKITE_PLUGIN_DOCKER_SHELL: "sh -c"
+
+steps:
+  - command: apk add --no-cache --no-progress python make gcc git && npm install && npm test
+    plugins:
+      docker:
+        image: "node:8-alpine"
+        always-pull: true
