@@ -2,7 +2,9 @@ env:
   BUILDKITE_PLUGIN_DOCKER_SHELL: "sh -c"
 
 steps:
+  - name: Tests
   - command: apk add --no-cache --no-progress python make gcc git && npm install && npm test
+    timeout_in_minutes: 5
     plugins:
       docker:
         image: "node:8-alpine"
