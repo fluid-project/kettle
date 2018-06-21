@@ -19,56 +19,55 @@
                         infusionMulterArray: {
                             type: "kettle.middleware.multer",
                             options: {
-                                invokers: {
-                                    "getMiddlewareForFileStrategy": {
-                                        "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
-                                        "args": ["{that}", "array", ["files", 2]]
-                                    }
+                                formFieldOptions: {
+                                    method: "array",
+                                    fieldName: "files",
+                                    maxCount: 2
                                 }
                             }
                         },
-                        infusionMulterFields: {
-                            type: "kettle.middleware.multer",
-                            options: {
-                                invokers: {
-                                    "getMiddlewareForFileStrategy": {
-                                        "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
-                                        "args": ["{that}", "fields", [
-                                            {name: "textFiles", maxCount: 2},
-                                            {name: "binaryFile", maxCount: 1},
-                                            {name: "projectName", maxCount: 1}
-                                        ]]
-                                    }
-                                }
-                            }
-                        },
-                        infusionMulterImageOnly: {
-                            type: "kettle.middleware.multer",
-                            options: {
-                                invokers: {
-                                    "getMiddlewareForFileStrategy": {
-                                        "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
-                                        "args": ["{that}", "single", "image"]
-                                    },
-                                    "fileFilter": {
-                                        "func": {
-                                            expander: {
-                                                "funcName": "kettle.middleware.multer.createMimeTypeFileFilterFunction",
-                                                "args": [["image/png", "image/jpg", "image/gif"]]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        infusionMulterDiskStorage: {
-                            type: "kettle.middleware.multer",
-                            options: {
-                                members: {
-                                    storage: "{that}.diskStorage"
-                                }
-                            }
-                        },
+                        // infusionMulterFields: {
+                        //     type: "kettle.middleware.multer",
+                        //     options: {
+                        //         invokers: {
+                        //             "getMiddlewareForFileStrategy": {
+                        //                 "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
+                        //                 "args": ["{that}", "fields", [
+                        //                     {name: "textFiles", maxCount: 2},
+                        //                     {name: "binaryFile", maxCount: 1},
+                        //                     {name: "projectName", maxCount: 1}
+                        //                 ]]
+                        //             }
+                        //         }
+                        //     }
+                        // },
+                        // infusionMulterImageOnly: {
+                        //     type: "kettle.middleware.multer",
+                        //     options: {
+                        //         invokers: {
+                        //             "getMiddlewareForFileStrategy": {
+                        //                 "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
+                        //                 "args": ["{that}", "single", "image"]
+                        //             },
+                        //             "fileFilter": {
+                        //                 "func": {
+                        //                     expander: {
+                        //                         "funcName": "kettle.middleware.multer.createMimeTypeFileFilterFunction",
+                        //                         "args": [["image/png", "image/jpg", "image/gif"]]
+                        //                     }
+                        //                 }
+                        //             }
+                        //         }
+                        //     }
+                        // },
+                        // infusionMulterDiskStorage: {
+                        //     type: "kettle.middleware.multer",
+                        //     options: {
+                        //         members: {
+                        //             storage: "{that}.diskStorage"
+                        //         }
+                        //     }
+                        // },
                         app: {
                             type: "kettle.app",
                             options: {
