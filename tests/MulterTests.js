@@ -112,7 +112,7 @@ fluid.defaults("kettle.tests.multer.handler.diskStorage", {
 
 kettle.tests.multer.testDefs = [{
     name: "Multer tests",
-    expect: 11,
+    expect: 29,
     config: {
         configName: "kettle.tests.multer.config",
         configPath: "%kettle/tests/configs"
@@ -237,27 +237,29 @@ kettle.tests.multer.testDefs = [{
         event: "{arrayFileUploadTooMany}.events.onComplete",
         listener: "kettle.test.testMulterArrayTooMany"
     },
-    // {
-    //     func: "{fieldFileUpload}.send"
-    // }, {
-    //     event: "{fieldFileUpload}.events.onComplete",
-    //     listener: "kettle.test.testMulterFields"
-    // }, {
-    //     func: "{imageOnlySuccessfulUpload}.send"
-    // }, {
-    //     event: "{imageOnlySuccessfulUpload}.events.onComplete",
-    //     listener: "kettle.test.testMulterImageOnlyFilterSuccess"
-    // }, {
-    //     func: "{imageOnlyFailedUpload}.send"
-    // }, {
-    //     event: "{imageOnlyFailedUpload}.events.onComplete",
-    //     listener: "kettle.test.testMulterImageOnlyFilterFailed"
-    // }, {
-    //     func: "{diskStorageUpload}.send"
-    // }, {
-    //     event: "{diskStorageUpload}.events.onComplete",
-    //     listener: "kettle.test.testMulterDiskStorage"
-    // }
+    {
+        func: "{fieldFileUpload}.send"
+    }, {
+        event: "{fieldFileUpload}.events.onComplete",
+        listener: "kettle.test.testMulterFields"
+    },
+    {
+        func: "{imageOnlySuccessfulUpload}.send"
+    }, {
+        event: "{imageOnlySuccessfulUpload}.events.onComplete",
+        listener: "kettle.test.testMulterImageOnlyFilterSuccess"
+    }, {
+        func: "{imageOnlyFailedUpload}.send"
+    }, {
+        event: "{imageOnlyFailedUpload}.events.onComplete",
+        listener: "kettle.test.testMulterImageOnlyFilterFailed"
+    },
+    {
+        func: "{diskStorageUpload}.send"
+    }, {
+        event: "{diskStorageUpload}.events.onComplete",
+        listener: "kettle.test.testMulterDiskStorage"
+    }
     ]
 }];
 
@@ -372,7 +374,6 @@ kettle.test.testMulterArray = function (filesInfo) {
 };
 
 kettle.test.testMulterArrayTooMany = function (filesInfo) {
-    console.log(filesInfo);
     var parsedFilesInfo = JSON.parse(filesInfo);
     jqUnit.assertTrue("Trying to upload more files than the maxcount throws an error", parsedFilesInfo.isError);
     jqUnit.assertEquals("Error code is expected multer LIMIT_UNEXPECTED_FILE code", "LIMIT_UNEXPECTED_FILE", parsedFilesInfo.code);
