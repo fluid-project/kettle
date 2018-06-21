@@ -3,7 +3,7 @@ env:
 
 steps:
   - name: Tests
-  - command: apk add --no-cache --no-progress python make gcc git && npm install && npm test
+    command: apk add --no-cache --no-progress python make gcc git && npm install && npm test
     timeout_in_minutes: 5
     plugins:
       docker:
