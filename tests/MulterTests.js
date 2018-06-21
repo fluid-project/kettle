@@ -224,7 +224,8 @@ kettle.tests.multer.testDefs = [{
     }, {
         event: "{singleFileUpload}.events.onComplete",
         listener: "kettle.test.testMulterSingle"
-    },{
+    },
+    {
         func: "{arrayFileUpload}.send"
     },{
         event: "{arrayFileUpload}.events.onComplete",
@@ -254,7 +255,8 @@ kettle.tests.multer.testDefs = [{
     }, {
         event: "{diskStorageUpload}.events.onComplete",
         listener: "kettle.test.testMulterDiskStorage"
-    }]
+    }
+    ]
 }];
 
 kettle.test.testMulterSingleSpec = {
