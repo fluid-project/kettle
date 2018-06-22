@@ -162,6 +162,13 @@ to implement your own.
     <td>none</td>
 </tr>
 <tr>
+    <td><code>kettle.middleware.multer</code></td>
+    <td><a href="https://github.com/expressjs/multer">expressjs/multer</a></td>
+    <td>Handles <code>multipart/form-data</code>, primarily for file uploading.</td>
+    <td><code>middlewareOptions</code>, forwarded to <code>multer(options)</code>, and <code>formFieldOptions</code>, used to configure the field parameters for uploaded files as described in <a href="https://github.com/expressjs/multer#usage">multer's documentation</a>. Note that some <code>multer</code> options require functions as their values, and are implemented in Kettle using <code>invokers</code>; see the documentation below on using <code>kettle.middleware.multer</code> for more details.</td>
+    <td>none – user must configure on each use</td>
+</tr>
+<tr>
     <td><code>kettle.middleware.session</code></td>
     <td><a href="https://github.com/expressjs/session">expressjs/session</a></td>
     <td>Stores and retrieves <code>req.session</code> from various backends</td>
@@ -265,5 +272,9 @@ fluid.defaults("examples.static.handler", {
         }
     }
 });
+
+#### Using the multer middleware
+
+Kettle also includes the
 
 ```
