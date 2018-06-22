@@ -165,7 +165,7 @@ to implement your own.
     <td><code>kettle.middleware.multer</code></td>
     <td><a href="https://github.com/expressjs/multer">expressjs/multer</a></td>
     <td>Handles <code>multipart/form-data</code>, primarily for file uploading.</td>
-    <td><code>middlewareOptions</code>, forwarded to <code>multer(options)</code>, and <code>formFieldOptions</code>, used to configure the field parameters for uploaded files as described in <a href="https://github.com/expressjs/multer#usage">multer's documentation</a>. Note that some <code>multer</code> options require functions as their values, and are implemented in Kettle using <code>invokers</code>; see the documentation below on using <code>kettle.middleware.multer</code> for more details.</td>
+    <td><code>middlewareOptions</code>, forwarded to <code>multer(options)</code>, and <code>formFieldOptions</code>, used to configure the field parameters for uploaded files as described in <a href="https://github.com/expressjs/multer#usage">multer's documentation</a>. <strong>Note</strong>: some <code>multer</code> options require functions as their values, and are implemented in Kettle using <code>invokers</code>; see the documentation below on using <code>kettle.middleware.multer</code> for more details.</td>
     <td>none – user must configure on each use</td>
 </tr>
 <tr>
@@ -272,9 +272,57 @@ fluid.defaults("examples.static.handler", {
         }
     }
 });
+```
 
 #### Using the multer middleware
 
-Kettle also includes the
+This shows a basic single-file upload with some customization to the naming and filtering behavior; for more examples of possible usage, refer to the `kettle.tests.multer.config.json5` configuration file in `tests/configs`.
 
 ```
+
+{
+    "type": "examples.upload.config",
+    "options": {
+        "gradeNames": ["fluid.component"],
+        "components": {
+            "server": {
+                "type": "kettle.server",
+                "options": {
+                    "port": 8081,
+                    "components": {
+                        "imageUpload": {
+                            "type": "kettle.middleware.multer",
+                            "options": {
+                                "formFieldOptions": {
+                                    "method": "single",
+                                    "fieldName": "image"
+                                },
+                                "members": {
+                                    "storage": "{that}.diskStorage"
+                                }
+                            }
+                        },
+                        "app": {
+                            "type": "kettle.app",
+                            "options": {
+                                "requestHandlers": {
+                                    "imageUploadHandler": {
+                                        "type": "examples.upload.handler",         
+                                        "route": "/upload",
+                                        "method": "post"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+`TODO`:
+- handler definition (show working with "file" object)
+- filefilter redefinition
+- diskstorage invoker redefinition
