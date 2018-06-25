@@ -1,5 +1,5 @@
 /**
- * Kettle Sample app - multiPartForm client
+ * Kettle Sample app - multipartForm client
  *
  * Copyright 2018 OCAD University
  *

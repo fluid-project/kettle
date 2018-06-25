@@ -1,5 +1,5 @@
 /**
- * Kettle Sample app - multiPartForm using code
+ * Kettle Sample app - multipartForm using code
  *
  * Copyright 2018 OCAD University
  *
@@ -61,7 +61,7 @@ fluid.defaults("examples.uploadConfig", {
 });
 
 examples.uploadConfig.diskStorageDestination = function (req, file, cb) {
-    cb(null, "./examples/multiPartForm/uploads");
+    cb(null, "./examples/multipartForm/uploads");
 };
 
 fluid.defaults("examples.uploadConfig.handler", {
@@ -77,9 +77,9 @@ fluid.defaults("examples.uploadConfig.handler", {
 });
 
 examples.uploadConfig.handleRequest = function (request) {
-    console.log(request);
+    var uploadedFileDetails = request.req.file;
     request.events.onSuccess.fire({
-        message: "POST request received on path /upload"
+        message: fluid.stringTemplate("POST request received on path /upload; file %originalName uploaded to %uploadedPath", {originalName: uploadedFileDetails.originalname, uploadedPath: uploadedFileDetails.path})
     });
 };
 
@@ -87,4 +87,4 @@ examples.uploadConfig.handleRequest = function (request) {
 examples.uploadConfig();
 
 // Load the client to make a test request
-require("./multiPartForm-client.js");
+require("./multipartForm-client.js");
