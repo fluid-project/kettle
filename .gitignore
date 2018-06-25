@@ -3,3 +3,5 @@ npm-debug.log
 yarn.lock
 
 /node_modules
+/examples/multiPartForm/uploads/*
+!/examples/multiPartForm/uploads/.gitkeep

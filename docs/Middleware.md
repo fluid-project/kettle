@@ -278,7 +278,7 @@ fluid.defaults("examples.static.handler", {
 
 This shows a basic single-file upload with some customization to the naming and filtering behavior; for more examples of possible usage, refer to the `kettle.tests.multer.config.json5` configuration file in `tests/configs`.
 
-```
+```javascript
 
 {
     "type": "examples.upload.config",
@@ -307,7 +307,7 @@ This shows a basic single-file upload with some customization to the naming and 
                             "options": {
                                 "requestHandlers": {
                                     "imageUploadHandler": {
-                                        "type": "examples.upload.handler",         
+                                        "type": "examples.upload.handler",
                                         "route": "/upload",
                                         "method": "post"
                                     }
@@ -323,6 +323,7 @@ This shows a basic single-file upload with some customization to the naming and 
 ```
 
 `TODO`:
-- handler definition (show working with "file" object)
-- filefilter redefinition
-- diskstorage invoker redefinition
+
+* handler definition (show working with "file" object)
+* filefilter redefinition
+* diskstorage invoker redefinition
