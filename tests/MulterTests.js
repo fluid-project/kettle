@@ -134,7 +134,6 @@ kettle.tests.multer.testDefs = [{
             type: "kettle.test.request.formData",
             options: {
                 path: "/multer-single",
-                method: "POST",
                 formData: {
                     files: {
                         "file": "{testFilePathsHolder}.paths.testTxtPath"
@@ -146,7 +145,6 @@ kettle.tests.multer.testDefs = [{
             type: "kettle.test.request.formData",
             options: {
                 path: "/multer-array",
-                method: "POST",
                 formData: {
                     files: {
                         "files": ["{testFilePathsHolder}.paths.testTxtPath", "{testFilePathsHolder}.paths.testMdPath"]
@@ -158,7 +156,6 @@ kettle.tests.multer.testDefs = [{
             type: "kettle.test.request.formData",
             options: {
                 path: "/multer-array",
-                method: "POST",
                 formData: {
                     files: {
                         "files": ["{testFilePathsHolder}.paths.testTxtPath", "{testFilePathsHolder}.paths.testMdPath", "{testFilePathsHolder}.paths.testPngPath"]
@@ -170,7 +167,6 @@ kettle.tests.multer.testDefs = [{
             type: "kettle.test.request.formData",
             options: {
                 path: "/multer-fields",
-                method: "POST",
                 formData: {
                     files: {
                         "textFiles": ["{testFilePathsHolder}.paths.testTxtPath", "{testFilePathsHolder}.paths.testMdPath"],
@@ -186,7 +182,6 @@ kettle.tests.multer.testDefs = [{
             type: "kettle.test.request.formData",
             options: {
                 path: "/multer-image-only",
-                method: "POST",
                 formData: {
                     files: {
                         "image": "{testFilePathsHolder}.paths.testPngPath"
@@ -198,7 +193,6 @@ kettle.tests.multer.testDefs = [{
             type: "kettle.test.request.formData",
             options: {
                 path: "/multer-image-only",
-                method: "POST",
                 formData: {
                     files: {
                         "image": "{testFilePathsHolder}.paths.testTxtPath"
@@ -210,7 +204,6 @@ kettle.tests.multer.testDefs = [{
             type: "kettle.test.request.formData",
             options: {
                 path: "/multer-disk-storage",
-                method: "POST",
                 formData: {
                     files: {
                         "file": "{testFilePathsHolder}.paths.testPngPath"
