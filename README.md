@@ -1,5 +1,7 @@
 # Kettle
 
+[![Build status](https://badge.buildkite.com/8715d7bc790b1c2702109d3ce2b777fe5322c858465e587478.svg)](https://buildkite.com/fluid-project/kettle)
+
 Kettle is an integration technology which promotes the expression of servers handling HTTP and WebSockets endpoints.
 With a few exceptions, Kettle implements no primary functionality of its own, but aggregates the facilities of
 [express](http://expressjs.com/) and [ws](https://github.com/websockets/ws), as well as middleware held in the wider [pillarjs](https://github.com/pillarjs)
