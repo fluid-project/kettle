@@ -17,7 +17,7 @@ var fluid = require("infusion"),
 
 require("./shared/DataSourceTestUtils.js");
 
-// JSON parsing and diagnostics tests
+// JSON5 parsing and diagnostics tests
 
 fluid.defaults("kettle.tests.dataSourceJSON5Tester", {
     gradeNames: ["fluid.test.testEnvironment", "kettle.tests.dataSource.onErrorLink"],

@@ -1,7 +1,9 @@
 npm-debug.log
 .project
+package-lock.json
 yarn.lock
 
+/coverage
 /node_modules
 /examples/multipartForm/uploads/*
 !/examples/multipartForm/uploads/.gitkeep
