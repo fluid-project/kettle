@@ -32,12 +32,12 @@ fluid.defaults("examples.uploadConfig", {
                                 "method": "single",
                                 "fieldName": "image"
                             },
-                            "members": {
-                                "storage": "{that}.diskStorage"
-                            },
-                            "invokers": {
-                                "diskStorageDestination": {
-                                    "funcName": "examples.uploadConfig.diskStorageDestination"
+                            "components": {
+                                "storage": {
+                                    "type": "kettle.middleware.multer.storage.disk",
+                                    "options": {
+                                        "destination": "./examples/multipartForm/uploads"
+                                    }
                                 }
                             }
                         }
@@ -59,10 +59,6 @@ fluid.defaults("examples.uploadConfig", {
         }
     }
 });
-
-examples.uploadConfig.diskStorageDestination = function (req, file, cb) {
-    cb(null, "./examples/multipartForm/uploads");
-};
 
 fluid.defaults("examples.uploadConfig.handler", {
     gradeNames: "kettle.request.http",
