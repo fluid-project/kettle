@@ -1,5 +1,7 @@
 npm-debug.log
 .project
+package-lock.json
 yarn.lock
 
+/coverage
 /node_modules
