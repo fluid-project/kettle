@@ -162,6 +162,13 @@ to implement your own.
     <td>none</td>
 </tr>
 <tr>
+    <td><code>kettle.middleware.multer</code></td>
+    <td><a href="https://github.com/expressjs/multer">expressjs/multer</a></td>
+    <td>Handles <code>multipart/form-data</code>, primarily for file uploading.</td>
+    <td><code>middlewareOptions</code>, forwarded to <code>multer(options)</code>, and <code>formFieldOptions</code>, used to configure the field parameters for uploaded files as described in <a href="https://github.com/expressjs/multer#usage">multer's documentation</a>. <strong>Note</strong>: some <code>multer</code> options require functions as their values, and are implemented in Kettle using <code>invokers</code>; see the documentation below on using <code>kettle.middleware.multer</code> for more details.</td>
+    <td>none – user must configure on each use</td>
+</tr>
+<tr>
     <td><code>kettle.middleware.session</code></td>
     <td><a href="https://github.com/expressjs/session">expressjs/session</a></td>
     <td>Stores and retrieves <code>req.session</code> from various backends</td>
@@ -265,5 +272,82 @@ fluid.defaults("examples.static.handler", {
         }
     }
 });
+```
 
+#### Using the multer middleware
+
+This shows a basic single-file upload; for more examples of possible usage, refer to the `kettle.tests.multer.config.json5` configuration file in `tests/configs` and the Multer documentation.
+
+Code for this example can be found in `/examples/multipartForm`.
+
+```javascript
+fluid.defaults("examples.uploadConfig", {
+    "gradeNames": ["fluid.component"],
+    "components": {
+        "server": {
+            "type": "kettle.server",
+            "options": {
+                "port": 8081,
+                "components": {
+                    "imageUpload": {
+                        "type": "kettle.middleware.multer",
+                        "options": {
+                            "formFieldOptions": {
+                                "method": "single",
+                                "fieldName": "image"
+                            },
+                            "members": {
+                                "storage": "{that}.diskStorage"
+                            },
+                            "invokers": {
+                                "diskStorageDestination": {
+                                    "funcName": "examples.uploadConfig.diskStorageDestination"
+                                }
+                            }
+                        }
+                    },
+                    "app": {
+                        "type": "kettle.app",
+                        "options": {
+                            "requestHandlers": {
+                                "imageUploadHandler": {
+                                    "type": "examples.uploadConfig.handler",
+                                    "route": "/upload",
+                                    "method": "post"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
+```
+
+And our corresponding handlers and `diskStorageDestination` invoker (to set our own destination path):
+
+```javascript
+examples.uploadConfig.diskStorageDestination = function (req, file, cb) {
+    cb(null, "./examples/multipartForm/uploads");
+};
+
+fluid.defaults("examples.uploadConfig.handler", {
+    gradeNames: "kettle.request.http",
+    requestMiddleware: {
+        imageUpload: {
+            middleware: "{server}.imageUpload"
+        }
+    },
+    invokers: {
+        handleRequest: "examples.uploadConfig.handleRequest"
+    }
+});
+
+examples.uploadConfig.handleRequest = function (request) {
+    var uploadedFileDetails = request.req.file;
+    request.events.onSuccess.fire({
+        message: fluid.stringTemplate("POST request received on path /upload; file %originalName uploaded to %uploadedPath", {originalName: uploadedFileDetails.originalname, uploadedPath: uploadedFileDetails.path})
+    });
+};
 ```

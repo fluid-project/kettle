@@ -19,37 +19,34 @@
                         infusionMulterArray: {
                             type: "kettle.middleware.multer",
                             options: {
-                                invokers: {
-                                    "getMiddlewareForFileStrategy": {
-                                        "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
-                                        "args": ["{that}", "array", ["files", 2]]
-                                    }
+                                formFieldOptions: {
+                                    method: "array",
+                                    fieldName: "files",
+                                    maxCount: 2
                                 }
                             }
                         },
                         infusionMulterFields: {
                             type: "kettle.middleware.multer",
                             options: {
-                                invokers: {
-                                    "getMiddlewareForFileStrategy": {
-                                        "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
-                                        "args": ["{that}", "fields", [
-                                            {name: "textFiles", maxCount: 2},
-                                            {name: "binaryFile", maxCount: 1},
-                                            {name: "projectName", maxCount: 1}
-                                        ]]
-                                    }
+                                formFieldOptions: {
+                                    method: "fields",
+                                    fields: [
+                                        {name: "textFiles", maxCount: 2},
+                                        {name: "binaryFile", maxCount: 1},
+                                        {name: "projectName", maxCount: 1}
+                                    ]
                                 }
                             }
                         },
                         infusionMulterImageOnly: {
                             type: "kettle.middleware.multer",
                             options: {
+                                formFieldOptions: {
+                                    method: "single",
+                                    fieldName: "image"
+                                },
                                 invokers: {
-                                    "getMiddlewareForFileStrategy": {
-                                        "funcName": "kettle.middleware.multer.getMiddlewareForFileStrategy",
-                                        "args": ["{that}", "single", "image"]
-                                    },
                                     "fileFilter": {
                                         "func": {
                                             expander: {

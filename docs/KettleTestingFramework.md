@@ -302,6 +302,14 @@ Consult the framework tests at [tests/shared/SessionTestDefs.js](../tests/shared
 These tests are also a good example of configuring custom [middleware](#working-with-middleware) into the middle of a request's middleware chain. These tests include a middleware grade named `kettle.tests.middleware.validateSession` which
 will reject requests without a particular piece of populated session data, before processing reaches the request's `requestHandler`.
 
+### Sending multipart-form testing fixtures via POST with `kettle.test.request.form`
+
+The `kettle.test.request.form` grade derives from `kettle.test.request.http`, but accepts additional configuration for sending `multipart-form-data` requests that can include a mix of fields and files.
+
+### Configuration options available on `kettle.test.request.form`
+
+<a href="#configuration-options-available-on-kettletestrequesthttp">In addition to all options from `kettle.test.request.http`</a>, the grade accepts the following options:
+
 ### Issuing WebSockets testing fixtures with `kettle.test.request.ws`
 
 A sibling grade of `kettle.test.request.http` is `kettle.test.request.ws` which will allow the testing of WebSockets endpoints in an analogous way. You should browse the `ws` project's documentation for

@@ -1,7 +1,7 @@
 /*
 Kettle Main Module Loader
 
-Copyright 2012-2013 OCAD University
+Copyright 2012-2018 OCAD University
 Copyright 2015 Raising the Floor (International)
 
 Licensed under the New BSD license. You may not use this file except in
@@ -37,6 +37,7 @@ require("./lib/KettleSession.js");
 kettle.loadTestingSupport = function () {
     require("./lib/test/KettleTestUtils.js");
     require("./lib/test/KettleTestUtils.http.js");
+    require("./lib/test/KettleTestUtils.form.js");
     require("./lib/test/KettleTestUtils.ws.js");
 };
 
