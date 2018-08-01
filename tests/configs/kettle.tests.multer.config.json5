@@ -46,13 +46,11 @@
                                     method: "single",
                                     fieldName: "image"
                                 },
-                                invokers: {
-                                    "fileFilter": {
-                                        "func": {
-                                            expander: {
-                                                "funcName": "kettle.middleware.multer.createMimeTypeFileFilterFunction",
-                                                "args": [["image/png", "image/jpg", "image/gif"]]
-                                            }
+                                components: {
+                                    fileFilter: {
+                                        type: "kettle.middleware.multer.filter.mimeType",
+                                        options: {
+                                            acceptedMimeTypes: ["image/png", "image/jpg", "image/gif"]
                                         }
                                     }
                                 }
@@ -63,7 +61,7 @@
                             options: {
                                 components: {
                                     storage: {
-                                        type: "kettle.middleware.multer.diskStorage"
+                                        type: "kettle.middleware.multer.storage.disk"
                                     }
                                 }
                             }

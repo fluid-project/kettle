@@ -397,6 +397,5 @@ kettle.test.testMulterDiskStorage = function (fileInfo) {
 kettle.test.bootstrapServer(kettle.tests.multer.testDefs);
 
 jqUnit.onAllTestsDone.addListener(function () {
-    // TODO: uncomment
-    // kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/uploads");
+    kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/uploads");
 });
