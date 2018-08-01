@@ -62,7 +62,9 @@
                             type: "kettle.middleware.multer",
                             options: {
                                 components: {
-                                    storage: "kettle.middleware.multer.diskStorage"
+                                    storage: {
+                                        type: "kettle.middleware.multer.diskStorage"
+                                    }
                                 }
                             }
                         },
