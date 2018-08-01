@@ -165,7 +165,7 @@ to implement your own.
     <td><code>kettle.middleware.multer</code></td>
     <td><a href="https://github.com/expressjs/multer">expressjs/multer</a></td>
     <td>Handles <code>multipart/form-data</code>, primarily for file uploading.</td>
-    <td><code>middlewareOptions</code>, forwarded to <code>multer(options)</code>, and <code>formFieldOptions</code>, used to configure the field parameters for uploaded files as described in <a href="https://github.com/expressjs/multer#usage">multer's documentation</a>. <strong>Note</strong>: some <code>multer</code> options require functions as their values, and are implemented in Kettle using <code>invokers</code>; see the documentation below on using <code>kettle.middleware.multer</code> for more details.</td>
+    <td><code>middlewareOptions</code>, forwarded to <code>multer(options)</code>, and <code>formFieldOptions</code>, used to configure the field parameters for uploaded files as described in <a href="https://github.com/expressjs/multer#usage">multer's documentation</a>. <strong>Note</strong>: Multer's storage and fileFilter <code>multer</code> options require functions as their values, and are implemented in Kettle using <code>subcomponents</code>; see the documentation below on using <code>kettle.middleware.multer</code> for more details.</td>
     <td>none – user must configure on each use</td>
 </tr>
 <tr>
@@ -276,7 +276,7 @@ fluid.defaults("examples.static.handler", {
 
 #### Using the multer middleware
 
-This shows a basic single-file upload; for more examples of possible usage, refer to the `kettle.tests.multer.config.json5` configuration file in `tests/configs` and the Multer documentation.
+This shows a single-file upload that allows image files only and saves them to disk storage; for more examples of possible usage, refer to the `kettle.tests.multer.config.json5` configuration file in `tests/configs`, the middleware source code, and the Multer documentation.
 
 Code for this example can be found in `/examples/multipartForm`.
 
@@ -296,12 +296,18 @@ fluid.defaults("examples.uploadConfig", {
                                 "method": "single",
                                 "fieldName": "image"
                             },
-                            "members": {
-                                "storage": "{that}.diskStorage"
-                            },
-                            "invokers": {
-                                "diskStorageDestination": {
-                                    "funcName": "examples.uploadConfig.diskStorageDestination"
+                            "components": {
+                                "storage": {
+                                    "type": "kettle.middleware.multer.storage.disk",
+                                    "options": {
+                                        "destination": "./examples/multipartForm/uploads"
+                                    }
+                                },
+                                "fileFilter": {
+                                    "type": "kettle.middleware.multer.filter.mimeType",
+                                    "options": {
+                                        "acceptedMimeTypes": ["image/png", "image/jpg", "image/gif"]
+                                    }
                                 }
                             }
                         }
@@ -325,13 +331,9 @@ fluid.defaults("examples.uploadConfig", {
 });
 ```
 
-And our corresponding handlers and `diskStorageDestination` invoker (to set our own destination path):
+And our corresponding handlers:
 
 ```javascript
-examples.uploadConfig.diskStorageDestination = function (req, file, cb) {
-    cb(null, "./examples/multipartForm/uploads");
-};
-
 fluid.defaults("examples.uploadConfig.handler", {
     gradeNames: "kettle.request.http",
     requestMiddleware: {

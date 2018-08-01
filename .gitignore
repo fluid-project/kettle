@@ -7,3 +7,5 @@ yarn.lock
 /node_modules
 /examples/multipartForm/uploads/*
 !/examples/multipartForm/uploads/.gitkeep
+
+/tests/data/uploads/test.png

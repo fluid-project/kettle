@@ -38,6 +38,12 @@ fluid.defaults("examples.uploadConfig", {
                                     "options": {
                                         "destination": "./examples/multipartForm/uploads"
                                     }
+                                },
+                                "fileFilter": {
+                                    "type": "kettle.middleware.multer.filter.mimeType",
+                                    "options": {
+                                        "acceptedMimeTypes": ["image/png", "image/jpg", "image/gif"]
+                                    }
                                 }
                             }
                         }
