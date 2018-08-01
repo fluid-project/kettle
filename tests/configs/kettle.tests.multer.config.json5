@@ -61,8 +61,8 @@
                         infusionMulterDiskStorage: {
                             type: "kettle.middleware.multer",
                             options: {
-                                members: {
-                                    storage: "{that}.diskStorage"
+                                components: {
+                                    storage: "kettle.middleware.multer.diskStorage"
                                 }
                             }
                         },
