@@ -1,6 +1,7 @@
 /*!
 Kettle Data Source Tests
 
+Copyright 2017-2018 OCAD University
 Copyright 2012-2015 Raising the Floor - International
 
 Licensed under the New BSD license. You may not use this file except in
@@ -20,7 +21,7 @@ var fluid = require("infusion"),
 
 require("./shared/DataSourceTestUtils.js");
 
-kettle.tests.dataSource.ensureWriteableEmpty();
+kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
 
 kettle.tests.dataSource.testFileSetResponse = function (dataSource, directModel, expected, encoding) {
     var fileName = kettle.dataSource.URL.resolveUrl(dataSource.options.path, dataSource.options.termMap, directModel, true),
@@ -586,6 +587,8 @@ kettle.tests.dataSource.promisifiedTests = fluid.transform(kettle.tests.dataSour
 
 var tests = kettle.tests.dataSource.standardTests.concat(kettle.tests.dataSource.promisifiedTests);
 
-jqUnit.onAllTestsDone.addListener(kettle.tests.dataSource.ensureWriteableEmpty);
+jqUnit.onAllTestsDone.addListener(function () {
+    kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
+});
 
 fluid.test.runTests(tests);

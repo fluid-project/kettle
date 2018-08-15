@@ -1,0 +1,106 @@
+/** This is a config file in the JSON5 format, illustrating how
+  * it is possible to include comments and unquoted keys.
+  * The purpose of this config is to test facilities of the "multer middleware"
+  */
+
+{
+    type: "kettle.tests.multer.config",
+    options: {
+        gradeNames: ["fluid.component"],
+        components: {
+            server: {
+                type: "kettle.server",
+                options: {
+                    port: 8081,
+                    components: {
+                        infusionMulterSingle: {
+                            type: "kettle.middleware.multer"
+                        },
+                        infusionMulterArray: {
+                            type: "kettle.middleware.multer",
+                            options: {
+                                formFieldOptions: {
+                                    method: "array",
+                                    fieldName: "files",
+                                    maxCount: 2
+                                }
+                            }
+                        },
+                        infusionMulterFields: {
+                            type: "kettle.middleware.multer",
+                            options: {
+                                formFieldOptions: {
+                                    method: "fields",
+                                    fields: [
+                                        {name: "textFiles", maxCount: 2},
+                                        {name: "binaryFile", maxCount: 1},
+                                        {name: "projectName", maxCount: 1}
+                                    ]
+                                }
+                            }
+                        },
+                        infusionMulterImageOnly: {
+                            type: "kettle.middleware.multer",
+                            options: {
+                                formFieldOptions: {
+                                    method: "single",
+                                    fieldName: "image"
+                                },
+                                components: {
+                                    fileFilter: {
+                                        type: "kettle.middleware.multer.filter.mimeType",
+                                        options: {
+                                            acceptedMimeTypes: ["image/png", "image/jpg", "image/gif"]
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        infusionMulterDiskStorage: {
+                            type: "kettle.middleware.multer",
+                            options: {
+                                components: {
+                                    storage: {
+                                        type: "kettle.middleware.multer.storage.disk"
+                                    }
+                                }
+                            }
+                        },
+                        app: {
+                            type: "kettle.app",
+                            options: {
+                                requestHandlers: {
+                                    multerSingleHandler: {
+                                        type: "kettle.tests.multer.handler.single",
+                                        route: "/multer-single",
+                                        method: "post"
+                                    },
+                                    multerArrayHandler: {
+                                        type: "kettle.tests.multer.handler.array",
+                                        route: "/multer-array",
+                                        method: "post"
+                                    },
+                                    multerFieldsHandler: {
+                                        type: "kettle.tests.multer.handler.fields",
+                                        route: "/multer-fields",
+                                        method: "post"
+                                    },
+                                    multerImagesOnlyHandler: {
+                                        type: "kettle.tests.multer.handler.imageOnly",
+                                        route: "/multer-image-only",
+                                        method: "post"
+                                    },
+                                    multerDiskStorageHandler: {
+                                        type: "kettle.tests.multer.handler.diskStorage",
+                                        route: "/multer-disk-storage",
+                                        method: "post"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
