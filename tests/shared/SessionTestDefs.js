@@ -299,4 +299,3 @@ kettle.tests.session.testDefs = {
         listener: "kettle.tests.session.testEndSuccessResponse"
     }]
 };
-

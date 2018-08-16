@@ -7,7 +7,7 @@
                 "type": "kettle.server",
                 "options": {
                     "gradeNames": ["kettle.server.sessionAware", "kettle.server.ws"],
-                     "components": {
+                    "components": {
                         "app": {
                             "type": "kettle.app",
                             "options": {
