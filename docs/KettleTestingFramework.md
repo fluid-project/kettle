@@ -86,7 +86,8 @@ from the [examples/testingSimpleConfig](../examples/testingSimpleConfig) directo
 
 This sample sets up JSON configuration to load the `examples.simpleConfig` application from this module's `examples`
 directory, and then defines a single request test component, named `getRequest`, of type `kettle.test.request.http`
-which targets its path. The `sequence` section of the configuration then consists of two elements – the first sends the
+which targets its path. It also sets the expected number of successful assertions by specifying `expect: 2`.
+The `sequence` section of the configuration then consists of two elements – the first sends the
 request, and the second listens for the `onComplete` event fired by the request and verifies that the returned payload
 is exactly as expected.
 
@@ -94,7 +95,9 @@ Note the use of two particular pieces of Kettle's infrastructure – firstly the
 use the contextualised reference `%kettle` in order to resolve a file path relative to the base directory of this
 module, and secondly the Kettle testing assert function
 [`kettle.test.assertJSONResponse`](#helper-methods-for-making-assertions-on-oncomplete), which is a helpful all-in-one
-utility for verifying an HTTP response status code as well as response payload.
+utility for verifying an HTTP response status code as well as response payload. Note that
+`kettle.test.assertJSONResponse` actually runs two jqUnit assert functions, one on the response status code, and
+another on the response being JSON (hence the `expect: 2`).
 
 <a id="#kettle.test.request.http"></a>
 
@@ -530,6 +533,35 @@ Analogous with `kettle.test.request.httpCookie`, there is a session-aware varian
 `kettle.test.request.httpCookie`, in particular being able to share access to the same `kettle.test.cookieJar`
 component to enable a mixed series of HTTP and WebSockets requests
 to be contextualised by the same session cookies.
+
+## Running multiple tests together
+
+Simply include all the test files in a single file using `require` and run that file.\
+For example,
+
+```javascript
+"use strict";
+
+var fluid = require("infusion");
+var kettle = require("kettle");
+
+kettle.loadTestingSupport();
+
+// array of paths to all tests (relative to the file containing this code) we want to run together
+var testIncludes = [
+    "path/to/test/one",
+    "path/to/test/two"
+    // .
+    // .
+    // .
+];
+
+fluid.each(testIncludes, function (path) {
+    require(path);
+});
+```
+
+For reference, you can see Kettle's own such file [here](https://github.com/fluid-project/kettle/blob/master/tests/all-tests.js)
 
 ## Framework tests
 
