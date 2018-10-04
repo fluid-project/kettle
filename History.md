@@ -1,5 +1,11 @@
 # Version History
 
+## 1.8.1 / 2018-10-04
+
+* KETTLE-71: Vagrant build courtesy of waharnum
+* KETTLE-72: Added form-data to main dependencies rather than dev dependencies
+* General dependency updates
+
 ## 1.8.0 / 2018-08-16
 
 * KETTLE-66: Multipart form upload middleware based on multer, courtesy of waharnum
