@@ -24,11 +24,16 @@ require("./shared/DataSourceTestUtils.js");
 
 kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
 
+/** KETTLE-34 options resolution and merging test **/
+
 fluid.defaults("kettle.tests.KETTLE34dataSource", {
     gradeNames: "kettle.dataSource.URL",
     url: "https://user:password@thing.available:997/path",
     headers: {
         "x-custom-header": "x-custom-value"
+    },
+    censorRequestOptionsLog: {
+        auth: false
     }
 });
 
@@ -75,33 +80,60 @@ kettle.tests.dataSource.resolutionTests = [ {
 }
 ];
 
-kettle.tests.dataSource.resolutionTest = function (fixture) {
-    jqUnit.test("KETTLE-34 request option resolution test", function () {
-        var httpRequest = http.request,
-            capturedOptions;
+kettle.tests.capturedHttpOptions = {};
+
+kettle.tests.withMockHttp = function (toapply) {
+    return function () {
+        var httpRequest = http.request;
+        kettle.tests.capturedHttpOptions = {};
         http.request = function (requestOptions) {
-            capturedOptions = requestOptions;
+            kettle.tests.capturedHttpOptions = requestOptions;
             return {
                 on: fluid.identity,
                 end: fluid.identity
             };
         };
         try {
-            var dataSource = fluid.invokeGlobalFunction(fixture.gradeName, [fixture.creatorArgs]);
-            dataSource.get(null, fixture.directOptions);
-            jqUnit.assertLeftHand("Resolved expected requestOptions", fixture.expectedOptions, capturedOptions);
+            toapply();
         } finally {
             http.request = httpRequest;
         }
-    });
+    };
+};
+
+kettle.tests.dataSource.resolutionTest = function (fixture) {
+    jqUnit.test("KETTLE-34 request option resolution test", kettle.tests.withMockHttp(function () {
+        var dataSource = fluid.invokeGlobalFunction(fixture.gradeName, [fixture.creatorArgs]);
+        dataSource.get(null, fixture.directOptions);
+        jqUnit.assertLeftHand("Resolved expected requestOptions", fixture.expectedOptions, kettle.tests.capturedHttpOptions);
+    }));
 };
 
 fluid.each(kettle.tests.dataSource.resolutionTests, function (fixture) {
     kettle.tests.dataSource.resolutionTest(fixture);
 });
 
+/** KETTLE-73 censoring sensitive options test **/
 
+fluid.defaults("kettle.tests.KETTLE73dataSource", {
+    gradeNames: "kettle.dataSource.URL",
+    url: "https://secret-user:secret-password@thing.available:997/path"
+});
 
+jqUnit.test("KETTLE-73 censoring test", kettle.tests.withMockHttp(function () {
+    var memoryLog = [];
+    var memoryLogger = function (args) {
+        memoryLog.push(JSON.stringify(args.slice(1)));
+    };
+    fluid.loggingEvent.addListener(memoryLogger, "memoryLogger", "before:log");
+    var that = kettle.tests.KETTLE73dataSource();
+    that.get();
+    jqUnit.assertTrue("Secret information should not have been logged", memoryLog[0].indexOf("secret") === -1);
+    jqUnit.assertTrue("URL port should have been logged", memoryLog[0].indexOf("997") !== -1);
+    fluid.loggingEvent.removeListener("memoryLogger");
+}));
+
+/** KETTLE-38 writeable grade resolution test **/
 
 fluid.defaults("kettle.tests.KETTLE38base", {
     gradeNames: "kettle.dataSource.URL",
@@ -117,6 +149,7 @@ jqUnit.test("KETTLE-38 derived writable dataSource test", function () {
     jqUnit.assertValue("Resolved writable grade via base grade", dataSource.set);
 });
 
+/** Form encoding test **/
 
 kettle.tests.formencData = {
     "text1": "text default",
