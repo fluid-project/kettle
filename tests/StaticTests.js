@@ -58,7 +58,7 @@ fluid.logObjectRenderChars = 10240;
 var infusionPackage = fluid.require("%infusion/package.json");
 
 /** Test defs for static hosting **/
- 
+
 kettle.tests["static"].testDefs = [{
     name: "Static hosting tests",
     expect: 9,
