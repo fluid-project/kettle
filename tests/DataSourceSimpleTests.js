@@ -116,20 +116,32 @@ fluid.each(kettle.tests.dataSource.resolutionTests, function (fixture) {
 /** KETTLE-73 censoring sensitive options test **/
 
 fluid.defaults("kettle.tests.KETTLE73dataSource", {
-    gradeNames: "kettle.dataSource.URL",
-    url: "https://secret-user:secret-password@thing.available:997/path"
+    gradeNames: "kettle.dataSource.URL"
 });
 
+kettle.tests.censoringTests = [{
+    url: "https://secret-user:secret-password@thing.available:997/path",
+    shouldNotApper: "secret",
+    shouldAppear: "997"
+}, {
+    url: "https://secret-user:secret-%25-password@thing.available:997/path",
+    shouldNotAppear: "secret",
+    shouldAppear: "997"
+}];
+
 jqUnit.test("KETTLE-73 censoring test", kettle.tests.withMockHttp(function () {
-    var memoryLog = [];
+    var memoryLog;
     var memoryLogger = function (args) {
         memoryLog.push(JSON.stringify(args.slice(1)));
     };
     fluid.loggingEvent.addListener(memoryLogger, "memoryLogger", "before:log");
-    var that = kettle.tests.KETTLE73dataSource();
-    that.get();
-    jqUnit.assertTrue("Secret information should not have been logged", memoryLog[0].indexOf("secret") === -1);
-    jqUnit.assertTrue("URL port should have been logged", memoryLog[0].indexOf("997") !== -1);
+    kettle.tests.censoringTests.forEach(function (fixture) {
+        memoryLog = [];
+        var that = kettle.tests.KETTLE73dataSource({url: fixture.url});
+        that.get();
+        jqUnit.assertTrue("Secret information should not have been logged", memoryLog[0].indexOf(fixture.shouldNotAppear) === -1);
+        jqUnit.assertTrue("URL port should have been logged", memoryLog[0].indexOf(fixture.shouldAppear) !== -1);
+    });
     fluid.loggingEvent.removeListener("memoryLogger");
 }));
 
