@@ -54,7 +54,7 @@ fluid.defaults("kettle.tests.middleware.verifyingUnmarked", {
     gradeNames: ["kettle.plainAsyncMiddleware"],
     middleware: kettle.tests.verifyingUnmarkedMiddleware
 });
-fluid.logObjectRenderChars = 10240;
+
 var infusionPackage = fluid.require("%infusion/package.json");
 
 /** Test defs for static hosting **/
