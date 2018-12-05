@@ -146,9 +146,11 @@ We document these configuration options in the next section:
         </tr>
         <tr>
             <td><code>censorRequestOptionsLog</code></td>
-            <td><code>Object</code> (map of <code>String</code> to <code>Boolean</code>) (default: <code>{auth: true}</code>)</td>
-            <td>A map of members of the <a href="https://nodejs.org/api/http.html#http_http_request_options_callback">
-                request options</a> which should be censored from appearing in logs. Any name which maps to <code>true</code>
+            <td><code>Object</code> (map of <code>String</code> to <code>Boolean</code>) (default:
+                <code>{auth: true, "headers.Authorization": true}</code>)
+            </td>
+            <td>A map of paths into the <a href="https://nodejs.org/api/http.html#http_http_request_options_callback">
+                request options</a> which should be censored from appearing in logs. Any path which maps to <code>true</code>
                 will not appear either in the logging output derived from the request options parsed from the url
                 or the url itself.
             </td>
