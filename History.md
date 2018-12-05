@@ -1,5 +1,10 @@
 # Version History
 
+## 1.9.0 / 2018-10-17
+
+* KETTLE-73: Allow censoring of sensitive information which may be present in URL of DataSource
+* General dependency updates, particularly to recent Infusion with support for `fluid.loggingEvent`
+
 ## 1.8.1 / 2018-10-04
 
 * KETTLE-71: Vagrant build courtesy of waharnum

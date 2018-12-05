@@ -145,6 +145,17 @@ We document these configuration options in the next section:
             payload rather than a <code>reject</code> response.</td>
         </tr>
         <tr>
+            <td><code>censorRequestOptionsLog</code></td>
+            <td><code>Object</code> (map of <code>String</code> to <code>Boolean</code>) (default:
+                <code>{auth: true, "headers.Authorization": true}</code>)
+            </td>
+            <td>A map of paths into the <a href="https://nodejs.org/api/http.html#http_http_request_options_callback">
+                request options</a> which should be censored from appearing in logs. Any path which maps to <code>true</code>
+                will not appear either in the logging output derived from the request options parsed from the url
+                or the url itself.
+            </td>
+        </tr>
+        <tr>
             <td><code>components.encoding.type</code></td>
             <td><code>String</code> (grade name)</td>
             <td>A <code>kettle.dataSource.URL</code> has a subcomponent named <code>encoding</code> which the user can
@@ -153,7 +164,7 @@ We document these configuration options in the next section:
                 <code>kettle.dataSource.encoding.JSON</code>. Other builtin encodings are
                 <code>kettle.dataSource.encoding.formenc</code> operating HTML
                 <a href="http://www.w3.org/TR/html401/interact/forms.html#didx-applicationx-www-form-urlencoded">form
-                encoding</code> and <code>kettle.dataSource.encoding.none</code> which applies no encoding.
+                encoding</a> and <code>kettle.dataSource.encoding.none</code> which applies no encoding.
                 More details in <a href="#using-content-encodings-with-a-datasource">Using Content Encodings with a
                 DataSource</a>.</td>
         </tr>
