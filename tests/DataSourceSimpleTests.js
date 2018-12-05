@@ -121,12 +121,20 @@ fluid.defaults("kettle.tests.KETTLE73dataSource", {
 
 kettle.tests.censoringTests = [{
     url: "https://secret-user:secret-password@thing.available:997/path",
+    headers: {
+        Authorization: "secret-authorization",
+        "X-unrelated-header": "998"
+    },
     shouldNotApper: "secret",
-    shouldAppear: "997"
+    shouldAppear: ["997", "998"]
 }, {
     url: "https://secret-user:secret-%25-password@thing.available:997/path",
+    headers: {
+        Authorization: "secret-%25-authorization",
+        "X-unrelated-header": "998"
+    },
     shouldNotAppear: "secret",
-    shouldAppear: "997"
+    shouldAppear: ["997", "998"]
 }];
 
 jqUnit.test("KETTLE-73 censoring test", kettle.tests.withMockHttp(function () {
@@ -138,9 +146,11 @@ jqUnit.test("KETTLE-73 censoring test", kettle.tests.withMockHttp(function () {
     kettle.tests.censoringTests.forEach(function (fixture) {
         memoryLog = [];
         var that = kettle.tests.KETTLE73dataSource({url: fixture.url});
-        that.get();
+        that.get(null, {headers: fixture.headers});
         jqUnit.assertTrue("Secret information should not have been logged", memoryLog[0].indexOf(fixture.shouldNotAppear) === -1);
-        jqUnit.assertTrue("URL port should have been logged", memoryLog[0].indexOf(fixture.shouldAppear) !== -1);
+        fixture.shouldAppear.forEach(function (shouldAppear) {
+            jqUnit.assertTrue("URL port and header should have been logged", memoryLog[0].indexOf(shouldAppear) !== -1);
+        });
     });
     fluid.loggingEvent.removeListener("memoryLogger");
 }));
