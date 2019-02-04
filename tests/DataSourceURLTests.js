@@ -68,6 +68,42 @@ fluid.defaults("kettle.tests.dataSource.https", {
     }
 });
 
+// KETTLE-73 sensitive info in error test
+
+kettle.tests.dataSource.testSensitiveErrorResponse = function (expected, data) {
+    jqUnit.assertEquals("Received expected status code", expected.statusCode, data.statusCode);
+    jqUnit.assertTrue("Expected string appeared", data.message.includes(expected.shouldAppear));
+    jqUnit.assertFalse("Unexpected string did not appear", data.message.includes(expected.shouldNotAppear));
+};
+
+fluid.defaults("kettle.tests.dataSource.URL.sensitiveError", {
+    gradeNames: ["kettle.tests.singleRequest.config", "kettle.tests.simpleDataSourceTest"],
+    name: "w. Testing URL dataSource with sensitive info in URL",
+    expect: 2,
+    components: {
+        dataSource: {
+            type: "kettle.dataSource.URL",
+            options: {
+                url: "http://secret-user:secret-password@localhost:8081/notfound"
+            }
+        }
+    },
+    shouldError: true,
+    expected: {
+        isError: true,
+        statusCode: 404,
+        shouldAppear: "SENSITIVE",
+        shouldNotAppear: "secret",
+        message: "socket hang up while executing HTTP GET on url http://localhost:8081/"
+    },
+    invokers: {
+        errorFunc: {
+            funcName: "kettle.tests.dataSource.testSensitiveErrorResponse",
+            args: ["{testEnvironment}.options.expected", "{arguments}.0"]
+        }
+    }
+});
+
 // Plain HTTP hangup test
 
 fluid.defaults("kettle.tests.dataSource.URL.hangup", {
@@ -182,7 +218,7 @@ jqUnit.test("GPII-2147: Testing that localhost is properly replaced by 127.0.0.1
         protocol: "http:",
         host: "localhost",
         hostname: "localhost",
-        path: "/preferences/sammy"
+        pathname: "/preferences/sammy"
     };
     var returned = kettle.dataSource.URL.prepareRequestOptions({}, undefined, {}, kettle.dataSource.URL.requestOptions, {}, userStaticOptions, undefined);
     jqUnit.assertEquals("host is 127.0.0.1", returned.host, "127.0.0.1");
@@ -192,6 +228,7 @@ jqUnit.test("GPII-2147: Testing that localhost is properly replaced by 127.0.0.1
 
 fluid.test.runTests([
 // Attempt to test HTTPS datasource - server currently just hangs without passing on request
+    "kettle.tests.dataSource.URL.sensitiveError",
     "kettle.tests.dataSource.https",
     "kettle.tests.dataSource.URL.hangup",
     "kettle.tests.dataSouce.CouchDB.hangup",

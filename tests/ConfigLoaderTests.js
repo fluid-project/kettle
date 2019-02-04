@@ -144,3 +144,24 @@ jqUnit.test("Load config with \"loadConfig\" directive", function () {
     jqUnit.assertTrue("Subcomponent has sub grade", fluid.componentHasGrade(that.subConfig, "kettle.tests.loadConfig.sub.config"));
     jqUnit.assertFalse("Top config does not have sub grade", fluid.componentHasGrade(that, "kettle.tests.loadConfig.sub.config"));
 });
+
+kettle.tests.parseArgsFixtures = [{
+    argv: ["node.exe", "thing.js", "--extra"],
+    expected: 1
+}, {
+    argv: ["node.exe", "--inspect-brk", "thing.js"],
+    expected: 2
+}, {
+    argv: ["node.exe", "--inspect-brk", "-e", "thing.js", "--extra"],
+    expected: 3
+}, {
+    argv: ["node.exe", "-first", "-second", "-third"],
+    expected: 4
+}];
+
+jqUnit.test("Test parsing command line arguments", function () {
+    kettle.tests.parseArgsFixtures.forEach(function (record, index) {
+        var result = kettle.config.CLI.findScriptArgument(record.argv);
+        jqUnit.assertEquals("Expected position of script argument index " + index, record.expected, result);
+    });
+});

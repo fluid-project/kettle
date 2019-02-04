@@ -28,7 +28,7 @@ kettle.tests.dataSource.testFileSetResponse = function (dataSource, directModel,
         encoder = encoding === "JSON5" ? JSON5 : JSON,
         data = encoder.parse(fs.readFileSync(fileName, "utf8"));
     jqUnit.assertDeepEq("Response is correct", expected, data);
-    fs.unlink(fileName);
+    fs.unlinkSync(fileName);
 };
 
 
