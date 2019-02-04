@@ -18,6 +18,7 @@ var fluid = require("infusion"),
     fs = require("fs"),
     querystring = require("querystring"),
     http = require("http"),
+    https = require("https"),
     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
 require("./shared/DataSourceTestUtils.js");
@@ -85,8 +86,9 @@ kettle.tests.capturedHttpOptions = {};
 kettle.tests.withMockHttp = function (toapply) {
     return function () {
         var httpRequest = http.request;
+        var httpsRequest = https.request;
         kettle.tests.capturedHttpOptions = {};
-        http.request = function (requestOptions) {
+        http.request = https.request = function (requestOptions) {
             kettle.tests.capturedHttpOptions = requestOptions;
             return {
                 on: fluid.identity,
@@ -97,6 +99,7 @@ kettle.tests.withMockHttp = function (toapply) {
             toapply();
         } finally {
             http.request = httpRequest;
+            https.request = httpsRequest;
         }
     };
 };
