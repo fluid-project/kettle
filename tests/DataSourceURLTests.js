@@ -71,20 +71,23 @@ fluid.defaults("kettle.tests.dataSource.https", {
 // KETTLE-73 sensitive info in error test
 
 kettle.tests.dataSource.testSensitiveErrorResponse = function (expected, data) {
+    console.log("Got error ", data);
     jqUnit.assertEquals("Received expected status code", expected.statusCode, data.statusCode);
-    jqUnit.assertTrue("Expected string appeared", data.message.includes(expected.shouldAppear));
-    jqUnit.assertFalse("Unexpected string did not appear", data.message.includes(expected.shouldNotAppear));
+    jqUnit.assertTrue("Expected string should appear", data.message.includes(expected.shouldAppear));
+    expected.shouldNotAppear.forEach(function (shouldNotAppear) {
+        jqUnit.assertFalse("Unexpected string should not appear", data.message.includes(shouldNotAppear));
+    });
 };
 
 fluid.defaults("kettle.tests.dataSource.URL.sensitiveError", {
     gradeNames: ["kettle.tests.singleRequest.config", "kettle.tests.simpleDataSourceTest"],
     name: "w. Testing URL dataSource with sensitive info in URL",
-    expect: 2,
+    expect: 3,
     components: {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "http://secret-user:secret-password@localhost:8081/notfound"
+                url: "http://secret-user:secret-password@localhost:8081/notfound?search"
             }
         }
     },
@@ -93,7 +96,7 @@ fluid.defaults("kettle.tests.dataSource.URL.sensitiveError", {
         isError: true,
         statusCode: 404,
         shouldAppear: "SENSITIVE",
-        shouldNotAppear: "secret",
+        shouldNotAppear: ["secret", "%3F"],
         message: "socket hang up while executing HTTP GET on url http://localhost:8081/"
     },
     invokers: {
