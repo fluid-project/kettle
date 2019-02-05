@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Declarative IoC-based framework for HTTP and WebSockets servers on node.js based on express and ws",
-    "version": "1.10.0",
+    "version": "1.10.1",
     "author": {
         "name": "The Fluid Project"
     },
