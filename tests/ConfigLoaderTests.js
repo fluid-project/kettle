@@ -33,7 +33,7 @@ fluid.defaults("kettle.tests.subcomponent3", {
     option: "OVERRIDE"
 });
 
-var expectedDefaults = {
+kettle.tests.expectedDefaultsOld = {
     config1: {
         gradeNames: ["fluid.modelComponent", "config3", "kettle.config", "config4", "config2", "fluid.component", "config1"],
         components: {
@@ -91,10 +91,67 @@ var expectedDefaults = {
     }
 };
 
-var expectedSubcomponentOptions = {
+// The post FLUID-6148 framework performs options merging differently. Not only are subcomponent options broken out
+// into an array, we also have a fix for FLUID-5614 so there is an actual change of meaning - e.g. in config1,
+// subcomponent1 acquires grades for both subcomponent2 and subcomponent3
+
+kettle.tests.expectedDefaultsNew = {
+    config1: {
+        gradeNames: ["fluid.modelComponent", "config3", "kettle.config", "config4", "config2", "fluid.component", "config1"],
+        components: {
+            subcomponent1: {
+                type: "kettle.tests.subcomponent1",
+                options: {
+                    gradeNames: ["kettle.tests.subcomponent2", "kettle.tests.subcomponent3"]
+                }
+            }
+        },
+        option1: "OPTION1",
+        option2: "OPTION2",
+        option3: "OPTION3"
+    }
+};
+
+kettle.tests.expectedSubcomponentOptionsOld = {
     gradeNames: ["kettle.tests.subcomponent1", "fluid.component", "kettle.tests.subcomponent3"],
     option: "OVERRIDE"
 };
+
+// The post-6148 framework is very different here. All contributed subcomponent grades, including through the hierarchy,
+// are accumulated
+kettle.tests.expectedSubcomponentOptionsNew = {
+    gradeNames: [
+        "kettle.tests.subcomponent1",
+        "fluid.modelComponent",
+        "kettle.tests.subcomponent2",
+        "fluid.component",
+        "kettle.tests.subcomponent3"
+    ],
+    option: "OVERRIDE"
+};
+
+kettle.tests.flattenSubcomponentsImpl = function (options) {
+    var togo = fluid.copy(options);
+    fluid.each(togo.components, function (options, key) {
+        var type, gradeNames = [];
+        options.forEach(function (oneOptions) {
+            type = type || oneOptions.type;
+            gradeNames = gradeNames.concat(fluid.makeArray(fluid.get(oneOptions, ["options", "gradeNames"])));
+        });
+        var record = {
+            options: {
+                gradeNames: gradeNames
+            }
+        };
+        if (type) {
+            record.type = type;
+        }
+        togo.components[key] = record;
+    });
+    return togo;
+};
+
+kettle.tests.flattenSubcomponents = fluid.registerPotentia ? kettle.tests.flattenSubcomponentsImpl : fluid.identity;
 
 kettle.tests.testConfigToGrade = function (headName, configNames) {
     var componentName = kettle.config.createDefaults({
@@ -110,9 +167,11 @@ kettle.tests.testConfigToGrade = function (headName, configNames) {
         expectedParents.shift(); // white box testing - in this case the system won't need to allocate a dedicated grade
     }
     jqUnit.assertValue("Head component defaults are allocated", fluid.defaults(componentName));
+    var expectedDefaults = fluid.registerPotentia ? fluid.extend({}, kettle.tests.expectedDefaultsOld, kettle.tests.expectedDefaultsNew)
+        : kettle.test.expectedDefaultsOld;
 
     fluid.each(expectedParents, function (configOrTypeName) {
-        var defaults = fluid.defaults(configOrTypeName);
+        var defaults = kettle.tests.flattenSubcomponents(fluid.defaults(configOrTypeName));
         jqUnit.assertValue("Grade is created for config " + configOrTypeName, defaults);
         jqUnit.assertLeftHand("Config " + configOrTypeName +
             " is correctly converted into a grade",
@@ -124,6 +183,8 @@ jqUnit.test("Load config defaults with types", function () {
     jqUnit.expect(14);
     kettle.tests.testConfigToGrade("config1", ["config1", "config2", "config3", "config4"]);
     var config1 = fluid.invokeGlobalFunction("config1");
+    var expectedSubcomponentOptions = fluid.registerPotentia ?
+        kettle.tests.expectedSubcomponentOptionsNew : kettle.tests.expectedSubcomponentOptionsOld;
     jqUnit.assertLeftHand("Subcomponent options are correct",
         expectedSubcomponentOptions, config1.subcomponent1.options);
     jqUnit.assertValue("Module-based require has executed from config4", kettle.tests.testModule);
