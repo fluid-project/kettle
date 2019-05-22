@@ -1,7 +1,7 @@
 {
     "name": "kettle",
     "description": "Declarative IoC-based framework for HTTP and WebSockets servers on node.js based on express and ws",
-    "version": "1.10.1",
+    "version": "1.11.0",
     "author": {
         "name": "The Fluid Project"
     },
@@ -17,13 +17,13 @@
     },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
-        "express": "4.16.4",
-        "body-parser": "1.18.3",
-        "cookie-parser": "1.4.3",
-        "express-session": "1.15.6",
-        "serve-static": "1.13.2",
-        "ws": "6.1.3",
-        "infusion": "3.0.0-dev.20190517T155859Z.5fac89508.FLUID-6148",
+        "express": "4.17.0",
+        "body-parser": "1.19.0",
+        "cookie-parser": "1.4.4",
+        "express-session": "1.16.1",
+        "serve-static": "1.14.1",
+        "ws": "7.0.0",
+        "infusion": "3.0.0-dev.20190328T144119Z.ec44dbfab",
         "jsonlint": "1.6.3",
         "fluid-resolve": "1.3.0",
         "path-to-regexp": "1.7.0",
@@ -36,8 +36,8 @@
         "gpii-grunt-lint-all": "1.0.5",
         "gpii-express": "1.0.15",
         "gpii-pouchdb": "1.0.14",
-        "grunt": "1.0.3",
-        "nyc": "13.1.0",
+        "grunt": "1.0.4",
+        "nyc": "14.1.1",
         "grunt-shell": "3.0.1",
         "node-jqunit": "1.1.8",
         "rimraf": "2.6.3"

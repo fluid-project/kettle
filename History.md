@@ -1,5 +1,20 @@
 # Version History
 
+## 1.11.1 / 2019-05-23
+
+* Reorganisation of request launching logic to permit use under post-FLUID-6148 branches of Infusion
+* Significant quantities of JSDocs for core files
+* General dependency update
+
+## 1.10.1 / 2019-02-05
+
+* KETTLE-75: Improvements to CLI parsing to allow use of node-directed arguments on electron
+
+## 1.10.0 / 2019-02-04
+
+* KETTLE-73: Improvements to censoring of sensitive values supplied as URL parameters to DataSources
+* General dependency updates
+
 ## 1.9.0 / 2018-10-17
 
 * KETTLE-73: Allow censoring of sensitive information which may be present in URL of DataSource

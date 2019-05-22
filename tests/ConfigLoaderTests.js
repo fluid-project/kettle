@@ -168,7 +168,7 @@ kettle.tests.testConfigToGrade = function (headName, configNames) {
     }
     jqUnit.assertValue("Head component defaults are allocated", fluid.defaults(componentName));
     var expectedDefaults = fluid.registerPotentia ? fluid.extend({}, kettle.tests.expectedDefaultsOld, kettle.tests.expectedDefaultsNew)
-        : kettle.test.expectedDefaultsOld;
+        : kettle.tests.expectedDefaultsOld;
 
     fluid.each(expectedParents, function (configOrTypeName) {
         var defaults = kettle.tests.flattenSubcomponents(fluid.defaults(configOrTypeName));

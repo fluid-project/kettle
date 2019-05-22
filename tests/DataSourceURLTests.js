@@ -71,7 +71,6 @@ fluid.defaults("kettle.tests.dataSource.https", {
 // KETTLE-73 sensitive info in error test
 
 kettle.tests.dataSource.testSensitiveErrorResponse = function (expected, data) {
-    console.log("Got error ", data);
     jqUnit.assertEquals("Received expected status code", expected.statusCode, data.statusCode);
     jqUnit.assertTrue("Expected string should appear", data.message.includes(expected.shouldAppear));
     expected.shouldNotAppear.forEach(function (shouldNotAppear) {
