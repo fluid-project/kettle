@@ -91,5 +91,5 @@ kettle.tests.asyncRequest.testDefs = [
     "kettle.tests.asyncRequest.handler.config"
 ];
 
-kettle.tests.singleRequest.executeTests(kettle.tests.asyncRequest.testDefs, 
+kettle.tests.singleRequest.executeTests(kettle.tests.asyncRequest.testDefs,
     "kettle.tests.asyncRequest.testDefTemplate", false);

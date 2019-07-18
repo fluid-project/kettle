@@ -1,5 +1,5 @@
 /**
- * Kettle HTTP Methods Tests
+ * Kettle Static Middleware Tests
  *
  * Copyright 2014-2015 Raising The Floor - International
  *
