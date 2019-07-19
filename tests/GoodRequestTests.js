@@ -154,12 +154,28 @@ kettle.tests.goodRequest.gradeNames.handleRequest = function (request) {
     request.events.onSuccess.fire({message: request.options.mixinValue});
 };
 
+/* KETTLE-56 handler with options support */
+
+fluid.defaults("kettle.tests.goodRequest.options.config", {
+    handler: {
+        type: "kettle.tests.goodRequest.gradeNames.handler",
+        options: {
+            mixinValue: "Fetched from immediate handler options"
+        },
+        method: "get"
+    },
+    name: "Good request: immediate options for handler",
+    message: "Received response from handler with immediate options",
+    expected: {message: "Fetched from immediate handler options"}
+});
+
 kettle.tests.goodRequest.testDefs = [
-//    "kettle.tests.goodRequest.emptyParameter.config",
-//    "kettle.tests.goodRequest.doubleResponse.config",
-//    "kettle.tests.goodRequest.options.config",
+    "kettle.tests.goodRequest.emptyParameter.config",
+    "kettle.tests.goodRequest.doubleResponse.config",
+    "kettle.tests.goodRequest.options.config",
     "kettle.tests.goodRequest.mismatchRoute.config",
-    "kettle.tests.goodRequest.gradeNames.config"
+    "kettle.tests.goodRequest.gradeNames.config",
+    "kettle.tests.goodRequest.options.config"
 ];
 
 kettle.tests.singleRequest.executeTests(kettle.tests.goodRequest.testDefs, "kettle.tests.singleRequest.testDefTemplate");
