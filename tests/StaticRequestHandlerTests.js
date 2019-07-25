@@ -61,24 +61,6 @@ fluid.defaults("kettle.tests.staticHandler.app", {
     }
 });
 
-
-fluid.defaults("kettle.tests.staticHandler.environment", {
-    gradeNames: ["fluid.test.testEnvironment", "fluid.test.testCaseHolder"],
-    components: {
-        server: {
-            type: "kettle.tests.staticHandler.server"
-        }
-    },
-    modules: [{
-        name: "Test staticHandler with static middleware",
-        tests: [{
-            expect: 4,
-            name: "Test staticHandler with static middleware",
-            sequenceGrade: "kettle.tests.staticHandler.sequence"
-        }]
-    }]
-});
-
 fluid.defaults("kettle.tests.staticHandler.oneRequest", {
     gradeNames: "fluid.test.sequenceElement",
     components: {
@@ -96,6 +78,19 @@ fluid.defaults("kettle.tests.staticHandler.oneRequest", {
     sequence: [{
         task: "{sequenceElement}.testRequest.send",
         resolve: "{sequenceElement}.checkResponse"
+    }]
+});
+
+kettle.tests.staticHandler.checkURL = function (staticMountIndexer, toRewrite, expected) {
+    var rewritten = kettle.staticMountIndexer.rewriteUrl(staticMountIndexer, toRewrite);
+    jqUnit.assertEquals("URL written via mount table", expected, rewritten);
+};
+
+fluid.defaults("kettle.tests.staticHandler.checkURLs", {
+    gradeNames: "fluid.test.sequenceElement",
+    sequence: [{
+        func: "kettle.tests.staticHandler.checkURL",
+        args: ["{kettle.server}.staticMountIndexer", "{that}.options.toRewrite", "{that}.options.expected"]
     }]
 });
 
@@ -136,8 +131,39 @@ fluid.defaults("kettle.tests.staticHandler.sequence", {
                     }
                 }
             }
+        },
+        checkInfusionURLs: {
+            gradeNames: "kettle.tests.staticHandler.checkURLs",
+            options: {
+                toRewrite: "%infusion/package.json",
+                expected: "/infusion/package.json"
+            }
+        },
+        checkConfigURLs: {
+            gradeNames: "kettle.tests.staticHandler.checkURLs",
+            options: {
+                toRewrite: "%kettle/tests/configs/config1.json5",
+                expected: "/kettleConfigs/config1.json5"
+            }
         }
     }
+});
+
+fluid.defaults("kettle.tests.staticHandler.environment", {
+    gradeNames: ["fluid.test.testEnvironment", "fluid.test.testCaseHolder"],
+    components: {
+        server: {
+            type: "kettle.tests.staticHandler.server"
+        }
+    },
+    modules: [{
+        name: "Test staticHandler with static middleware",
+        tests: [{
+            expect: 6,
+            name: "Test staticHandler with static middleware",
+            sequenceGrade: "kettle.tests.staticHandler.sequence"
+        }]
+    }]
 });
 
 fluid.test.runTests(["kettle.tests.staticHandler.environment"]);
