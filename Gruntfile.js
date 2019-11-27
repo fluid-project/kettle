@@ -20,6 +20,13 @@ module.exports = function (grunt) {
                 md: ["./*.md", "docs/**/*.md", "examples/**/*.md"],
                 other: ["./.*"]
             }
+        },
+        markdownlint: {
+            options: {
+                config: {
+                    "single-h1": false
+                }
+            }
         }
     });
 
