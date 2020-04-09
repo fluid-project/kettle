@@ -17,30 +17,30 @@
     },
     "homepage": "http://wiki.fluidproject.org/display/fluid/Kettle",
     "dependencies": {
-        "express": "4.17.0",
+        "express": "4.17.1",
         "body-parser": "1.19.0",
         "cookie-parser": "1.4.4",
-        "express-session": "1.16.1",
+        "express-session": "1.17.0",
         "serve-static": "1.14.1",
-        "ws": "7.0.0",
-        "infusion": "3.0.0-dev.20190328T144119Z.ec44dbfab",
+        "ws": "7.2.0",
+        "infusion": "3.0.0-dev.20191220T163226Z.db83ce0ef.FLUID-6145",
         "jsonlint": "1.6.3",
         "fluid-resolve": "1.3.0",
         "path-to-regexp": "1.7.0",
-        "multer": "1.4.1",
-        "form-data": "2.3.3",
-        "json5": "2.1.0"
+        "multer": "1.4.2",
+        "form-data": "3.0.0",
+        "json5": "2.1.1"
     },
     "devDependencies": {
-        "eslint-config-fluid": "1.3.0",
-        "gpii-grunt-lint-all": "1.0.5",
+        "eslint-config-fluid": "1.4.0",
+        "gpii-grunt-lint-all": "1.0.7",
         "gpii-express": "1.0.15",
-        "gpii-pouchdb": "1.0.14",
+        "gpii-pouchdb": "1.0.15",
         "grunt": "1.0.4",
         "nyc": "14.1.1",
         "grunt-shell": "3.0.1",
         "node-jqunit": "1.1.8",
-        "rimraf": "2.6.3"
+        "rimraf": "3.0.0"
     },
     "license": "BSD-3-Clause",
     "keywords": [

@@ -74,7 +74,7 @@ fluid.defaults("kettle.tests.asyncRequest.handler", {
             dataType: "json"
         }
     },
-    model: "{that}.resources.data",
+    model: "{that}.resources.data.parsed",
     invokers: {
         handleRequest: {
             funcName: "kettle.tests.asyncRequest.handleRequest"
