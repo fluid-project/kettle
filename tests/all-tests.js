@@ -41,7 +41,8 @@ var testIncludes = [
     "./MultiConfigTests.js",
     "./StaticTests.js",
     "./MulterTests.js",
-    "./AsyncRequestComponentTests.js"
+    "./AsyncRequestComponentTests.js",
+    "./RequestAbortTests.js"
 ];
 
 fluid.each(testIncludes, function (path) {

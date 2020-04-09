@@ -240,4 +240,5 @@ kettle.tests.badRequest.testDefs = [
     "kettle.tests.badRequest.badURL.config"
 ];
 
-kettle.tests.singleRequest.executeTests(kettle.tests.badRequest.testDefs, "kettle.tests.badRequest.testDefTemplate", true);
+kettle.tests.singleRequest.executeTests(kettle.tests.badRequest.testDefs,
+    "kettle.tests.badRequest.testDefTemplate", true);
