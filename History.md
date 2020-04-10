@@ -1,5 +1,11 @@
 # Version History
 
+## 1.12.0 / 2020-04-10
+
+* KETTLE-82: Fix for client abort causing server exit
+* Updates for compatibility with FLUID-6148/FLUID-6145 branches of Infusion
+* General dependency update
+
 ## 1.11.1 / 2019-05-23
 
 * Reorganisation of request launching logic to permit use under post-FLUID-6148 branches of Infusion
