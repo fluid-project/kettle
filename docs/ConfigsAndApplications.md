@@ -102,12 +102,29 @@ Kettle includes a driver function, `kettle.config.loadConfig` which will load an
 JSON or JSON5 file in the filesystem. It accepts an `options` structure which includes the
 following fields:
 
-|Member name| Type | Description |
-|-----------|------|-------------|
-|`configName`| `String` | The name of the config (the bare filename, minus any extension) which is to be loaded|
-|`configPath`| `String` | The directory holding the config. This path may start with a symbolic module reference, e.g.
-of the form `%kettle`, to a module which has been registered using Infusion's module API
-[`fluid.module.register`](http://docs.fluidproject.org/infusion/development/NodeAPI.html#fluid-module-register-name-basedir-modulerequire-)|
+<table>
+    <thead>
+        <tr style="white-space: nowrap;">
+            <th>Member name</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>configName</code></td>
+            <td><code>String</code></td>
+            <td>The name of the config (the bare filename, minus any extension) which is to be loaded</td>
+        </tr>
+        <tr>
+            <td><code>configPath</code></td>
+            <td><code>String</code></td>
+            <td>The directory holding the config. This path may start with a symbolic module reference, e.g. 
+                of the form `%kettle`, to a module which has been registered using Infusion's module API 
+                [`fluid.module.register`](http://docs.fluidproject.org/infusion/development/NodeAPI.html#fluid-module-register-name-basedir-modulerequire-)</td>
+        </tr>
+    </tbody>
+</table>
 
 `kettle.config.loadConfig` will return the (Infusion) component instance of the initialised application. You could use
 this, for example, to terminate the application using its ``destroy()`` method.
