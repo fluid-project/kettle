@@ -119,8 +119,8 @@ following fields:
         <tr>
             <td><code>configPath</code></td>
             <td><code>String</code></td>
-            <td>The directory holding the config. This path may start with a symbolic module reference, e.g. 
-                of the form `%kettle`, to a module which has been registered using Infusion's module API 
+            <td>The directory holding the config. This path may start with a symbolic module reference, e.g.
+                of the form `%kettle`, to a module which has been registered using Infusion's module API
                 [`fluid.module.register`](http://docs.fluidproject.org/infusion/development/NodeAPI.html#fluid-module-register-name-basedir-modulerequire-)</td>
         </tr>
     </tbody>
