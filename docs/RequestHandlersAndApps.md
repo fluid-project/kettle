@@ -77,8 +77,9 @@ multiple apps are merged together from different sources to produce combined app
             <code>request.req.url</code>. The entire incoming URL will remain visible in
             <code>request.req.originalUrl</code> –
             this is the same behaviour as express.js <a href="http://expressjs.com/api.html#app.use">routing system</a>.
-            It is primarily useful when using <a href="./Middleware.md#built-in-standard-middleware-bundled-with-kettle">static middleware</a> which will compare the
-            <code>req.url</code> value with the filesystem path relative to its mount point.
+            It is primarily useful when using 
+            <a href="./Middleware.md#built-in-standard-middleware-bundled-with-kettle">static middleware</a> 
+            which will compare the <code>req.url</code> value with the filesystem path relative to its mount point.
         </tr>
         <tr>
             <td><code>method</code> (optional)</td>
