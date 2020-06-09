@@ -79,9 +79,25 @@ kettle.tests.ws.testSocketError = function (err, that) {
     });
 };
 
+fluid.defaults("kettle.tests.ws.testClose.handler", {
+    gradeNames: "kettle.request.ws",
+    listeners: {
+        onReceiveMessage: "kettle.tests.ws.testClose.receiveMessage"
+    }
+});
+
+kettle.tests.ws.testClose.receiveMessage = function (request) {
+    // close the WebSocket with the status code for normal closure
+    request.ws.close(1000);
+};
+
+kettle.tests.ws.assertCloseResponse = function (response) {
+    jqUnit.assertEquals("Socket close response code is 1000", 1000, response.code);
+};
+
 kettle.tests.ws.testDefs = {
     name: "WebSockets tests",
-    expect: 15,
+    expect: 17,
     config: {
         configName: "kettle.tests.webSockets.config",
         configPath: "%kettle/tests/configs"
@@ -106,6 +122,12 @@ kettle.tests.ws.testDefs = {
             type: "kettle.test.request.ws",
             options: {
                 path: "/"
+            }
+        },
+        closingWsRequest: {
+            type: "kettle.test.request.ws",
+            options: {
+                path: "/close_path"
             }
         }
     },
@@ -161,7 +183,21 @@ kettle.tests.ws.testDefs = {
     }, {
         event: "{badWsRequest}.events.onError",
         listener: "kettle.tests.ws.testSocketError"
-    }]
+    }, {
+        func: "{closingWsRequest}.connect"
+    }, {
+        event: "{closingWsRequest}.events.onConnect",
+        listener: "jqUnit.assert",
+        args: "Received WebSockets connection event"
+    }, {
+        func: "{closingWsRequest}.send",
+        args: {}
+    }, {
+        event: "{closingWsRequest}.events.onClose",
+        listener: "kettle.tests.ws.assertCloseResponse",
+        args: "{arguments}.1"
+    }
+]
 };
 
 kettle.test.bootstrapServer(kettle.tests.ws.testDefs);
