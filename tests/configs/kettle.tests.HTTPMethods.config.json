@@ -26,6 +26,11 @@
                                         "type": "kettle.tests.HTTPMethods.put.handler",
                                         "route": "/",
                                         "method": "put"
+                                    },
+                                    "put201Handler": {
+                                        "type": "kettle.tests.HTTPMethods.put201.handler",
+                                        "route": "/201",
+                                        "method": "put"
                                     }
                                 }
                             }
