@@ -1,1 +1,2 @@
-* text eol=lf
+# Disables autocrlf
+* text=false
