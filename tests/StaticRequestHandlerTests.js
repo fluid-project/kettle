@@ -58,6 +58,7 @@ fluid.defaults("kettle.tests.staticHandler.app", {
                 priority: "before:kettleStaticHandler"
             }
         }
+        // TODO: test prefix of "/" or ""
     }
 });
 
