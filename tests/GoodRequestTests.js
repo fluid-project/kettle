@@ -122,6 +122,7 @@ fluid.defaults("kettle.tests.goodRequest.options.config", {
     name: "Good request: options request",
     message: "Received response from successful request with empty parameter",
     expected: undefined,
+    expectedStatusCode: 204,
     distributeOptions: {
         target: "{that testRequest}.options.method",
         record: "OPTIONS"
@@ -138,7 +139,12 @@ fluid.defaults("kettle.tests.goodRequest.options.handler", {
 });
 
 kettle.tests.goodRequest.options.handleRequest = function (request) {
-    request.events.onSuccess.fire({message: "Ignored message"});
+    request.events.onSuccess.fire(undefined, {
+        statusCode: 204,
+        headers: {
+            Allow: "OPTIONS"
+        }
+    });
 };
 
 
