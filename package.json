@@ -33,11 +33,11 @@
     },
     "devDependencies": {
         "eslint-config-fluid": "1.4.0",
-        "gpii-grunt-lint-all": "1.0.7",
-        "gpii-express": "1.0.15",
-        "gpii-pouchdb": "1.0.15",
-        "grunt": "1.1.0",
-        "nyc": "15.0.1",
+        "fluid-grunt-lint-all": "1.0.8",
+        "fluid-express": "1.0.16",
+        "fluid-pouchdb": "1.0.16-dev.20200709T122740Z.23562f0.FLUID-6524",
+        "grunt": "1.2.1",
+        "nyc": "15.1.0",
         "grunt-shell": "3.0.1",
         "node-jqunit": "1.1.8",
         "rimraf": "3.0.2"
