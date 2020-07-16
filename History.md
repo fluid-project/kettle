@@ -1,5 +1,9 @@
 # Version History
 
+## 1.14.0 / 2020-07-16
+
+* KETTLE-86: Corrected version incorporating extra commits following review
+
 ## 1.13.0 / 2020-07-16
 
 * KETTLE-86: Extended request.events.onSuccess accepting additional arguments allowing custom status codes, and added
