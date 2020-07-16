@@ -1,9 +1,17 @@
 # Version History
 
+## 1.13.0 / 2020-07-16
+
+* KETTLE-86: Extended request.events.onSuccess accepting additional arguments allowing custom status codes, and added
+  request.outerRequestPromise which accepts a wider framed payload correspondingly.
+* KETTLE-84: Extended kettle.test.request.ws to support an onClose event
+* Various docs fixes
+* General dependency update
+
 ## 1.12.0 / 2020-04-10
 
 * KETTLE-82: Fix for client abort causing server exit
-* Updates for compatibility with FLUID-6148/FLUID-6145 branches of Infusion
+* Updates for compatibility with FLUID-6148/FLUID-6145 branches of Infusion - "golden release"
 * General dependency update
 
 ## 1.11.1 / 2019-05-23
