@@ -1,5 +1,10 @@
 # Version History
 
+## 1.15.0 / 2020-07-20
+
+* Updated to fluid-xxxx version of former GPII dependencies, including update of fluid-pouchdb that allows build on node 12.x
+* Other dependency updates
+
 ## 1.14.0 / 2020-07-16
 
 * KETTLE-86: Corrected version incorporating extra commits following review
