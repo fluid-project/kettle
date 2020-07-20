@@ -81,7 +81,33 @@ kettle.tests.HTTPMethods.put.testResponse = function (data) {
     }, JSON.parse(data));
 };
 
-//------------- Test defs for GET, POST, PUT ---------------
+// -------- PUT handling with alternate status code --------
+fluid.defaults("kettle.tests.HTTPMethods.put201.handler", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.HTTPMethods.put201.handleRequest"
+        }
+    }
+});
+
+kettle.tests.HTTPMethods.put201.handleRequest = function (request) {
+    jqUnit.assert("PUT request successfully received");
+    // Add a non-200 status code as an additional parameter to onSuccess
+    request.events.onSuccess.fire(request.req.body, {
+        statusCode: 201
+    });
+};
+
+kettle.tests.HTTPMethods.put201.testResponse = function (request, data) {
+    var response = request.nativeResponse;
+    jqUnit.assertEquals("PUT response is 201 (Created)", 201, response.statusCode);
+    jqUnit.assertDeepEq("PUT response successfully received", {
+        "msg": "I am a PUT request"
+    }, JSON.parse(data));
+};
+
+// ------------- Test defs for GET, POST, PUT --------------
 kettle.tests.HTTPMethods.testDefs = [{
     name: "HTTPMethods GET test",
     expect: 2,
@@ -198,5 +224,31 @@ kettle.tests.HTTPMethods.testDefs = [{
     }, {
         event: "{postRequest2}.events.onComplete",
         listener: "kettle.tests.HTTPMethods.post.testResponse"
+    }]
+}, { // PUT test with alternate status code
+    name: "HTTPMethods PUT test with alternate response status code",
+    expect: 3,
+    config: {
+        configName: "kettle.tests.HTTPMethods.config",
+        configPath: "%kettle/tests/configs"
+    },
+    components: {
+        put201Request: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/201",
+                method: "PUT"
+            }
+        }
+    },
+    sequence: [{
+        func: "{put201Request}.send",
+        args: { "msg": "I am a PUT request" }
+    }, {
+        event: "{put201Request}.events.onComplete",
+        listener: "kettle.tests.HTTPMethods.put201.testResponse",
+        // since we need to verify the status code in addition to the response content,
+        // we use the request as input to the verification function, in addition to forwarding the payload
+        args: ["{put201Request}", "{arguments}.0"]
     }]
 }];
