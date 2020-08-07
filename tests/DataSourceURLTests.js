@@ -155,7 +155,7 @@ kettle.tests.dataSource.URL.hangup.handleRequest = function (request) {
 
 // CouchDB hangup test
 
-fluid.defaults("kettle.tests.dataSouce.CouchDB.hangup", {
+fluid.defaults("kettle.tests.dataSource.CouchDB.hangup", {
     gradeNames: "kettle.tests.dataSource.URL.hangup",
     name: "y. Testing CouchDB dataSource with server hangup",
     distributeOptions: {
@@ -300,7 +300,7 @@ fluid.test.runTests([
     "kettle.tests.dataSource.URL.sensitiveError",
     "kettle.tests.dataSource.https",
     "kettle.tests.dataSource.URL.hangup",
-    "kettle.tests.dataSouce.CouchDB.hangup",
+    "kettle.tests.dataSource.CouchDB.hangup",
     "kettle.tests.dataSource.URL.notFound",
     "kettle.tests.dataSource.URL.set.specialChars"
 ]);
