@@ -239,10 +239,10 @@ fluid.defaults("kettle.tests.dataSource.URL.redirect", {
         dataSource: {
             type: "kettle.dataSource.URL",
             options: {
-                url: "http://localhost:8081/redirect",
+                url: "http://localhost:8081/redirect"
             }
         }
-    },
+    }
 });
 
 // Special chars test
