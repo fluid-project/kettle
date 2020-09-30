@@ -59,7 +59,7 @@ kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directM
 
 fluid.defaults("kettle.tests.dataSource.3.CouchDB.URL.standard", {
     gradeNames: ["kettle.tests.dataSource.pouchDB.environment"],
-    name: "3. Testing CouchDB URL datasource with standard response",
+    name: "3. Testing CouchDB URL DataSource with standard response",
     components: {
         dataSource: {
             type: "kettle.dataSource.URL",

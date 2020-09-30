@@ -23,6 +23,39 @@ require("./shared/DataSourceTestUtils.js");
 
 kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
 
+// Basic initialisation tests
+
+kettle.tests.dataSource.testInit = function (dataSource) {
+    jqUnit.expect(4);
+    jqUnit.assertValue("Data source is initialized", dataSource);
+    jqUnit.assertValue("Data source should have a get method", dataSource.get);
+    jqUnit.assertUndefined("Data source should not have a set method by default", dataSource.set);
+    jqUnit.assertDeepEq("Data source should have a termMap", {}, dataSource.options.termMap);
+};
+
+
+fluid.defaults("kettle.tests.dataSource.initTester", {
+    gradeNames: "fluid.component",
+    components: {
+        urlDataSource: {
+            type: "kettle.dataSource.URL"
+        },
+        couchDBDataSource: {
+            type: "kettle.dataSource.URL",
+            options: {
+                gradeNames: "kettle.dataSource.CouchDB"
+            }
+        }
+    }
+});
+
+jqUnit.test("DataSource basic init tests", function () {
+    var initTester = kettle.tests.dataSource.initTester();
+    kettle.tests.dataSource.testInit(initTester.urlDataSource);
+    kettle.tests.dataSource.testInit(initTester.couchDBDataSource);
+});
+
+
 /** KETTLE-34 options resolution and merging test **/
 
 fluid.defaults("kettle.tests.KETTLE34dataSource", {
@@ -48,10 +81,11 @@ kettle.tests.dataSource.resolutionTests = [ {
     expectedOptions: {
         protocol: "https:",
         port: 999,
-        auth: "user:password",
-        path: "/path",
+        username: "user",
+        password: "password",
+        pathname: "/path",
         method: "GET",
-        host: "thing.available:997", // appears to be a parsing fault in url module
+        hostname: "thing.available",
         family: 4,
         headers: {
             "x-custom-header": "x-custom-value",
@@ -73,8 +107,8 @@ kettle.tests.dataSource.resolutionTests = [ {
     expectedOptions: {
         protocol: "http:",
         port: 998,
-        path: "/device",
-        host: "127.0.0.1"
+        pathname: "/device",
+        hostname: "127.0.0.1"
     }
 }
 ];
@@ -86,7 +120,7 @@ kettle.tests.withMockHttp = function (toapply) {
         var httpRequest = kettle.npm.http.request;
         var httpsRequest = kettle.npm.https.request;
         kettle.tests.capturedHttpOptions = {};
-        kettle.npm.http.request = kettle.npm.https.request = function (requestOptions) {
+        kettle.npm.http.request = kettle.npm.https.request = function (url, requestOptions) {
             kettle.tests.capturedHttpOptions = requestOptions;
             return {
                 on: fluid.identity,
@@ -113,6 +147,7 @@ kettle.tests.dataSource.resolutionTest = function (fixture) {
 fluid.each(kettle.tests.dataSource.resolutionTests, function (fixture) {
     kettle.tests.dataSource.resolutionTest(fixture);
 });
+
 
 /** KETTLE-73 censoring sensitive options test **/
 
@@ -159,7 +194,7 @@ jqUnit.test("KETTLE-73 censoring test", kettle.tests.withMockHttp(function () {
 /** KETTLE-38 writeable grade resolution test **/
 
 fluid.defaults("kettle.tests.KETTLE38base", {
-    gradeNames: "kettle.dataSource.URL",
+    gradeNames: ["kettle.dataSource.URL"],
     writable: true
 });
 
@@ -180,7 +215,8 @@ kettle.tests.formencData = {
 };
 
 fluid.defaults("kettle.tests.formencSource", {
-    gradeNames: "kettle.dataSource.file.moduleTerms",
+    gradeNames: ["kettle.dataSource.file", "kettle.dataSource.moduleTerms"],
+    writableGrade: "kettle.tests.formencSourceWrite",
     path: "%kettle/tests/data/formenc.txt",
     components: {
         encoding: {
@@ -200,15 +236,11 @@ jqUnit.asyncTest("Reading file in formenc encoding", function () {
     });
 });
 
+// Note: This is a specialised "concrete writable grade" as opposed to a generalised writable mixin grade and so
+// derives from the concrete readable grade
 fluid.defaults("kettle.tests.formencSourceWrite", {
-    gradeNames: "kettle.dataSource.file.moduleTerms",
-    path: "%kettle/tests/data/writeable/formenc.txt",
-    writable: true,
-    components: {
-        encoding: {
-            type: "kettle.dataSource.encoding.formenc"
-        }
-    }
+    gradeNames: ["kettle.tests.formencSource", "kettle.dataSource.file.writable"],
+    path: "%kettle/tests/data/writeable/formenc.txt"
 });
 
 jqUnit.asyncTest("Writing file in formenc encoding", function () {
@@ -224,39 +256,7 @@ jqUnit.asyncTest("Writing file in formenc encoding", function () {
     });
 });
 
-
-// Basic initialisation tests
-
-kettle.tests.dataSource.testInit = function (dataSource) {
-    jqUnit.expect(4);
-    jqUnit.assertValue("Data source is initialized", dataSource);
-    jqUnit.assertValue("Data source should have a get method", dataSource.get);
-    jqUnit.assertUndefined("Data source should not have a set method by default", dataSource.set);
-    jqUnit.assertDeepEq("Data source should have a termMap", {}, dataSource.options.termMap);
-};
-
-
-fluid.defaults("kettle.tests.dataSource.initTester", {
-    gradeNames: "fluid.component",
-    components: {
-        urlDataSource: {
-            type: "kettle.dataSource.URL"
-        },
-        couchDBDataSource: {
-            type: "kettle.dataSource.URL",
-            options: {
-                gradeNames: "kettle.dataSource.CouchDB"
-            }
-        }
-    }
-});
-
-jqUnit.test("DataSource basic init tests", function () {
-    var initTester = kettle.tests.dataSource.initTester();
-    kettle.tests.dataSource.testInit(initTester.urlDataSource);
-    kettle.tests.dataSource.testInit(initTester.couchDBDataSource);
-});
-
+// File DataSource without path
 
 fluid.defaults("kettle.tests.dataSource.fileWithoutPath", {
     gradeNames: "kettle.dataSource.file"
