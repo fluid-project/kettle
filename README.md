@@ -18,6 +18,15 @@ In fact, Kettle's dependency on express itself is minimal, since the entirety of
 is packaged as a single piece of express-compatible middleware – Kettle could be deployed against any other consumer
 of middleware or even a raw node.js HTTP server.
 
+## Notes on Kettle 2.x releases
+
+The 2.x line of Kettle releases are (at the time of writing) still code-compatible with the 1.x releases in terms of
+support for user code, but the 2.x Kettle releases break compatibility with older versions of Infusion. Kettle 1.x
+has been compatible with mainline releases of Infusion as well as those from in-progress FLUID-6145 and FLUID-6148
+branches. Kettle 2.x releases are only compatible with releases of Infusion from the FLUID-6145 branch, newer
+than and including 3.0.0-dev.20200930T151056Z.d0b9e348d.FLUID-6145 . The contents of this branch will in time
+contribute to the upcoming 3.x releases of Infusion.
+
 ## Contents of this repository
 
 ### Core Kettle implementation

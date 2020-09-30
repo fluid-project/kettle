@@ -172,7 +172,7 @@ fluid.defaults("kettle.tests.serverPair", {
         sourceServer: {
             type: "kettle.server",
             options: {
-                port: 8085,
+                port: 8087,
                 distributeOptions: {
                     source: "{that}.options.port", // ideally we will move this top level once we can support non-that here
                     target: "{serverPair relayServer dataSource}.options.termMap.sourcePort"
@@ -314,7 +314,7 @@ kettle.tests.errorServerPairSequence = [
             statusCode: 500,
             string: "{arguments}.0",
             request: "{errorRequest}",
-            expected: kettle.upgradeError(kettle.tests.dataSource.errorPayload, " while executing HTTP GET on url http://localhost:8085/errorEndpoint")
+            expected: kettle.upgradeError(kettle.tests.dataSource.errorPayload, " while executing HTTP GET on url http://localhost:8087/errorEndpoint")
         }
     }
 ];

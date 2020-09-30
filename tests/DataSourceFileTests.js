@@ -24,7 +24,7 @@ require("./shared/DataSourceTestUtils.js");
 kettle.tests.dataSource.ensureDirectoryEmpty("%kettle/tests/data/writeable");
 
 kettle.tests.dataSource.testFileSetResponse = function (dataSource, directModel, expected, encoding) {
-    var fileName = kettle.dataSource.URL.resolveUrl(dataSource.options.path, dataSource.options.termMap, directModel, true),
+    var fileName = fluid.dataSource.URL.resolveUrl(dataSource.options.path, dataSource.options.termMap, directModel, true),
         encoder = encoding === "JSON5" ? JSON5 : JSON,
         data = encoder.parse(fs.readFileSync(fileName, "utf8"));
     jqUnit.assertDeepEq("Response is correct", expected, data);
@@ -37,7 +37,7 @@ fluid.defaults("kettle.tests.dataSource.1.file.empty", {
     name: "1. Testing file datasource with empty response",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/emptyDataSourceTestFile.txt"
             }
@@ -53,7 +53,7 @@ fluid.defaults("kettle.tests.dataSource.2.file.standard", {
     name: "2. Testing file datasource with standard response",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/dataSourceTestFile.json"
             }
@@ -74,7 +74,7 @@ fluid.defaults("kettle.tests.dataSource.3.CouchDB.file.standard", {
     name: "3. Testing CouchDB datasource with standard response",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 path: "%kettle/tests/data/couchDataSourceTestFile.json"
@@ -96,7 +96,7 @@ fluid.defaults("kettle.tests.dataSource.4.CouchDB.file.empty", {
     name: "4. Testing CouchDB datasource with empty response",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 path: "%kettle/tests/data/emptyDataSourceTestFile.txt"
@@ -114,7 +114,7 @@ fluid.defaults("kettle.tests.dataSource.5.CouchDB.file.missing", {
     shouldError: true,
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 notFoundIsEmpty: false, // equivalent to the default
@@ -140,7 +140,7 @@ fluid.defaults("kettle.tests.dataSource.6.CouchDB.file.error", {
     shouldError: true,
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 path: "%kettle/tests/data/couchDataSourceError.json"
@@ -166,7 +166,7 @@ fluid.defaults("kettle.tests.dataSource.7.file.expand.present", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/%expand.json",
                 termMap: {
@@ -193,7 +193,7 @@ fluid.defaults("kettle.tests.dataSource.8.file.expand.missing", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/%expand.json",
                 notFoundIsEmpty: true,
@@ -216,7 +216,7 @@ fluid.defaults("kettle.tests.dataSource.9.CouchDB.file.expand.missing", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 path: "%kettle/tests/data/%expand.json",
@@ -237,7 +237,7 @@ fluid.defaults("kettle.tests.dataSource.10.file.expand.static", {
     name: "10. Testing file datasource with filesystem with static expansion",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/dataSourceTestFile.json"
             }
@@ -258,7 +258,7 @@ fluid.defaults("kettle.tests.dataSource.11.CouchDB.file.expand.static", {
     name: "11. Testing couchdb datasource with filesystem with static expansion",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 path: "%kettle/tests/data/couchDataSourceTestFile.json"
@@ -283,7 +283,7 @@ fluid.defaults("kettle.tests.dataSource.12.CouchDB.file.expand.dynamic", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 path: "%kettle/tests/data/%expand.json",
@@ -312,7 +312,7 @@ fluid.defaults("kettle.tests.dataSource.13.file.set", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/writeable/test.json",
                 writable: true
@@ -338,7 +338,7 @@ fluid.defaults("kettle.tests.dataSource.13a.file.JSON5.set", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/writeable/test.json5",
                 writable: true,
@@ -369,7 +369,7 @@ fluid.defaults("kettle.tests.dataSource.14.CouchDB.file.set", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 notFoundIsEmpty: true,
@@ -408,7 +408,7 @@ fluid.defaults("kettle.tests.dataSource.15.CouchDB.file.set.existing", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 notFoundIsEmpty: true,
@@ -443,7 +443,7 @@ fluid.defaults("kettle.tests.dataSource.16.file.set.expand", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/writeable/%expand.json",
                 termMap: {
@@ -478,7 +478,7 @@ fluid.defaults("kettle.tests.dataSource.17.CouchDB.file.set.existing.expand", {
     },
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 gradeNames: "kettle.dataSource.CouchDB",
                 path: "%kettle/tests/data/writeable/%expand.json",
@@ -508,7 +508,7 @@ fluid.defaults("kettle.tests.dataSource.18.JSON5file.standard", {
     name: "18. Testing JSON5 file datasource with standard response",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/dataSourceJSON5TestFile.json5",
                 components: {
@@ -534,7 +534,7 @@ fluid.defaults("kettle.tests.dataSource.19.JSON5file.empty", {
     name: "19. Testing JSON5 file datasource with empty response",
     components: {
         dataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
                 path: "%kettle/tests/data/emptyDataSourceTestFile.txt",
                 components: {

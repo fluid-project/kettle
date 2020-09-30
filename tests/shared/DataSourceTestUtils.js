@@ -70,7 +70,7 @@ kettle.tests.dataSource.defaultErrorFunc = function (shouldError, data) {
 
 // Base grade for each individual DataSource test fixture: Top-level component holding dataSource, test environment and standard events
 fluid.defaults("kettle.tests.simpleDataSourceTest", {
-    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.dataSource.onErrorLink"],
+    gradeNames: ["fluid.test.testEnvironment", "kettle.tests.dataSource.onErrorLink", "kettle.dataSource.distributeDevTerms"],
     mergePolicy: {
         initSequence: "noexpand"
     },
