@@ -15,7 +15,7 @@ nodejs_version = "8.11.4"
 
 Vagrant.configure(2) do |config|
 
-  config.vm.box = "inclusivedesign/fedora28"
+  config.vm.box = "inclusivedesign/fedora31"
   config.vm.hostname = app_name
 
   # Port-forwarding

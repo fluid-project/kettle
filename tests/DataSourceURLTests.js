@@ -95,8 +95,7 @@ fluid.defaults("kettle.tests.dataSource.URL.sensitiveError", {
         isError: true,
         statusCode: 404,
         shouldAppear: "SENSITIVE",
-        shouldNotAppear: ["secret", "%3F"],
-        message: "socket hang up while executing HTTP GET on url http://localhost:8081/"
+        shouldNotAppear: ["secret", "%3F"]
     },
     invokers: {
         errorFunc: {
@@ -155,7 +154,7 @@ kettle.tests.dataSource.URL.hangup.handleRequest = function (request) {
 
 // CouchDB hangup test
 
-fluid.defaults("kettle.tests.dataSouce.CouchDB.hangup", {
+fluid.defaults("kettle.tests.dataSource.CouchDB.hangup", {
     gradeNames: "kettle.tests.dataSource.URL.hangup",
     name: "y. Testing CouchDB dataSource with server hangup",
     distributeOptions: {
@@ -164,11 +163,11 @@ fluid.defaults("kettle.tests.dataSouce.CouchDB.hangup", {
     }
 });
 
-// CouchDB on 404
+// HTTP hangup test
 
-fluid.defaults("kettle.tests.dataSouce.URL.notFound", {
+fluid.defaults("kettle.tests.dataSource.URL.notFound", {
     gradeNames: "kettle.tests.dataSource.URL.hangup",
-    name: "z. Testing CouchDB dataSource with server hangup",
+    name: "z. Testing HTTP dataSource with server hangup",
     expected: {
         message: "Cannot GET /notFound while executing HTTP GET on url http://localhost:8081/notFound",
         isError: true,
@@ -179,6 +178,138 @@ fluid.defaults("kettle.tests.dataSouce.URL.notFound", {
         record: "http://localhost:8081/notFound"
     }
 });
+
+// KETTLE-89 follow redirects
+
+fluid.defaults("kettle.tests.dataSource.URL.redirectingApp", {
+    gradeNames: "kettle.app",
+    requestHandlers: {
+        redirectHandler: {
+            type: "kettle.tests.dataSource.URL.redirectingRequestHandler",
+            route: "/redirect",
+            method: "get"
+        }
+    }
+});
+
+fluid.defaults("kettle.tests.dataSource.URL.redirectingRequestHandler", {
+    gradeNames: "kettle.request.http",
+    invokers: {
+        handleRequest: {
+            funcName: "kettle.tests.dataSource.URL.redirectingHandler"
+        }
+    }
+});
+
+kettle.tests.dataSource.URL.redirectingHandler = function (request) {
+    jqUnit.assert("GET request successfully received");
+    request.events.onSuccess.fire("Moved to /", {
+        statusCode: 301,
+        headers: {
+            Location: "/"
+        }
+    });
+};
+
+fluid.defaults("kettle.tests.dataSource.URL.redirect", {
+    gradeNames: ["kettle.tests.singleRequest.config", "kettle.tests.simpleDataSourceTest"],
+    name: "KETTLE-89: DataSource support for redirects",
+    expect: 2,
+    distributeOptions: {
+        testHandlerType: {
+            target: "{that kettle.app}.options.requestHandlers.testHandler.type",
+            record: "kettle.tests.HTTPMethods.get.handler"
+        },
+        redirectHandler: {
+            target: "{that kettle.app}.options.gradeNames",
+            record: "kettle.tests.dataSource.URL.redirectingApp"
+        }
+    },
+    invokers: {
+        responseFunc: {
+            funcName: "kettle.tests.dataSource.testResponse",
+            args: ["{that}.options.expected", "{arguments}.0"]
+        }
+    },
+    expected: {
+        message: "GET response"
+    },
+    components: {
+        dataSource: {
+            type: "kettle.dataSource.URL",
+            options: {
+                url: "http://localhost:8081/redirect"
+            }
+        }
+    }
+});
+
+// Using a DataSource at init time
+
+fluid.defaults("kettle.tests.dataSource.URL.init", {
+    gradeNames: ["kettle.tests.singleRequest.config", "fluid.test.testEnvironment"],
+    name: "FLUID-6148: DataSource during init",
+    distributeOptions: {
+        testHandlerType: {
+            target: "{that kettle.app}.options.requestHandlers.testHandler.type",
+            record: "kettle.tests.HTTPMethods.get.handler"
+        }
+    },
+    invokers: {
+        responseFunc: {
+            funcName: "kettle.tests.dataSource.testResponse",
+            args: ["{that}.options.expected", "{arguments}.0"]
+        }
+    },
+    expected: {
+        message: "GET response"
+    },
+    components: {
+        dataSource: {
+            type: "kettle.dataSource.URL",
+            options: {
+                url: "http://localhost:8081/"
+            }
+        },
+        testCaseHolder: {
+            type: "fluid.test.testCaseHolder",
+            options: {
+                modules: [{
+                    name: "DataSource during init",
+                    tests: [{
+                        name: "Resource model is initialised",
+                        sequence: [{
+                            listener: "fluid.identity",
+                            event: "{resourceLoader}.events.onCreate"
+                        }, {
+                            funcName: "kettle.tests.dataSource.URL.init.check",
+                            args: "{kettle.tests.dataSource.URL.init}"
+                        }]
+                    }]
+                }]
+            }
+        },
+        resourceHolder: {
+            type: "fluid.modelComponent",
+            createOnEvent: "{testEnvironment}.server.events.onListen",
+            options: {
+                gradeNames: "fluid.resourceLoader",
+                resources: {
+                    dataSourceResource: {
+                        dataSource: "{dataSource}"
+                    }
+                },
+                model: "{that}.resources.dataSourceResource.parsed"
+            }
+        }
+    }
+});
+
+kettle.tests.dataSource.URL.init.check = function (root) {
+    jqUnit.assertDeepEq("Model should have been initialised from resource", root.options.expected, root.resourceHolder.model);
+};
+
+// Special chars test
 
 fluid.defaults("kettle.tests.dataSource.URL.set.specialChars", {
     gradeNames: ["kettle.tests.singleRequest.config", "kettle.tests.simpleDataSourceTest"],
@@ -218,22 +349,21 @@ fluid.defaults("kettle.tests.dataSource.URL.set.specialChars", {
 jqUnit.test("GPII-2147: Testing that localhost is properly replaced by 127.0.0.1 in prepareRequestOptions", function () {
     var userStaticOptions = {
         protocol: "http:",
-        host: "localhost",
         hostname: "localhost",
         pathname: "/preferences/sammy"
     };
-    var returned = kettle.dataSource.URL.prepareRequestOptions({}, undefined, {}, kettle.dataSource.URL.requestOptions, {}, userStaticOptions, undefined);
-    jqUnit.assertEquals("host is 127.0.0.1", returned.host, "127.0.0.1");
+    var returned = fluid.dataSource.URL.prepareRequestOptions({}, undefined, {}, kettle.dataSource.URL.requestOptions, {}, userStaticOptions, undefined);
     jqUnit.assertEquals("hostname is 127.0.0.1", returned.hostname, "127.0.0.1");
 });
 
 
 fluid.test.runTests([
-// Attempt to test HTTPS datasource - server currently just hangs without passing on request
+    "kettle.tests.dataSource.URL.redirect",
+    "kettle.tests.dataSource.URL.init",
     "kettle.tests.dataSource.URL.sensitiveError",
     "kettle.tests.dataSource.https",
     "kettle.tests.dataSource.URL.hangup",
-    "kettle.tests.dataSouce.CouchDB.hangup",
-    "kettle.tests.dataSouce.URL.notFound",
+    "kettle.tests.dataSource.CouchDB.hangup",
+    "kettle.tests.dataSource.URL.notFound",
     "kettle.tests.dataSource.URL.set.specialChars"
 ]);

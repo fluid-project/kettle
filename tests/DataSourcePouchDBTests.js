@@ -14,24 +14,23 @@ https://github.com/fluid-project/kettle/blob/master/LICENSE.txt
 
 var fluid = require("infusion"),
     kettle = fluid.require("%kettle"),
-    gpii = fluid.registerNamespace("gpii"),
     jqUnit = fluid.require("node-jqunit", require, "jqUnit");
 
-require("gpii-pouchdb");
+require("fluid-pouchdb");
 
-gpii.pouch.loadTestingSupport();
+fluid.pouch.loadTestingSupport();
 
 require("./shared/DataSourceTestUtils.js");
 
 fluid.defaults("kettle.tests.dataSource.pouchDB.environment", {
-    gradeNames: ["gpii.test.pouch.environment", "kettle.tests.simpleDataSourceTest"],
+    gradeNames: ["fluid.test.pouch.environment", "kettle.tests.simpleDataSourceTest"],
     port: 6789,
     pouchConfig: {
         databases: {
             testFile: { data: "%kettle/tests/data/pouchDataSourceTestFile.json"}
         }
     },
-    initSequence: gpii.test.express.standardSequenceStart
+    initSequence: fluid.test.express.standardSequenceStart
 });
 
 fluid.defaults("kettle.tests.dataSource.pouchDB.write.environment", {
@@ -60,7 +59,7 @@ kettle.tests.dataSource.testURLSetResponse = function (that, dataSource, directM
 
 fluid.defaults("kettle.tests.dataSource.3.CouchDB.URL.standard", {
     gradeNames: ["kettle.tests.dataSource.pouchDB.environment"],
-    name: "3. Testing CouchDB URL datasource with standard response",
+    name: "3. Testing CouchDB URL DataSource with standard response",
     components: {
         dataSource: {
             type: "kettle.dataSource.URL",

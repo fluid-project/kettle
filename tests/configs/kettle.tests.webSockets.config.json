@@ -19,6 +19,10 @@
                                     "testGet": {
                                         "type": "kettle.tests.ws.testGet.handler",
                                         "route": "/"
+                                    },
+                                    "testClose": {
+                                        "type": "kettle.tests.ws.testClose.handler",
+                                        "route": "/close_path"
                                     }
                                 }
                             }

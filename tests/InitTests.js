@@ -38,7 +38,7 @@ fluid.defaults("kettle.tests.init.server", {
             args: ["{that}", "onContributeRouteHandlers"]
         },
         onCreate: {
-            priority: "first",
+            priority: "first:testing",
             funcName: "kettle.tests.init.record",
             args: ["{that}", "onCreate"]
         }

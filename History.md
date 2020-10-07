@@ -1,5 +1,46 @@
 # Version History
 
+## 2.0.0 / 2020-09-30
+
+* KETTLE-55: Adopted Infusion's DataSource infrastructure and factored away duplicate code
+* KETTLE-50: `kettle.dataSource.file.moduleTerms` has been decoupled from `kettle.dataSource.file` as `kettle.dataSource.moduleTerms`
+* KETTLE-49: Eliminated "readOnlyGrade" system in favour of slightly more logical "writableGrade" system and
+contextAwareness definition.
+* KETTLE-61: Client-side URL DataSource which is now part of the FLUID-6145 branch
+* URL DataSource now follows node's modern WhatWG-oriented naming for URL fields
+* **BREAKING CHANGES** Kettle after 2.0.0 is only compatible with releases of Infusion from the FLUID-6145 branch which
+are dated later than 2020-09-24. This branch will eventually become the released version of Infusion 3.x.
+* Other dependency updates
+
+## 1.16.0 / 2020-08-07
+
+* KETTLE-89: Follow HTTP redirects from URL DataSource
+* Other dependency updates
+
+## 1.15.0 / 2020-07-20
+
+* Updated to fluid-xxxx version of former GPII dependencies, including update of fluid-pouchdb that allows build on
+  node 12.x
+* Other dependency updates
+
+## 1.14.0 / 2020-07-16
+
+* KETTLE-86: Corrected version incorporating extra commits following review
+
+## 1.13.0 / 2020-07-16
+
+* KETTLE-86: Extended request.events.onSuccess accepting additional arguments allowing custom status codes, and added
+  request.outerRequestPromise which accepts a wider framed payload correspondingly.
+* KETTLE-84: Extended kettle.test.request.ws to support an onClose event
+* Various docs fixes
+* General dependency update
+
+## 1.12.0 / 2020-04-10
+
+* KETTLE-82: Fix for client abort causing server exit
+* Updates for compatibility with FLUID-6148/FLUID-6145 branches of Infusion - "golden release"
+* General dependency update
+
 ## 1.11.1 / 2019-05-23
 
 * Reorganisation of request launching logic to permit use under post-FLUID-6148 branches of Infusion

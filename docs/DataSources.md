@@ -113,7 +113,7 @@ We document these configuration options in the next section:
             <td><code>writeMethod</code></td>
             <td><code>String</code> (default: <code>PUT</code>)</td>
             <td>The HTTP method to be used when the <code>set</code> method is operated on this writable DataSource
-                (with <code>writable: true</code>). This defaults to <code>PUT</code> but
+                (with grade <code>fluid.dataSource.writable</code>). This defaults to <code>PUT</code> but
                 <code>POST</code> is another option. Note that this option can also be supplied within the
                 <code>options</code> argument to the <code>set</code> method itself.</td>
         </tr>

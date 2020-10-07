@@ -26,8 +26,9 @@ fluid.defaults("kettle.tests.dataSourceJSON5Tester", {
     },
     components: {
         faultyJSONDataSource: {
-            type: "kettle.dataSource.file.moduleTerms",
+            type: "kettle.dataSource.file",
             options: {
+                gradeNames: "kettle.dataSource.moduleTerms",
                 path: "%kettle/tests/data/invalid/invalidJSON5File.json5",
                 components: {
                     encoding: {

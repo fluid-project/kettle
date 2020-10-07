@@ -46,6 +46,7 @@ fluid.defaults("kettle.tests.singleRequest.config", {
     }
 });
 
+<<<<<<< HEAD
 fluid.defaults("kettle.tests.singleRequest.testDefTemplate", {
     gradeNames: "fluid.component",
     mergePolicy: {
