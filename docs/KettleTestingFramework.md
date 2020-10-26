@@ -561,7 +561,7 @@ fluid.each(testIncludes, function (path) {
 });
 ```
 
-For reference, you can see Kettle's own such file [here](https://github.com/fluid-project/kettle/blob/master/tests/all-tests.js)
+For reference, you can see Kettle's own such file [here](https://github.com/fluid-project/kettle/blob/main/tests/all-tests.js)
 
 ## Framework tests
 
