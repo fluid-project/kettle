@@ -46,19 +46,46 @@ fluid.defaults("kettle.tests.singleRequest.config", {
     }
 });
 
-/** Merge the config testDefs, generate their grades derived from
- * "kettle.tests.singleRequest.config" and execute them **/
+fluid.defaults("kettle.tests.singleRequest.testDefTemplate", {
+    gradeNames: "fluid.component",
+    mergePolicy: {
+        sequence: "noexpand"
+    },
+    expectedStatusCode: 200,
+    components: {
+        testRequest: {
+            type: "kettle.test.request.http",
+            options: {
+                path: "/",
+                method: "GET"
+            }
+        }
+    },
+    sequence: [
+        {
+            func: "{testRequest}.send"
+        }, {
+            event: "{testRequest}.events.onComplete",
+            listener: "kettle.test.assertResponse",
+            args: {
+                message: "{testCaseHolder}.options.message",
+                plainText: "{testCaseHolder}.options.plainText",
+                statusCode: "{testCaseHolder}.options.expectedStatusCode",
+                expected: "{testCaseHolder}.options.expected",
+                expectedSubstring: "{testCaseHolder}.options.expectedSubstring",
+                string: "{arguments}.0",
+                request: "{testRequest}"
+            }
+        }
+    ]
+});
 
-/**
- * @param testDefs {Array of String} An array of the grade names holding
- *     "hollow grades" to be merged into full fixtures
- * @param testDefTemplateGrade {String} The grade holding the
- *     "test def template" including the actual test sequence and assertion
- *     defaults to be merged into the hollow grades
- * @param errorExpect {Boolean} `true` If the `expect` count for the fixtures
- *     is to be derived based on the `errorTexts` option.
+/** Merge the config testDefs, if their grades include a `handler` entry, generate their config grades derived from
+ * "kettle.tests.singleRequest.config" and execute them
+ * @param {String[]} testDefs - An array of the grade names holding "hollow grades" to be merged into full fixtures
+ * @param {String} testDefTemplateGrade - The grade holding the "test def template" including the actual test sequence and assertion defaults to be merged into the hollow grades
+ * @param {Boolean} errorExpect - `true` If the `expect` count for the fixtures is to be derived based on the `errorTexts` option.
  */
-
 kettle.tests.singleRequest.executeTests = function (testDefs, testDefTemplateGrade, errorExpect) {
     fluid.each(testDefs, function (testDefGrade) {
         var testDefDefaults = fluid.defaults(testDefGrade);

@@ -33,6 +33,8 @@ require("./lib/KettleRequest.ws.js");
 require("./lib/KettleServer.js");
 require("./lib/KettleServer.ws.js");
 require("./lib/KettleSession.js");
+require("./lib/KettleStaticMountIndexer.js");
+require("./lib/KettleStaticRequestHandler.js");
 
 kettle.loadTestingSupport = function () {
     require("./lib/test/KettleTestUtils.js");

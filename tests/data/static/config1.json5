@@ -1,0 +1,5 @@
+// This file overrides the resolution of %kettle/tests/configs/config1.json5
+// as part of the StaticRequestHandlerTests.json5
+{
+    overridden: true
+}
