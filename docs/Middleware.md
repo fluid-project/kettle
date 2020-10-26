@@ -166,7 +166,7 @@ perform the necessary [request marking](DataSources.md#callback-wrapping-in-data
 Here we describe the built-in middleware supplied with Kettle, which is mostly sourced from standard middleware in the
 [express](http://expressjs.com/) and [pillarjs](https://github.com/pillarjs) communities. You can consult the
 straightforward implementations in
-[KettleMiddleware.js](https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js) for suggestions on
+[KettleMiddleware.js](https://github.com/fluid-project/kettle/tree/main/lib/KettleMiddleware.js) for suggestions on
 how to implement your own.
 
 <div style="font-size: smaller">
@@ -236,7 +236,7 @@ how to implement your own.
 </tr>
 <tr>
     <td><code>kettle.middleware.CORS</code></td>
-    <td><a href="https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js">Kettle built-in</a></td>
+    <td><a href="https://github.com/fluid-project/kettle/tree/main/lib/KettleMiddleware.js">Kettle built-in</a></td>
     <td>Adds <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a> headers to
         outgoing HTTP request to enable cross-domain access
     </td>
@@ -249,7 +249,7 @@ how to implement your own.
 </tr>
 <tr>
     <td><code>kettle.middleware.null</code></td>
-    <td><a href="https://github.com/fluid-project/kettle/tree/master/lib/KettleMiddleware.js">Kettle built-in</a></td>
+    <td><a href="https://github.com/fluid-project/kettle/tree/main/lib/KettleMiddleware.js">Kettle built-in</a></td>
     <td>No-op middleware, useful for overriding and inactivating undesired middleware</td>
     <td>none</td>
     <td><code>{middlewareHolder}.null</code></td>
