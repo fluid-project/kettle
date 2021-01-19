@@ -230,7 +230,9 @@ kettle.tests.session.testDefs = {
         httpTestSessionEnd: {
             type: "kettle.test.request.httpCookie",
             options: {
-                path: "/testSessionEnd/%token",
+                // Test KETTLE-92
+                url: "http://localhost:8081/testSessionEnd/%token",
+                // path: "/testSessionEnd/%token",
                 termMap: {
                     token: kettle.tests.session.token
                 }

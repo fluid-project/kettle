@@ -196,8 +196,7 @@ kettle.tests.ws.testDefs = {
         event: "{closingWsRequest}.events.onClose",
         listener: "kettle.tests.ws.assertCloseResponse",
         args: "{arguments}.1"
-    }
-]
+    }]
 };
 
 kettle.test.bootstrapServer(kettle.tests.ws.testDefs);

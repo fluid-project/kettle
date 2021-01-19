@@ -17,26 +17,26 @@ The DataSource API is drawn from the following two methods – a read-only DataS
 writeable DataSource will implement both `get` and `set`:
 
 ```javascript
-    /* @param directModel {Object} A JSON structure holding the "coordinates" of the state to be read -
-     * this model is morally equivalent to (the substitutable parts of) a file path or URL
-     * @param options {Object} [Optional] A JSON structure holding configuration options good for just
-     * this request. These will be specially interpreted by the particular concrete grade of DataSource
-     * – there are no options valid across all implementations of this grade.
-     * @return {Promise} A promise representing successful or unsuccessful resolution of the read state
-     */
-    dataSource.get(directModel, options);
-    /* @param directModel {Object} As for get
-     * @param model {Object} The state to be written to the coordinates
-     * @param options {Object} [Optional] A JSON structure holding configuration options good for just
-     * this request. These will be specially interpreted by the
-     * particular concrete grade of DataSource – there are no options valid across all implementations
-     * of this grade. For example, a URL DataSource will accept an option `writeMethod` which will
-     * allow the user to determine which HTTP method (PUT or POST) will be used to implement the write
-     * operation.
-     * @return {Promise} A promise representing resolution of the written state,
-     * which may also optionally resolve to any returned payload from the write process
-     */
-    dataSource.set(directModel, model, options);
+/* @param directModel {Object} A JSON structure holding the "coordinates" of the state to be read -
+ * this model is morally equivalent to (the substitutable parts of) a file path or URL
+ * @param options {Object} [Optional] A JSON structure holding configuration options good for just
+ * this request. These will be specially interpreted by the particular concrete grade of DataSource
+ * – there are no options valid across all implementations of this grade.
+ * @return {Promise} A promise representing successful or unsuccessful resolution of the read state
+ */
+dataSource.get(directModel, options);
+/* @param directModel {Object} As for get
+ * @param model {Object} The state to be written to the coordinates
+ * @param options {Object} [Optional] A JSON structure holding configuration options good for just
+ * this request. These will be specially interpreted by the
+ * particular concrete grade of DataSource – there are no options valid across all implementations
+ * of this grade. For example, a URL DataSource will accept an option `writeMethod` which will
+ * allow the user to determine which HTTP method (PUT or POST) will be used to implement the write
+ * operation.
+ * @return {Promise} A promise representing resolution of the written state,
+ * which may also optionally resolve to any returned payload from the write process
+ */
+dataSource.set(directModel, model, options);
 ```
 
 ## Simple example of using an HTTP dataSource
