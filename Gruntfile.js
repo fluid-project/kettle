@@ -19,12 +19,22 @@ module.exports = function (grunt) {
                 json5: ["lib/**/*.json5", "tests/data/*.json5", "tests/configs/*.json5", "examples/**/*.json5"],
                 md: ["./*.md", "docs/**/*.md", "examples/**/*.md"],
                 other: ["./.*"]
-            }
+            },
+            ignores: ["!./node_modules", "!./package-lock.json"]
         },
         markdownlint: {
             options: {
                 config: {
                     "single-h1": false
+                }
+            }
+        },
+        eslint: {
+            "md": {
+                "options": {
+                    "rules": {
+                        "no-redeclare": 0
+                    }
                 }
             }
         }
