@@ -23,7 +23,7 @@
         "express-session": "1.17.1",
         "serve-static": "1.14.1",
         "ws": "7.4.2",
-        "infusion": "3.0.0-dev.20201113T153152Z.32176dcbe.FLUID-6145",
+        "infusion": "3.0.0-dev.20210120T204128Z.6e4be079f.FLUID-6580",
         "jsonlint": "1.6.3",
         "fluid-resolve": "1.3.0",
         "path-to-regexp": "1.7.0",
