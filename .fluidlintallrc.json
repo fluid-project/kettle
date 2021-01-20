@@ -1,0 +1,29 @@
+{
+    "sources": {
+        "js": ["./lib/**/*.js", "./tests/**/*.js", "./*.js"],
+        "json": ["lib/**/*.json", "tests/data/*.json", "tests/configs/*.json", "examples/**/*.json", "./*.json"],
+        "json5": ["lib/**/*.json5", "tests/data/*.json5", "tests/configs/*.json5", "examples/**/*.json5"],
+        "md": ["./*.md", "docs/**/*.md", "examples/**/*.md"],
+        "other": ["./.*"]
+    },
+    "eslint": {
+        "js": {
+            "options": {
+                "ignore": false,
+                "globInputPaths": false
+            }
+        }
+    },
+    "lintspaces": {
+        "newlines": {
+            "excludes": ["./tests/**/*.png"]
+        }
+    },
+    "markdownlint": {
+        "options": {
+            "config": {
+                "single-h1": false
+            }
+        }
+    }
+}

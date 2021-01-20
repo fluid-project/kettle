@@ -73,7 +73,7 @@ kettle.tests.error.requestErrorAsync.handleRequest = function () {
         throw new Error(
             // not an appropriate failure strategy, but
             // we need to test that the next stack will be properly contextualised to back out the request
-                "Uncharacterised error which should cause request failure"
+            "Uncharacterised error which should cause request failure"
         );
     });
     fluid.invokeLater(wrappedFail);
@@ -188,8 +188,8 @@ kettle.tests.error.testDefs = [{
     }, {
         event: "{eventHolder}.events.logNotifier",
         listener: "kettle.tests.awaitGlobalError"
-    }, { // TODO: Currently this relies on a timing subtlety to evade bug FLUID-5502 in the IoC testing framework -
-         // we know that our error handler will definitely be invoked before one corresponding to actual I/O
+    }, {// TODO: Currently this relies on a timing subtlety to evade bug FLUID-5502 in the IoC testing framework -
+        // we know that our error handler will definitely be invoked before one corresponding to actual I/O
         event: "{httpRequest}.events.onComplete",
         listener: "kettle.tests.testRequestErrorStatus",
         args: ["{httpRequest}"]

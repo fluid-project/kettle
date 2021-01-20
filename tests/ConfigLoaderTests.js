@@ -175,7 +175,7 @@ kettle.tests.testConfigToGrade = function (headName, configNames) {
         jqUnit.assertValue("Grade is created for config " + configOrTypeName, defaults);
         jqUnit.assertLeftHand("Config " + configOrTypeName +
             " is correctly converted into a grade",
-            expectedDefaults[configOrTypeName], defaults);
+        expectedDefaults[configOrTypeName], defaults);
     });
 };
 

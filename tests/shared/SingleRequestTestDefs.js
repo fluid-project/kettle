@@ -50,12 +50,12 @@ fluid.defaults("kettle.tests.singleRequest.config", {
  * "kettle.tests.singleRequest.config" and execute them **/
 
 /**
- * @param testDefs {Array of String} An array of the grade names holding
+ * @param {Array<String>} testDefs - An array of the grade names holding
  *     "hollow grades" to be merged into full fixtures
- * @param testDefTemplateGrade {String} The grade holding the
+ * @param {String} testDefTemplateGrade - The grade holding the
  *     "test def template" including the actual test sequence and assertion
  *     defaults to be merged into the hollow grades
- * @param errorExpect {Boolean} `true` If the `expect` count for the fixtures
+ * @param {Boolean} errorExpect - `true` If the `expect` count for the fixtures
  *     is to be derived based on the `errorTexts` option.
  */
 
