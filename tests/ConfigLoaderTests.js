@@ -173,8 +173,7 @@ kettle.tests.testConfigToGrade = function (headName, configNames) {
     fluid.each(expectedParents, function (configOrTypeName) {
         var defaults = kettle.tests.flattenSubcomponents(fluid.defaults(configOrTypeName));
         jqUnit.assertValue("Grade is created for config " + configOrTypeName, defaults);
-        jqUnit.assertLeftHand("Config " + configOrTypeName +
-            " is correctly converted into a grade",
+        jqUnit.assertLeftHand("Config " + configOrTypeName + " is correctly converted into a grade",
             expectedDefaults[configOrTypeName], defaults);
     });
 };
