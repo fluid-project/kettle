@@ -1,5 +1,14 @@
 # Version History
 
+## 2.1.0 / 2021-01-20
+
+* KETTLE-92: Restored ability of kettle.test.request.http to be configured with a full URL
+* KETTLE-93: Moved over to fluid-lint-all for linting, and deleted Grunt and all of its odious dependencies
+* Inauguration day
+* Other dependency updates
+
+# Version History
+
 ## 2.0.0 / 2020-09-30
 
 * KETTLE-55: Adopted Infusion's DataSource infrastructure and factored away duplicate code
