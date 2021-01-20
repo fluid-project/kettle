@@ -9,8 +9,6 @@
     "eslint": {
         "js": {
             "options": {
-                "ignore": false,
-                "globInputPaths": false
             }
         }
     },
