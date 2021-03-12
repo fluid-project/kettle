@@ -1,5 +1,10 @@
 # Version History
 
+## 2.2.0 / 2021-03-12
+
+* FLUID-6599: Updated to version of Infusion fixing incorrect defaulting of DataSource port to 80 and fixed corresponding bug here 
+* Other dependency updates
+
 ## 2.1.0 / 2021-01-20
 
 * KETTLE-92: Restored ability of kettle.test.request.http to be configured with a full URL
