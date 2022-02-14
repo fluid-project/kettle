@@ -30,7 +30,7 @@
         "multer": "1.4.2",
         "form-data": "4.0.0",
         "json5": "2.2.0",
-        "follow-redirects": "1.13.3"
+        "follow-redirects": "1.14.8"
     },
     "devDependencies": {
         "eslint-config-fluid": "2.0.0",
