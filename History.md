@@ -1,5 +1,9 @@
 # Version History
 
+## 2.3.0 / 2022-02-16
+
+* Dependency updates, including to pre-release version of Infusion 4.0.0
+
 ## 2.2.0 / 2021-03-12
 
 * FLUID-6599: Updated to version of Infusion fixing incorrect defaulting of DataSource port to 80 and fixed

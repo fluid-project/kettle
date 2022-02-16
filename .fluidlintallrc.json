@@ -14,7 +14,7 @@
     },
     "lintspaces": {
         "newlines": {
-            "excludes": ["./tests/**/*.png"]
+            "excludes": ["./tests/**/*.png", "./tests/**/*.txt"]
         }
     },
     "markdownlint": {
