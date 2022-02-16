@@ -48,7 +48,7 @@ for use with Infusion's
 Any user of Kettle's testing support needs to have [node-jqunit](https://github.com/fluid-project/node-jqunit)
 registered as a member of their own project's `devDependencies` in their own package.json.
 
-Kettle runs on [node.js](https://nodejs.org) version 14.x and upward (see [package.json](package.json) for current
+Kettle runs on [node.js](https://nodejs.org) version 12.x and upward (see [package.json](package.json) for current
 dependency profile).
 
 ### Contents - DataSources
