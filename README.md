@@ -21,11 +21,11 @@ of middleware or even a raw node.js HTTP server.
 ## Notes on Kettle 2.x releases
 
 The 2.x line of Kettle releases are (at the time of writing) still code-compatible with the 1.x releases in terms of
-support for user code, but the 2.x Kettle releases break compatibility with older versions of Infusion. Kettle 1.x
-has been compatible with mainline releases of Infusion as well as those from in-progress FLUID-6145 and FLUID-6148
-branches. Kettle 2.x releases are only compatible with releases of Infusion from the FLUID-6145 branch, newer
-than and including 3.0.0-dev.20200930T151056Z.d0b9e348d.FLUID-6145 . The contents of this branch will in time
-contribute to the upcoming 3.x releases of Infusion.
+support for user code, but the 2.x Kettle releases break compatibility with older versions of Infusion (1.x through
+3.x). Kettle 1.x has been compatible with mainline releases of Infusion as well as those from in-progress
+FLUID-6145 and FLUID-6148 branches. Kettle 2.x releases are only compatible with 4.x releases of Infusion (and
+historically, those from the FLUID-6145 branch, newer than and including
+3.0.0-dev.20200930T151056Z.d0b9e348d.FLUID-6145 ).
 
 ## Contents of this repository
 
@@ -48,8 +48,8 @@ for use with Infusion's
 Any user of Kettle's testing support needs to have [node-jqunit](https://github.com/fluid-project/node-jqunit)
 registered as a member of their own project's `devDependencies` in their own package.json.
 
-Kettle runs on [node.js](https://nodejs.org) version 4.x (see [package.json](package.json) for current dependency
-profile).
+Kettle runs on [node.js](https://nodejs.org) version 12.x and upward (see [package.json](package.json) for current
+dependency profile).
 
 ### Contents - DataSources
 

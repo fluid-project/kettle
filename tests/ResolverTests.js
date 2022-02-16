@@ -46,7 +46,7 @@ jqUnit.test("Test absent environment substitution", function () {
 jqUnit.test("Test present file substitution", function () {
     var that = kettle.tests.loadConfigTest("kettle.tests.resolver.fileConfig");
     jqUnit.assertEquals("Environment value is resolved", "This is a secret secret",
-        that.options.option6);
+        that.options.option6.trim());
 });
 
 jqUnit.test("Test absent file substitution", function () {
