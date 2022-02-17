@@ -23,6 +23,7 @@ var testIncludes = [
     "./DataSourceJSONTests.js",
     "./DataSourceJSON5Tests.js",
     "./DataSourceFileTests.js",
+    "./DataSourceRecursiveFileTests.js",
     "./DataSourceURLTests.js",
     "./DataSourcePouchDBTests.js",
     "./DataSourceSimpleTests.js",
