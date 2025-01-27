@@ -1,5 +1,9 @@
 # Version History
 
+## 2.3.1 / xxxx-xx-xx
+
+* KETTLE-94: Removed dev dependency on fluid-pouchdb which depends on unmaintained leveldown package
+
 ## 2.3.0 / 2022-02-16
 
 * Dependency updates, including to pre-release version of Infusion 4.0.0
