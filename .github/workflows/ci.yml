@@ -19,33 +19,22 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        node-version: [12.x, 14.x]
+        node-version: [16.x, 18.x]
 
     steps:
     - name: Prepare git
       run: git config --global core.autocrlf false
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Get npm cache directory
-      id: npm-cache
-      run: |
-        echo "::set-output name=dir::$(npm config get cache)"
-
-    - uses: actions/cache@v2
-      with:
-        path: ${{ steps.npm-cache.outputs.dir }}
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+        cache: npm
 
     - name: Install Node.js dependencies
-      run: npm install
+      run: npm ci
 
     - name: Code linter
       run: npm run lint
